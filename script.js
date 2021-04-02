@@ -24,7 +24,9 @@ class king extends pieces{
         } else {
             this.image.src = '/pieces/kingB.png';
         }
+        console.log(this.image.src)
         this.image.onload = function(){
+            console.log('loaded')
             this.imgLoad = true;
         };
     }
