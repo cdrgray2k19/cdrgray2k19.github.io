@@ -1,6 +1,6 @@
 class pieces{
     constructor(x, y, white, board){
-    	this.x = x;
+        this.x = x;
         this.y = y;
         this.white = white;
         this.board = board;
@@ -1136,10 +1136,18 @@ function main(){
         }
     });
 
-    frame();
+    var img = new Image();
+	img.src = "file:///Users/charlie/Downloads/left_stand.png";
+	img.onload = function(){
+		b.ctx.drawImage(img,320, 320, 30, 30);
+		console.log('hi');
+	};
+
+    //frame();
 
     function frame(){
         b.ctx.clearRect(0, 0, b.width, b.height);
+        
         
         b.drawGrid();
         b.drawPieces();
