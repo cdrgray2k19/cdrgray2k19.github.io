@@ -1136,7 +1136,16 @@ function main(){
         }
     });
 
-    frame();
+
+    var img = new Image();
+    img.src = 'file:///Users/charlie/Downloads/heart_sprite.png';
+    img.onload = function() {    
+        b.ctx.clearRect(0, 0, canvas.width, canvas.height);
+        b.ctx.drawImage(img, 320, 320, 50, 50);
+    });
+    
+    //frame();
+
 
     function frame(){
         b.ctx.clearRect(0, 0, b.width, b.height);
