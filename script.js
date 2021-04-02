@@ -1140,7 +1140,7 @@ function main(){
     b.ctx.clearRect(0, 0, b.width, b.height);
     b.drawGrid();
     var img = new Image();
-    img.src = '/heart_sprite.png';
+    img.src = '/kingW.png';
     img.onload = function() {    
         b.ctx.drawImage(img, 100, 20, 40, 40);
     };
