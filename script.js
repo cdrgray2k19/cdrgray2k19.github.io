@@ -24,14 +24,12 @@ class king extends pieces{
         } else {
             this.image.src = '/pieces/kingB.png';
         }
-        console.log(this.image.src)
         this.image.onload = function(){
-            console.log('loaded')
             this.imgLoad = true;
-        };
+        }
     }
     display(){
-        if (this.imgLoad){
+        /*if (this.imgLoad == true){
             this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
         } else {
             if (this.white){
@@ -40,7 +38,9 @@ class king extends pieces{
                 this.board.ctx.fillStyle = '#000000';
             }
             this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
-        }
+        }*/
+
+        this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
 
 
     }
@@ -147,14 +147,30 @@ class queen extends pieces{
     constructor(x, y, white, board){
         super(x, y, white, board);
         this.text = 'Q';
+        this.imgLoad = false;
+        this.image = new Image();
+        if (this.white){
+            this.image.src = '/pieces/queenW.png';
+        } else {
+            this.image.src = '/pieces/queenB.png';
+        }
+        this.image.onload = function(){
+            this.imgLoad = true;
+        }
     }
     display(){
-        if (this.white){
-            this.board.ctx.fillStyle = '#808080';
-        }else{
-            this.board.ctx.fillStyle = '#000000';
-        }
-        this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
+        /*if (this.imgLoad == true){
+            this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
+        } else {
+            if (this.white){
+                this.board.ctx.fillStyle = '#808080';
+            }else{
+                this.board.ctx.fillStyle = '#000000';
+            }
+            this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
+        }*/
+
+        this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
     }
     mapLegal(){
         this.legal = [];
@@ -269,14 +285,30 @@ class rook extends pieces{
         super(x, y, white, board);
         this.text = 'R';
         this.moved = false;
+        this.imgLoad = false;
+        this.image = new Image();
+        if (this.white){
+            this.image.src = '/pieces/rookW.png';
+        } else {
+            this.image.src = '/pieces/rookB.png';
+        }
+        this.image.onload = function(){
+            this.imgLoad = true;
+        }
     }
     display(){
-        if (this.white){
-            this.board.ctx.fillStyle = '#808080';
-        }else{
-            this.board.ctx.fillStyle = '#000000';
-        }
-        this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
+        /*if (this.imgLoad == true){
+            this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
+        } else {
+            if (this.white){
+                this.board.ctx.fillStyle = '#808080';
+            }else{
+                this.board.ctx.fillStyle = '#000000';
+            }
+            this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
+        }*/
+
+        this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
     }
     mapLegal(){
         this.legal = [];
@@ -338,14 +370,30 @@ class bishop extends pieces{
     constructor(x, y, white, board){
         super(x, y, white, board);
         this.text = 'B';
+        this.imgLoad = false;
+        this.image = new Image();
+        if (this.white){
+            this.image.src = '/pieces/bishopW.png';
+        } else {
+            this.image.src = '/pieces/bishopB.png';
+        }
+        this.image.onload = function(){
+            this.imgLoad = true;
+        }
     }
     display(){
-        if (this.white){
-            this.board.ctx.fillStyle = '#808080';
-        }else{
-            this.board.ctx.fillStyle = '#000000';
-        }
-        this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
+        /*if (this.imgLoad == true){
+            this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
+        } else {
+            if (this.white){
+                this.board.ctx.fillStyle = '#808080';
+            }else{
+                this.board.ctx.fillStyle = '#000000';
+            }
+            this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
+        }*/
+
+        this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
     }
     mapLegal(){
         this.legal = [];
@@ -411,14 +459,30 @@ class knight extends pieces{
     constructor(x, y, white, board){
         super(x, y, white, board);
         this.text = 'N';
+        this.imgLoad = false;
+        this.image = new Image();
+        if (this.white){
+            this.image.src = '/pieces/knightW.png';
+        } else {
+            this.image.src = '/pieces/knightB.png';
+        }
+        this.image.onload = function(){
+            this.imgLoad = true;
+        }
     }
     display(){
-        if (this.white){
-            this.board.ctx.fillStyle = '#808080';
-        }else{
-            this.board.ctx.fillStyle = '#000000';
-        }
-        this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
+        /*if (this.imgLoad == true){
+            this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
+        } else {
+            if (this.white){
+                this.board.ctx.fillStyle = '#808080';
+            }else{
+                this.board.ctx.fillStyle = '#000000';
+            }
+            this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
+        }*/
+
+        this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
     }
     mapLegal(){
         this.legal = [];
@@ -444,14 +508,30 @@ class pawn extends pieces{
         this.text = 'P';
         this.moved = false;
         this.justMoved = false;
+        this.imgLoad = false;
+        this.image = new Image();
+        if (this.white){
+            this.image.src = '/pieces/pawnW.png';
+        } else {
+            this.image.src = '/pieces/pawnB.png';
+        }
+        this.image.onload = function(){
+            this.imgLoad = true;
+        }
     }
     display(){
-        if (this.white){
-            this.board.ctx.fillStyle = '#808080';
-        }else{
-            this.board.ctx.fillStyle = '#000000';
-        }
-        this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
+        /*if (this.imgLoad == true){
+            this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
+        } else {
+            if (this.white){
+                this.board.ctx.fillStyle = '#808080';
+            }else{
+                this.board.ctx.fillStyle = '#000000';
+            }
+            this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
+        }*/
+
+        this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
     }
     mapLegal(){ // add varaible which allows pawn to indicate if its just been moved and then write function to check for en passant moves
         this.legal = [];
