@@ -1142,7 +1142,7 @@ function main(){
     var img = new Image();
     img.src = '/kingW.png';
     img.onload = function() {    
-        b.ctx.drawImage(img, 100, 20, 40, 40);
+        b.ctx.drawImage(img, 330, 570, 60, 60);
     };
     
     //frame();
