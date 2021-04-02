@@ -1140,7 +1140,7 @@ function main(){
     b.ctx.clearRect(0, 0, b.width, b.height);
     b.drawGrid();
     var img = new Image();
-    img.src = '/kingW.png';
+    img.src = '/pieces/kingW.png';
     img.onload = function() {    
         b.ctx.drawImage(img, 330, 570, 60, 60);
     };
