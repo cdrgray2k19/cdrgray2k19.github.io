@@ -1,4 +1,4 @@
-/*class pieces{
+class pieces{
     constructor(x, y, white, board){
     	this.x = x;
         this.y = y;
@@ -1135,15 +1135,8 @@ function main(){
             b.mousePress2();
         }
     });
-	
-	var img = new Image();
-	img.src = "file:///Users/charlie/Downloads/left_stand.png";
-	img.onload = function(){
-		b.ctx.drawImage(img,320, 320, 30, 30);
-		console.log('hi');
-	};
 
-    //frame();
+    frame();
 
     function frame(){
         b.ctx.clearRect(0, 0, b.width, b.height);
@@ -1157,4 +1150,3 @@ function main(){
 }
 
 window.onload = main;
-*/
