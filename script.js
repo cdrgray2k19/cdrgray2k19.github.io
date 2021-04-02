@@ -30,7 +30,7 @@ class king extends pieces{
     }
     display(){
         if (this.imgLoad){
-            this.board.ctx.drawImage(img, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
+            this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
         } else {
             if (this.white){
                 this.board.ctx.fillStyle = '#808080';
