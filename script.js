@@ -17,14 +17,30 @@ class king extends pieces{
         super(x, y, white, board);
         this.text = 'K';
         this.moved = false;
+        this.imgLoad = false;
+        this.image = new Image();
+        if (this.white){
+            this.image.src = '/pieces/kingW.png';
+        } else {
+            this.image.src = '/pieces/kingB.png';
+        }
+        this.image.onload = function(){
+            this.imgLoad = true;
+        };
     }
     display(){
-        if (this.white){
-            this.board.ctx.fillStyle = '#808080';
-        }else{
-            this.board.ctx.fillStyle = '#000000';
+        if (this.imgLoad){
+            this.board.ctx.drawImage(img, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
+        } else {
+            if (this.white){
+                this.board.ctx.fillStyle = '#808080';
+            }else{
+                this.board.ctx.fillStyle = '#000000';
+            }
+            this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
         }
-        this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
+
+
     }
     mapLegal(){ // add kingside and queenside castling function - check two squares for no knight and no bishop and then check that king hasnt been moved and rook hasnt been moved, then check for checks on all squares that king is at or crosses
         this.legal = [];
@@ -1135,22 +1151,8 @@ function main(){
             b.mousePress2();
         }
     });
-
-
-    b.ctx.clearRect(0, 0, b.width, b.height);
-    b.drawGrid();
-    var img = new Image();
-    img.src = '/pieces/kingW.png';
-    img.onload = function() {    
-        b.ctx.drawImage(img, 330, 570, 60, 60);
-    };
-    var img2 = new Image();
-    img2.src = '/pieces/kingW.png';
-    img2.onload = function() {    
-        b.ctx.drawImage(img2, 330, 10, 60, 60);
-    };
     
-    //frame();
+    frame();
 
 
     function frame(){
