@@ -1140,7 +1140,7 @@ function main(){
     var img = new Image();
     img.src = '/heart_sprite.png';
     img.onload = function() {    
-        b.ctx.clearRect(0, 0, canvas.width, canvas.height);
+        b.ctx.clearRect(0, 0, b.width, b.height);
         b.ctx.drawImage(img, 320, 320, 50, 50);
     };
     
