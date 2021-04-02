@@ -1144,6 +1144,11 @@ function main(){
     img.onload = function() {    
         b.ctx.drawImage(img, 330, 570, 60, 60);
     };
+    var img2 = new Image();
+    img2.src = '/pieces/kingW.png';
+    img2.onload = function() {    
+        b.ctx.drawImage(img2, 330, 10, 60, 60);
+    };
     
     //frame();
 
