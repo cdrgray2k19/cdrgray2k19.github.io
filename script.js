@@ -1,4 +1,4 @@
-class pieces{
+/*class pieces{
     constructor(x, y, white, board){
     	this.x = x;
         this.y = y;
@@ -1157,3 +1157,4 @@ function main(){
 }
 
 window.onload = main;
+*/
