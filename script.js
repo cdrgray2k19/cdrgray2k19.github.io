@@ -531,7 +531,7 @@ class pawn extends pieces{
             this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
         }*/
 
-        this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
+        this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 20, this.y * this.board.sqSize + 20, this.board.sqSize - 40, this.board.sqSize - 40);
     }
     mapLegal(){ // add varaible which allows pawn to indicate if its just been moved and then write function to check for en passant moves
         this.legal = [];
