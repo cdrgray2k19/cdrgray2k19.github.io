@@ -17,16 +17,16 @@ class king extends pieces{
         super(x, y, white, board);
         this.text = 'K';
         this.moved = false;
-        this.imgLoad = false;
+        //this.imgLoad = false;
         this.image = new Image();
         if (this.white){
             this.image.src = '/pieces/kingW.png';
         } else {
             this.image.src = '/pieces/kingB.png';
         }
-        this.image.onload = function(){
+        /*this.image.onload = function(){
             this.imgLoad = true;
-        }
+        }*/
     }
     display(){
         /*if (this.imgLoad == true){
@@ -147,16 +147,16 @@ class queen extends pieces{
     constructor(x, y, white, board){
         super(x, y, white, board);
         this.text = 'Q';
-        this.imgLoad = false;
+        //this.imgLoad = false;
         this.image = new Image();
         if (this.white){
             this.image.src = '/pieces/queenW.png';
         } else {
             this.image.src = '/pieces/queenB.png';
         }
-        this.image.onload = function(){
+        /*this.image.onload = function(){
             this.imgLoad = true;
-        }
+        }*/
     }
     display(){
         /*if (this.imgLoad == true){
@@ -285,16 +285,16 @@ class rook extends pieces{
         super(x, y, white, board);
         this.text = 'R';
         this.moved = false;
-        this.imgLoad = false;
+        //this.imgLoad = false;
         this.image = new Image();
         if (this.white){
             this.image.src = '/pieces/rookW.png';
         } else {
             this.image.src = '/pieces/rookB.png';
         }
-        this.image.onload = function(){
+        /*this.image.onload = function(){
             this.imgLoad = true;
-        }
+        }*/
     }
     display(){
         /*if (this.imgLoad == true){
@@ -370,16 +370,16 @@ class bishop extends pieces{
     constructor(x, y, white, board){
         super(x, y, white, board);
         this.text = 'B';
-        this.imgLoad = false;
+        //this.imgLoad = false;
         this.image = new Image();
         if (this.white){
             this.image.src = '/pieces/bishopW.png';
         } else {
             this.image.src = '/pieces/bishopB.png';
         }
-        this.image.onload = function(){
+        /*this.image.onload = function(){
             this.imgLoad = true;
-        }
+        }*/
     }
     display(){
         /*if (this.imgLoad == true){
@@ -459,16 +459,16 @@ class knight extends pieces{
     constructor(x, y, white, board){
         super(x, y, white, board);
         this.text = 'N';
-        this.imgLoad = false;
+        //this.imgLoad = false;
         this.image = new Image();
         if (this.white){
             this.image.src = '/pieces/knightW.png';
         } else {
             this.image.src = '/pieces/knightB.png';
         }
-        this.image.onload = function(){
+        /*this.image.onload = function(){
             this.imgLoad = true;
-        }
+        }*/
     }
     display(){
         /*if (this.imgLoad == true){
@@ -508,16 +508,16 @@ class pawn extends pieces{
         this.text = '';
         this.moved = false;
         this.justMoved = false;
-        this.imgLoad = false;
+        //this.imgLoad = false;
         this.image = new Image();
         if (this.white){
             this.image.src = '/pieces/pawnW.png';
         } else {
             this.image.src = '/pieces/pawnB.png';
         }
-        this.image.onload = function(){
+        /*this.image.onload = function(){
             this.imgLoad = true;
-        }
+        }*/
     }
     display(){
         /*if (this.imgLoad == true){
@@ -626,7 +626,7 @@ class board{
         this.ctx = this.canvas.getContext("2d");
         this.ctx.textAlgin = 'center';
         this.smallFont = "15px Georgia";
-        this.bigFont = "30px Georgia";
+        //this.bigFont = "30px Georgia";
         this.width = this.canvas.clientWidth;
         this.height = this.canvas.clientHeight;
         this.sqSize = this.width/8;
@@ -635,26 +635,47 @@ class board{
         this.whiteMove = true;
         this.mouse = [];
         this.movingPiece = 0;
-        this.createGrid();
-        this.createPieces();
-        this.updateTakeArr(true);
-        this.updateTakeArr(false);
         this.inCheck = 0; // if color which is being moved is not in check it stores 0 if it is then it stores an array with the king x,y pos in it to color its square
         this.msg = 0; // stores message that is received from maplegal function which can tell mousepress2 how to behave if different move called like castling or en passant
         this.prev = [];
         this.letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
         this.notation = '';
+        this.white = '#ffffff';
+        this.black = '#000000';
+        this.blue = '#0000ff';
+        this.red = '#ff0000';
+        this.lightMagenta = '#ff9eff';
+        this.magenta = '#ff00ff'
+        this.lightBlue = '#6be2f9';
+        this.lightGreen = '#39ff14';
+        this.darkGreen = '#22bc22';
+        this.createGrid();
+        this.createPieces();
+        this.updateTakeArr(true);
+        this.updateTakeArr(false);
     }
+    
+    
+    inArr(arr1, arr2){ // had problem comparing 2d array values so made this function which has a very general application
+        for (let i = 0; i < arr2.length; i++){
+            if(arr1[0] == arr2[i][0] && arr1[1] == arr2[i][1]){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     createGrid(){
         this.squares = [];
         for (let x = 0; x < 8; x++){
             for (let y = 0; y < 8; y++){
                 if ((x+y) % 2 == 0){
-                    var block_num = '#ffffff';
-                    var coord_num = '#0000ff';
+                    var block_num = this.white;
+                    var coord_num = this.blue;
                 } else {
-                    var block_num = '#0000ff';
-                    var coord_num = '#ffffff';
+                    var block_num = this.blue;
+                    var coord_num = this.white;
                 }
                 if (y == 0){
                     this.squares.push([]);
@@ -712,7 +733,7 @@ class board{
         }
     }
     drawPieces(){
-        this.ctx.font = this.bigFont;
+        //this.ctx.font = this.bigFont;
         for (let i = 0; i < this.whitePieces.length; i++){
             this.whitePieces[i].display();
         }
@@ -738,244 +759,20 @@ class board{
             }
         }
     }
-    mousePress2(){
-        this.createGrid(); // remove any green legal blocks
-
-        if (this.inCheck != 0){ // keep any red check blocks
-            let king_x = this.inCheck[0];
-            let king_y = this.inCheck[1];
-            this.squares[king_x][king_y].block = '#ff0000'
-            this.squares[king_x][king_y].coord = '#000000'
-        }
-        for (let i = 0; i < this.prev.length; i++){
-            let x = this.prev[i][0];
-            let y = this.prev[i][1];
-            if (this.squares[x][y].block == '#ffffff'){
-                this.squares[x][y].block = '#ff9eff';
-            } else {
-                this.squares[x][y].block = '#ff00ff';
-            }
-            this.squares[x][y].coord = '#000000';
-        }
-
-        let x = Math.floor(this.mouse[0]/this.sqSize);
-        let y = Math.floor(this.mouse[1]/this.sqSize);
-        let pos = [x, y];
-        let value = this.inArr(pos, this.movingPiece.legal);
-
-        if (value){
-            let originalX = this.movingPiece.x;
-            let originalY = this.movingPiece.y;
-            this.movingPiece.x = x; // move
-            this.movingPiece.y = y; // move
-            
-            this.movingVariableHandle();
-
-            this.notation = '';
-
-            if (this.msg == 'castle'){
-                if (this.movingPiece.x - originalX == 2){
-                    let piece = this.getRook(true);
-                    piece.x = this.movingPiece.x - 1;
-                    piece.moved = true;
-                    this.notation = 'O-O';
-                } else if (this.movingPiece.x - originalX == -2){
-                    let piece = this.getRook(false);
-                    piece.x = this.movingPiece.x + 1;
-                    piece.moved = true;
-                    this.notation = 'O-O-O';
-                }
-            } else if (this.msg == 'enP-left' || this.msg == 'enP-right'){
-                this.pieceTake(this.movingPiece.x, originalY, this.movingPiece.white);
-                this.notation = 'x' + this.letters[x] + String(8-y) + 'e.p.';
-            } else {
-                this.notation = this.movingPiece.text;
-                if (this.pieceTake(this.movingPiece.x, this.movingPiece.y, this.movingPiece.white) != 0){
-                    this.notation += 'x';
-                }
-                this.notation += this.letters[x] + String(8-y);
-            }
-
-            if (this.movingPiece.text == '' && this.movingPiece.y == 0 || this.movingPiece.y == 7){
-                if (this.white){
-                    this.whitePieces.push(new queen(this.movingPiece.x, this.movingPiece.y, this.movingPiece.white, this));
-                    let index = this.whitePieces.indexOf(this.movingPiece);
-                    this.whitePieces.splice(index, 1);
-                } else {
-                    this.blackPieces.push(new queen(this.movingPiece.x, this.movingPiece.y, this.movingPiece.white, this));
-                    let index = this.blackPieces.indexOf(this.movingPiece);
-                    this.blackPieces.splice(index, 1);
-                }
-                this.notation += 'Q';
-            }
-            
-            this.updateTakeArr(this.whiteMove); // update current colors for taking moves
-
-            this.inCheck = 0;
-
-            this.msg = 0;
-
-            this.prev = [];
-
-            this.createGrid(); // remove any red check blocks
-
-            this.prev.push([originalX, originalY]);
-            this.prev.push([this.movingPiece.x, this.movingPiece.y]);
-
-            for (let i = 0; i < this.prev.length; i++){
-                let x = this.prev[i][0];
-                let y = this.prev[i][1];
-                if (this.squares[x][y].block == '#ffffff'){
-                    this.squares[x][y].block = '#ff9eff';
-                } else {
-                    this.squares[x][y].block = '#ff00ff';
-                }
-                this.squares[x][y].coord = '#000000';
-            }
-
-            this.movingPiece = 0; // refresh moving piece variable for next go
-            
-            this.whiteMove = !(this.whiteMove); // change move color
-            
-            let checkValue = this.isCheck(this.whiteMove);
-
-            if(checkValue != 0){
-                this.notation += '+';
-            }
-            console.log(this.notation);
-
-            if(checkValue != 0){ // check new color for checks before anything else
-                let x = this.isCheck(this.whiteMove)[0];
-                let y = this.isCheck(this.whiteMove)[1];
-                this.inCheck = [x, y];
-                this.squares[x][y].block = '#ff0000'
-                this.squares[x][y].coord = '#000000'
-                if(this.hasMoves(this.whiteMove) == false){
-                    console.log('checkmate');
-                    this.playing = false;
-                }
-            } else {
-                if(this.hasMoves(this.whiteMove) == false){
-                    console.log('stalemate');
-                    this.playing = false;
-                }
-            }
-
-
-        } else {
-            this.mousePress1(); // check if same color piece has been clicked which would restart process
-        }
-    }
     piecePressed(piece){
         this.pieceUpdateLegal(piece);
-        this.squares[this.movingPiece.x][this.movingPiece.y].block = '#6be2f9';
-        this.squares[this.movingPiece.x][this.movingPiece.y].coord = '#000000';
+        
+        //update squares
+        this.squares[this.movingPiece.x][this.movingPiece.y].block = this.lightBlue;
+        this.squares[this.movingPiece.x][this.movingPiece.y].coord = this.black;
         for(let i = 0; i < this.movingPiece.legal.length;i++){
-            if (this.squares[this.movingPiece.legal[i][0]][this.movingPiece.legal[i][1]].block == '#ffffff'){
-                this.squares[this.movingPiece.legal[i][0]][this.movingPiece.legal[i][1]].block = '#39ff14';
+            if ((this.movingPiece.legal[i][0] + this.movingPiece.legal[i][1]) % 2 == 0){
+                this.squares[this.movingPiece.legal[i][0]][this.movingPiece.legal[i][1]].block = this.lightGreen;
             } else {
-                this.squares[this.movingPiece.legal[i][0]][this.movingPiece.legal[i][1]].block = '#22bc22';
+                this.squares[this.movingPiece.legal[i][0]][this.movingPiece.legal[i][1]].block = this.darkGreen;
             }
-            this.squares[this.movingPiece.legal[i][0]][this.movingPiece.legal[i][1]].coord = '#000000';
+            this.squares[this.movingPiece.legal[i][0]][this.movingPiece.legal[i][1]].coord = this.black;
         }
-    }
-    inArr(arr1, arr2){ // had problem comparing 2d array values so made this function which has a very general application
-        for (let i = 0; i < arr2.length; i++){
-            if(arr1[0] == arr2[i][0] && arr1[1] == arr2[i][1]){
-                return true;
-            }
-        }
-        return false;
-    }
-    pieceAt(x, y, white){
-
-        for (let i = 0; i < this.whitePieces.length; i++){
-            if (this.whitePieces[i].x == x && this.whitePieces[i].y == y){
-                if(white){
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        }
-
-        for (let i = 0; i < this.blackPieces.length; i++){
-            if (this.blackPieces[i].x == x && this.blackPieces[i].y == y){
-                if(white){
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-        }
-        return 'null';
-    }
-    pieceTake(x, y, white){
-        if(white){
-            for(let i = 0; i < this.blackPieces.length; i++){
-                if (this.blackPieces[i].x == x && this.blackPieces[i].y == y){
-                    let piece = this.blackPieces[i];
-                    this.blackPieces.splice(i, 1);
-                    return piece;
-                }
-            }
-        } else {
-            for(let i = 0; i < this.whitePieces.length; i++){
-                if (this.whitePieces[i].x == x && this.whitePieces[i].y == y){
-                    let piece = this.whitePieces[i];
-                    this.whitePieces.splice(i, 1);
-                    return piece;
-                }
-            }
-        }
-        return 0;
-    }
-    updateTakeArr(white){
-        if(white){
-            this.whiteTakeMoves = [];
-            for (let i = 0; i < this.whitePieces.length; i++){
-                this.whitePieces[i].mapLegal();
-                for (let j = 0; j < this.whitePieces[i].take.length; j++){
-                    this.whiteTakeMoves.push(this.whitePieces[i].take[j]);
-                }
-            }
-        } else {
-            this.blackTakeMoves = [];
-            for (let i = 0; i < this.blackPieces.length; i++){
-                this.blackPieces[i].mapLegal();
-                for (let j = 0; j < this.blackPieces[i].take.length; j++){
-                    this.blackTakeMoves.push(this.blackPieces[i].take[j]);
-                }
-            }
-        }
-    }
-    isCheck(white){
-        if (white){
-            for (let i = 0; i < this.whitePieces.length; i++){
-                if (this.whitePieces[i].constructor.name == king.name){
-                    var x = this.whitePieces[i].x;
-                    var y = this.whitePieces[i].y;
-                }
-            }
-            for (let i = 0; i < this.blackTakeMoves.length; i++){
-                if (this.blackTakeMoves[i][0] == x && this.blackTakeMoves[i][1] == y){
-                    return [x, y];
-                }
-            }
-        } else {
-            for (let i = 0; i < this.blackPieces.length; i++){
-                if (this.blackPieces[i].constructor.name == king.name){
-                    var x = this.blackPieces[i].x;
-                    var y = this.blackPieces[i].y;
-                }
-            }
-            for (let i = 0; i < this.whiteTakeMoves.length; i++){
-                if (this.whiteTakeMoves[i][0] == x && this.whiteTakeMoves[i][1] == y){
-                    return [x, y];
-                }
-            }
-        }
-        return 0;
     }
     pieceUpdateLegal(piece){
         this.movingPiece = piece;
@@ -1029,6 +826,380 @@ class board{
         this.movingPiece.legal = arr2; // change legal array to new check legal array
         this.movingPiece.x = originalX; // change x and y position back
         this.movingPiece.y = originalY;
+    }
+    pieceAt(x, y, white){
+
+        for (let i = 0; i < this.whitePieces.length; i++){
+            if (this.whitePieces[i].x == x && this.whitePieces[i].y == y){
+                if(white){
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        for (let i = 0; i < this.blackPieces.length; i++){
+            if (this.blackPieces[i].x == x && this.blackPieces[i].y == y){
+                if(white){
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        }
+        return 'null';
+    }
+    mousePress2(){
+
+        this.clearGrid();
+
+        let x = Math.floor(this.mouse[0]/this.sqSize);
+        let y = Math.floor(this.mouse[1]/this.sqSize);
+        let pos = [x, y];
+        let value = this.inArr(pos, this.movingPiece.legal);
+
+        if (value){
+            let originalX = this.movingPiece.x;
+            let originalY = this.movingPiece.y;
+            this.movingPiece.x = x; // move
+            this.movingPiece.y = y; // move
+            
+            this.movingVariableHandle();
+
+            this.notation = '';
+
+            this.msgHandle(originalX, originalY);
+
+            this.promotionHandle();
+            
+            this.updateTakeArr(this.whiteMove); // update current colors for taking moves
+
+            this.inCheck = 0;
+
+            this.msg = 0;
+
+            this.prev = [];
+
+            this.createGrid(); // completely resets grid
+
+            this.updatePrev(originalX, originalY);
+
+            this.movingPiece = 0; // refresh moving piece variable for next go
+            
+            this.whiteMove = !(this.whiteMove); // change move color
+            
+            let checkValue = this.isCheck(this.whiteMove);
+
+            if(checkValue != 0){
+                this.notation += '+';
+            }
+            console.log(this.notation);
+
+            
+            
+            if(checkValue != 0){ // check new color for checks before anything else
+                let x = this.isCheck(this.whiteMove)[0];
+                let y = this.isCheck(this.whiteMove)[1];
+                this.inCheck = [x, y];
+                this.squares[x][y].block = this.red;
+                this.squares[x][y].coord = this.black;
+                if(this.hasMoves(this.whiteMove) == false){
+                    console.log('checkmate');
+                    this.playing = false;
+                }
+            } else {
+                if(this.hasMoves(this.whiteMove) == false){
+                    console.log('stalemate');
+                    this.playing = false;
+                }
+            }
+
+
+        } else {
+            this.mousePress1(); // check if same color piece has been clicked which would restart process
+        }
+    }
+    clearGrid(){
+        this.createGrid(); // remove any green legal blocks
+
+        if (this.inCheck != 0){ // keep any red check blocks
+            let king_x = this.inCheck[0];
+            let king_y = this.inCheck[1];
+            this.squares[king_x][king_y].block = this.red;
+            this.squares[king_x][king_y].coord = this.black;
+        }
+        for (let i = 0; i < this.prev.length; i++){
+            let x = this.prev[i][0];
+            let y = this.prev[i][1];
+            if (this.squares[x][y].block == this.white){
+                this.squares[x][y].block = this.lightMagenta;
+            } else {
+                this.squares[x][y].block = this.magenta;
+            }
+            this.squares[x][y].coord = this.black;
+        }
+    }
+    movingVariableHandle(){
+        if (this.whiteMove){
+            for (let i = 0; i < this.whitePieces.length; i++){
+                try{
+                    if (this.whitePieces[i].justMoved == true){
+                        this.whitePieces[i].justMoved = false;
+                    }
+                }catch{}
+            }
+        } else {
+            for (let i = 0; i < this.blackPieces.length; i++){
+                try{
+                    if (this.blackPieces[i].justMoved == true){
+                        this.blackPieces[i].justMoved = false;
+                    }
+                }catch{}
+            }
+        }
+
+
+        try{
+            if (this.movingPiece.moved == false){
+                this.movingPiece.moved = true; // tell pieces that need to now that they have moved
+                try{
+                    this.movingPiece.justMoved = true;
+                }catch{}
+            }
+        }catch{}
+    }
+    msgHandle(originalX, originalY){
+        if (this.msg == 'castle'){
+            if (this.movingPiece.x - originalX == 2){
+                let piece = this.getRook(true);
+                piece.x = this.movingPiece.x - 1;
+                piece.moved = true;
+                this.notation = 'O-O';
+            } else if (this.movingPiece.x - originalX == -2){
+                let piece = this.getRook(false);
+                piece.x = this.movingPiece.x + 1;
+                piece.moved = true;
+                this.notation = 'O-O-O';
+            }
+        } else if (this.msg == 'enP-left' || this.msg == 'enP-right'){
+            this.pieceTake(this.movingPiece.x, originalY, this.movingPiece.white);
+            this.notation = 'x' + this.letters[this.movingPiece.x] + String(8-this.movingPiece.y) + 'e.p.';
+        } else {
+            this.notation = this.movingPiece.text;
+            if (this.pieceTake(this.movingPiece.x, this.movingPiece.y, this.movingPiece.white) != 0){
+                this.notation += 'x';
+            }
+            this.notation += this.letters[this.movingPiece.x] + String(8-this.movingPiece.y);
+        }
+    }
+    castle(x,startX){
+        this.movingPiece.x = startX;
+        if (startX - x == 2){
+            //queen side castle
+            if(this.inCheck){
+                return true;
+            }
+            for (let i = 1; i<3; i++){
+                this.movingPiece.x = startX - i;
+                this.updateTakeArr(!this.whiteMove);
+                if (this.isCheck(this.whiteMove) != 0){
+                    return true
+                }
+            }
+            return [x, this.movingPiece.y];
+        } else if (startX - x == -2){
+            //king side castle
+            if(this.inCheck){
+                return true;
+            }
+            for (let i = 1; i<3; i++){
+                this.movingPiece.x = startX + i;
+                this.updateTakeArr(!this.whiteMove);
+                if (this.isCheck(this.whiteMove) != 0){
+                    return true
+                }
+            }
+            return [x, this.movingPiece.y];
+        } else {
+            this.movingPiece.x = x;
+            return false;
+        }
+    }
+    getRook(king){
+        if (king){
+            if (this.whiteMove){
+                for (let i = 0; i < this.whitePieces.length; i++){
+                    if (this.whitePieces[i].x == 7 && this.whitePieces[i].y == this.movingPiece.y){
+                        return this.whitePieces[i];
+                    }
+                }
+            } else {
+                for (let i = 0; i < this.blackPieces.length; i++){
+                    if (this.blackPieces[i].x == 7 && this.blackPieces[i].y == this.movingPiece.y){
+                        return this.blackPieces[i];
+                    }
+                }
+            }
+        } else {
+            if (this.whiteMove){
+                for (let i = 0; i < this.whitePieces.length; i++){
+                    if (this.whitePieces[i].x == 0 && this.whitePieces[i].y == this.movingPiece.y){
+                        return this.whitePieces[i];
+                    }
+                }
+            } else {
+                for (let i = 0; i < this.blackPieces.length; i++){
+                    if (this.blackPieces[i].x == 0 && this.blackPieces[i].y == this.movingPiece.y){
+                        return this.blackPieces[i];
+                    }
+                }
+            }
+        }
+    }
+    enPLeft(x, startX, startY){
+        if (startX - x == 1){
+            let takenPiece = this.pieceTake(this.movingPiece.x, startY, this.movingPiece.white);
+            this.updateTakeArr(!this.whiteMove);
+
+            if(this.isCheck(this.whiteMove) == 0){
+                if (this.movingPiece.white){
+                    this.blackPieces.push(takenPiece);
+                } else {
+                    this.whitePieces.push(takenPiece);
+                }
+                return 'success';
+            } else {
+                if (this.movingPiece.white){
+                    this.blackPieces.push(takenPiece);
+                } else {
+                    this.whitePieces.push(takenPiece);
+                }
+                return 'fail';
+            }
+        }else{
+            return false;
+        }
+    }
+    enPRight(x, startX, startY){
+        if (startX - x == -1){
+            let takenPiece = this.pieceTake(this.movingPiece.x, startY, this.movingPiece.white);
+            this.updateTakeArr(!this.whiteMove);
+
+            if(this.isCheck(this.whiteMove) == 0){
+                if (this.movingPiece.white){
+                    this.blackPieces.push(takenPiece);
+                } else {
+                    this.whitePieces.push(takenPiece);
+                }
+                return 'success';
+            } else {
+                if (this.movingPiece.white){
+                    this.blackPieces.push(takenPiece);
+                } else {
+                    this.whitePieces.push(takenPiece);
+                }
+                return 'fail';
+            }
+        }else{
+            return false;
+        }
+    }
+    pieceTake(x, y, white){
+        if(white){
+            for(let i = 0; i < this.blackPieces.length; i++){
+                if (this.blackPieces[i].x == x && this.blackPieces[i].y == y){
+                    let piece = this.blackPieces[i];
+                    this.blackPieces.splice(i, 1);
+                    return piece;
+                }
+            }
+        } else {
+            for(let i = 0; i < this.whitePieces.length; i++){
+                if (this.whitePieces[i].x == x && this.whitePieces[i].y == y){
+                    let piece = this.whitePieces[i];
+                    this.whitePieces.splice(i, 1);
+                    return piece;
+                }
+            }
+        }
+        return 0;
+    }
+    promotionHandle(){
+        if (this.movingPiece.text == '' && (this.movingPiece.y == 0 || this.movingPiece.y == 7)){
+            if (this.white){
+                this.whitePieces.push(new queen(this.movingPiece.x, this.movingPiece.y, this.movingPiece.white, this));
+                let index = this.whitePieces.indexOf(this.movingPiece);
+                this.whitePieces.splice(index, 1);
+            } else {
+                this.blackPieces.push(new queen(this.movingPiece.x, this.movingPiece.y, this.movingPiece.white, this));
+                let index = this.blackPieces.indexOf(this.movingPiece);
+                this.blackPieces.splice(index, 1);
+            }
+            this.notation += 'Q';
+        }
+    }
+    updateTakeArr(white){
+        if(white){
+            this.whiteTakeMoves = [];
+            for (let i = 0; i < this.whitePieces.length; i++){
+                this.whitePieces[i].mapLegal();
+                for (let j = 0; j < this.whitePieces[i].take.length; j++){
+                    this.whiteTakeMoves.push(this.whitePieces[i].take[j]);
+                }
+            }
+        } else {
+            this.blackTakeMoves = [];
+            for (let i = 0; i < this.blackPieces.length; i++){
+                this.blackPieces[i].mapLegal();
+                for (let j = 0; j < this.blackPieces[i].take.length; j++){
+                    this.blackTakeMoves.push(this.blackPieces[i].take[j]);
+                }
+            }
+        }
+    }
+    updatePrev(originalX, originalY){
+        this.prev.push([originalX, originalY]);
+            this.prev.push([this.movingPiece.x, this.movingPiece.y]);
+
+            for (let i = 0; i < this.prev.length; i++){
+                let x = this.prev[i][0];
+                let y = this.prev[i][1];
+                if (this.squares[x][y].block == this.white){
+                    this.squares[x][y].block = this.lightMagenta;
+                } else {
+                    this.squares[x][y].block = this.magenta;
+                }
+                this.squares[x][y].coord = this.black;
+            }
+    }
+    isCheck(white){
+        if (white){
+            for (let i = 0; i < this.whitePieces.length; i++){
+                if (this.whitePieces[i].constructor.name == king.name){
+                    var x = this.whitePieces[i].x;
+                    var y = this.whitePieces[i].y;
+                }
+            }
+            for (let i = 0; i < this.blackTakeMoves.length; i++){
+                if (this.blackTakeMoves[i][0] == x && this.blackTakeMoves[i][1] == y){
+                    return [x, y];
+                }
+            }
+        } else {
+            for (let i = 0; i < this.blackPieces.length; i++){
+                if (this.blackPieces[i].constructor.name == king.name){
+                    var x = this.blackPieces[i].x;
+                    var y = this.blackPieces[i].y;
+                }
+            }
+            for (let i = 0; i < this.whiteTakeMoves.length; i++){
+                if (this.whiteTakeMoves[i][0] == x && this.whiteTakeMoves[i][1] == y){
+                    return [x, y];
+                }
+            }
+        }
+        return 0;
     }
     hasMoves(white){
         if (white){
@@ -1103,147 +1274,6 @@ class board{
             }
         }
         return false;
-    }
-    castle(x,startX){
-        this.movingPiece.x = startX;
-        if (startX - x == 2){
-            //queen side castle
-            if(this.inCheck){
-                return true;
-            }
-            for (let i = 1; i<3; i++){
-                this.movingPiece.x = startX - i;
-                this.updateTakeArr(!this.whiteMove);
-                if (this.isCheck(this.whiteMove) != 0){
-                    return true
-                }
-            }
-            return [x, this.movingPiece.y];
-        } else if (startX - x == -2){
-            //king side castle
-            if(this.inCheck){
-                return true;
-            }
-            for (let i = 1; i<3; i++){
-                this.movingPiece.x = startX + i;
-                this.updateTakeArr(!this.whiteMove);
-                if (this.isCheck(this.whiteMove) != 0){
-                    return true
-                }
-            }
-            return [x, this.movingPiece.y];
-        } else {
-            this.movingPiece.x = x;
-            return false;
-        }
-    }
-    getRook(king){
-        if (king){
-            if (this.whiteMove){
-                for (let i = 0; i < this.whitePieces.length; i++){
-                    if (this.whitePieces[i].x == 7 && this.whitePieces[i].y == this.movingPiece.y){
-                        return this.whitePieces[i];
-                    }
-                }
-            } else {
-                for (let i = 0; i < this.blackPieces.length; i++){
-                    if (this.blackPieces[i].x == 7 && this.blackPieces[i].y == this.movingPiece.y){
-                        return this.blackPieces[i];
-                    }
-                }
-            }
-        } else {
-            if (this.whiteMove){
-                for (let i = 0; i < this.whitePieces.length; i++){
-                    if (this.whitePieces[i].x == 0 && this.whitePieces[i].y == this.movingPiece.y){
-                        return this.whitePieces[i];
-                    }
-                }
-            } else {
-                for (let i = 0; i < this.blackPieces.length; i++){
-                    if (this.blackPieces[i].x == 0 && this.blackPieces[i].y == this.movingPiece.y){
-                        return this.blackPieces[i];
-                    }
-                }
-            }
-        }
-    }
-    movingVariableHandle(){
-        if (this.whiteMove){
-            for (let i = 0; i < this.whitePieces.length; i++){
-                try{
-                    if (this.whitePieces[i].justMoved == true){
-                        this.whitePieces[i].justMoved = false;
-                    }
-                }catch{}
-            }
-        } else {
-            for (let i = 0; i < this.blackPieces.length; i++){
-                try{
-                    if (this.blackPieces[i].justMoved == true){
-                        this.blackPieces[i].justMoved = false;
-                    }
-                }catch{}
-            }
-        }
-
-
-        try{
-            if (this.movingPiece.moved == false){
-                this.movingPiece.moved = true; // tell pieces that need to now that they have moved
-                try{
-                    this.movingPiece.justMoved = true;
-                }catch{}
-            }
-        }catch{}
-    }
-    enPLeft(x, startX, startY){
-        if (startX - x == 1){
-            let takenPiece = this.pieceTake(this.movingPiece.x, startY, this.movingPiece.white);
-            this.updateTakeArr(!this.whiteMove);
-
-            if(this.isCheck(this.whiteMove) == 0){
-                if (this.movingPiece.white){
-                    this.blackPieces.push(takenPiece);
-                } else {
-                    this.whitePieces.push(takenPiece);
-                }
-                return 'success';
-            } else {
-                if (this.movingPiece.white){
-                    this.blackPieces.push(takenPiece);
-                } else {
-                    this.whitePieces.push(takenPiece);
-                }
-                return 'fail';
-            }
-        }else{
-            return false;
-        }
-    }
-    enPRight(x, startX, startY){
-        if (startX - x == -1){
-            let takenPiece = this.pieceTake(this.movingPiece.x, startY, this.movingPiece.white);
-            this.updateTakeArr(!this.whiteMove);
-
-            if(this.isCheck(this.whiteMove) == 0){
-                if (this.movingPiece.white){
-                    this.blackPieces.push(takenPiece);
-                } else {
-                    this.whitePieces.push(takenPiece);
-                }
-                return 'success';
-            } else {
-                if (this.movingPiece.white){
-                    this.blackPieces.push(takenPiece);
-                } else {
-                    this.whitePieces.push(takenPiece);
-                }
-                return 'fail';
-            }
-        }else{
-            return false;
-        }
     }
 }
 function main(){
