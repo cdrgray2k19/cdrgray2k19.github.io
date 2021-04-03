@@ -642,15 +642,15 @@ class board{
         this.prev = [];
         this.letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
         this.notation = '';
-        this.lightSqCol = '#ffffff';// light square
-        this.changedCoordCol = '#000000'; // changedCoord
-        this.darkSqCol = '#0000ff';//dark square
-        this.checkCol = '#ff0000'; // check
-        this.lightPrevCol = '#ff9eff'; // light prev
-        this.darkPrevCol = '#ff00ff' // dark prev
-        this.selectedCol = '#6be2f9'; // select
-        this.lightLegalCol = '#39ff14'; // light legal
-        this.darkLegalCol = '#22bc22'; // dark legal
+        this.lightSqCol = '#ffffff';
+        this.changedCoordCol = '#000000';
+        this.darkSqCol = '#0000ff';
+        this.checkCol = '#ff0000';
+        this.lightPrevCol = '#fdfd96';//ff9eff - light magenta
+        this.darkPrevCol = '#ffff00';//ff00ff - magenta
+        this.selectedCol = '#6be2f9';
+        this.lightLegalCol = '#39ff14';
+        this.darkLegalCol = '#22bc22';
         this.createGrid();
         this.createPieces();
         this.updateTakeArr(true);
