@@ -1,9 +1,8 @@
 import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r125/build/three.module.js';
-import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r125/examples/jsm/controls/OrbitControls.js';
-import {GUI} from 'https://threejsfundamentals.org/threejs/../3rdparty/dat.gui.module.js';
+//import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r125/examples/jsm/controls/OrbitControls.js';
 
 function main(){
-	const canvas = document.querySelector('#c');
+	const canvas = document.querySelector('#c-3');
 	const renderer = new THREE.WebGLRenderer({canvas});
 	
 	const fov = 75;

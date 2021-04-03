@@ -1,3 +1,5 @@
+import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r125/build/three.module.js';
+
 class pieces{
     constructor(x, y, white, board){
         this.x = x;
@@ -1276,8 +1278,78 @@ class board{
         return false;
     }
 }
+
+class three{
+    constructor(){
+        this.canvas = document.querySelector('#c-3');
+        this.renderer = new THREE.WebGLRenderer({canvas: this.canvas});
+        
+        this.fov = 75;
+        this.aspect = 2;
+        this.near = 0.1;
+        this.far = 1000;
+        this.camera = new THREE.PerspectiveCamera(this.fov, this.aspect, this.near, this.far);
+        this.camera.position.set(0, 0, 25);
+
+        this.scene = new THREE.Scene();
+        this.scene.background = new THREE.Color(0x0b0c10);
+
+        this.color = 0xffffff;
+        this.intensity = 0.5;
+        this.light = new THREE.AmbientLight(this.color, this.intensity);
+        this.scene.add(this.light);
+
+        this.boxGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+        this.boxMaterial = new THREE.MeshPhongMaterial({color: 0xc5c6c7});
+        
+        this.cubes = [];
+        this.cubeNum = 1000;
+        for (let i = 0; i < this.cubeNum; i++){
+            const cube = new THREE.Mesh(this.boxGeometry, this.boxMaterial);
+            this.scene.add(cube);
+            this.cubes.push(cube);
+            cube.position.x = (Math.random() - 0.5) * 50;
+            cube.position.y = (Math.random() - 0.5) * 25;
+            cube.position.z = (Math.random() - 0.5) * this.far;
+        }
+
+    }
+    resizeRenderer(){
+		let c = this.renderer.domElement;
+		let width = c.clientWidth;
+		let height = c.clientHeight;
+		let needResize = c.width !== width || c.height !== height;
+		if (needResize){
+			this.renderer.setSize(width, height, false);
+		}
+
+		return needResize;
+	}
+    frameHandle(time){
+        if (this.resizeRenderer()){
+			let canvas = this.renderer.domElement;
+			this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
+			this.camera.updateProjectionMatrix();
+		}
+
+		this.cubes.forEach((cube, ndx) => {
+			let speed = 1 + (ndx * 0.01);
+			let rot = time * speed;
+			cube.rotation.set(rot, rot, rot);
+			cube.position.z += 0.1;
+			if (cube.position.z > 25){
+				cube.position.x = (Math.random() - 0.5) * 100;
+				cube.position.y = (Math.random() - 0.5) * 100;
+				cube.position.z = (Math.random() - 0.5) * this.far/10;
+			}
+		})
+		
+		this.renderer.render(this.scene, this.camera);
+    }
+
+}
 function main(){
-    b = new board();
+    const b = new board();
 
     b.canvas.addEventListener('mousemove', function(evt) {
         let rect = b.canvas.getBoundingClientRect();
@@ -1294,16 +1366,22 @@ function main(){
             b.mousePress2();
         }
     });
+
+    const t = new three();
     
-    frame();
+    requestAnimationFrame(frame);
 
 
-    function frame(){
+    function frame(time){
+        time *= 0.001;
+        
         b.ctx.clearRect(0, 0, b.width, b.height);
         
         
         b.drawGrid();
         b.drawPieces();
+
+        t.frameHandle(time);
 
 
         if (b.playing){
