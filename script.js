@@ -505,7 +505,7 @@ class knight extends pieces{
 class pawn extends pieces{
     constructor(x, y, white, board){
         super(x, y, white, board);
-        this.text = 'P';
+        this.text = '';
         this.moved = false;
         this.justMoved = false;
         this.imgLoad = false;
@@ -621,6 +621,7 @@ class pawn extends pieces{
 
 class board{
     constructor(){
+        this.playing = true;
         this.canvas = document.querySelector('#c');
         this.ctx = this.canvas.getContext("2d");
         this.ctx.textAlgin = 'center';
@@ -641,6 +642,8 @@ class board{
         this.inCheck = 0; // if color which is being moved is not in check it stores 0 if it is then it stores an array with the king x,y pos in it to color its square
         this.msg = 0; // stores message that is received from maplegal function which can tell mousepress2 how to behave if different move called like castling or en passant
         this.prev = [];
+        this.letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+        this.notation = '';
     }
     createGrid(){
         this.squares = [];
@@ -661,8 +664,6 @@ class board{
         }
     }
     drawGrid(){
-        const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-
         for (let x = 0; x < 8; x++){
             for (let y = 0; y < 8; y++){
 
@@ -679,7 +680,7 @@ class board{
                 if (y == 7){
                     this.ctx.fillStyle = color_coord;
                     this.ctx.font = this.smallFont;
-                    let value = letters[x];
+                    let value = this.letters[x];
                     this.ctx.fillText(value, x * this.sqSize + this.sqSize * 9/10, y * this.sqSize + this.sqSize* 14/15);
                 }
             }
@@ -770,20 +771,42 @@ class board{
             
             this.movingVariableHandle();
 
+            this.notation = '';
+
             if (this.msg == 'castle'){
                 if (this.movingPiece.x - originalX == 2){
                     let piece = this.getRook(true);
                     piece.x = this.movingPiece.x - 1;
                     piece.moved = true;
+                    this.notation = 'O-O';
                 } else if (this.movingPiece.x - originalX == -2){
                     let piece = this.getRook(false);
                     piece.x = this.movingPiece.x + 1;
                     piece.moved = true;
+                    this.notation = 'O-O-O';
                 }
             } else if (this.msg == 'enP-left' || this.msg == 'enP-right'){
                 this.pieceTake(this.movingPiece.x, originalY, this.movingPiece.white);
+                this.notation = 'x' + this.letters[x] + String(8-y) + 'e.p.';
             } else {
-                this.pieceTake(this.movingPiece.x, this.movingPiece.y, this.movingPiece.white); // check for piece take
+                this.notation = this.movingPiece.text;
+                if (this.pieceTake(this.movingPiece.x, this.movingPiece.y, this.movingPiece.white) != 0){
+                    this.notation += 'x';
+                }
+                this.notation += this.letters[x] + String(8-y);
+            }
+
+            if (this.movingPiece.text == '' && this.movingPiece.y == 0 || this.movingPiece.y == 7){
+                if (this.white){
+                    this.whitePieces.push(new queen(this.movingPiece.x, this.movingPiece.y, this.movingPiece.white, this));
+                    let index = this.whitePieces.indexOf(this.movingPiece);
+                    this.whitePieces.splice(index, 1);
+                } else {
+                    this.blackPieces.push(new queen(this.movingPiece.x, this.movingPiece.y, this.movingPiece.white, this));
+                    let index = this.blackPieces.indexOf(this.movingPiece);
+                    this.blackPieces.splice(index, 1);
+                }
+                this.notation += 'Q';
             }
             
             this.updateTakeArr(this.whiteMove); // update current colors for taking moves
@@ -814,18 +837,27 @@ class board{
             
             this.whiteMove = !(this.whiteMove); // change move color
             
-            if(this.isCheck(this.whiteMove) != 0){ // check new color for checks before anything else
+            let checkValue = this.isCheck(this.whiteMove);
+
+            if(checkValue != 0){
+                this.notation += '+';
+            }
+            console.log(this.notation);
+
+            if(checkValue != 0){ // check new color for checks before anything else
                 let x = this.isCheck(this.whiteMove)[0];
                 let y = this.isCheck(this.whiteMove)[1];
                 this.inCheck = [x, y];
                 this.squares[x][y].block = '#ff0000'
                 this.squares[x][y].coord = '#000000'
                 if(this.hasMoves(this.whiteMove) == false){
-                    console.log('checkmate!');
+                    console.log('checkmate');
+                    this.playing = false;
                 }
             } else {
                 if(this.hasMoves(this.whiteMove) == false){
-                    console.log('stalemate!');
+                    console.log('stalemate');
+                    this.playing = false;
                 }
             }
 
@@ -836,7 +868,6 @@ class board{
     }
     piecePressed(piece){
         this.pieceUpdateLegal(piece);
-        this.movingPiece = piece;
         this.squares[this.movingPiece.x][this.movingPiece.y].block = '#6be2f9';
         this.squares[this.movingPiece.x][this.movingPiece.y].coord = '#000000';
         for(let i = 0; i < this.movingPiece.legal.length;i++){
@@ -1245,7 +1276,9 @@ function main(){
         b.drawPieces();
 
 
-        requestAnimationFrame(frame);
+        if (b.playing){
+            requestAnimationFrame(frame);
+        }
     }
 }
 
