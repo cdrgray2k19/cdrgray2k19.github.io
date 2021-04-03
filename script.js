@@ -642,15 +642,15 @@ class board{
         this.prev = [];
         this.letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
         this.notation = '';
-        this.white = '#ffffff';
-        this.black = '#000000';
-        this.blue = '#0000ff';
-        this.red = '#ff0000';
-        this.lightMagenta = '#ff9eff';
-        this.magenta = '#ff00ff'
-        this.lightBlue = '#6be2f9';
-        this.lightGreen = '#39ff14';
-        this.darkGreen = '#22bc22';
+        this.lightSqCol = '#ffffff';// light square
+        this.changedCoordCol = '#000000'; // changedCoord
+        this.darkSqCol = '#0000ff';//dark square
+        this.checkCol = '#ff0000'; // check
+        this.lightPrevCol = '#ff9eff'; // light prev
+        this.darkPrevCol = '#ff00ff' // dark prev
+        this.selectedCol = '#6be2f9'; // select
+        this.lightLegalCol = '#39ff14'; // light legal
+        this.darkLegalCol = '#22bc22'; // dark legal
         this.createGrid();
         this.createPieces();
         this.updateTakeArr(true);
@@ -673,11 +673,11 @@ class board{
         for (let x = 0; x < 8; x++){
             for (let y = 0; y < 8; y++){
                 if ((x+y) % 2 == 0){
-                    var block_num = this.white;
-                    var coord_num = this.blue;
+                    var block_num = this.lightSqCol;
+                    var coord_num = this.darkSqCol;
                 } else {
-                    var block_num = this.blue;
-                    var coord_num = this.white;
+                    var block_num = this.darkSqCol;
+                    var coord_num = this.lightSqCol;
                 }
                 if (y == 0){
                     this.squares.push([]);
@@ -765,15 +765,15 @@ class board{
         this.pieceUpdateLegal(piece);
         
         //update squares
-        this.squares[this.movingPiece.x][this.movingPiece.y].block = this.lightBlue;
-        this.squares[this.movingPiece.x][this.movingPiece.y].coord = this.black;
+        this.squares[this.movingPiece.x][this.movingPiece.y].block = this.selectedCol;
+        this.squares[this.movingPiece.x][this.movingPiece.y].coord = this.changedCoordCol;
         for(let i = 0; i < this.movingPiece.legal.length;i++){
             if ((this.movingPiece.legal[i][0] + this.movingPiece.legal[i][1]) % 2 == 0){
-                this.squares[this.movingPiece.legal[i][0]][this.movingPiece.legal[i][1]].block = this.lightGreen;
+                this.squares[this.movingPiece.legal[i][0]][this.movingPiece.legal[i][1]].block = this.lightLegalCol;
             } else {
-                this.squares[this.movingPiece.legal[i][0]][this.movingPiece.legal[i][1]].block = this.darkGreen;
+                this.squares[this.movingPiece.legal[i][0]][this.movingPiece.legal[i][1]].block = this.darkLegalCol;
             }
-            this.squares[this.movingPiece.legal[i][0]][this.movingPiece.legal[i][1]].coord = this.black;
+            this.squares[this.movingPiece.legal[i][0]][this.movingPiece.legal[i][1]].coord = this.changedCoordCol;
         }
     }
     pieceUpdateLegal(piece){
@@ -904,8 +904,8 @@ class board{
                 let x = this.isCheck(this.whiteMove)[0];
                 let y = this.isCheck(this.whiteMove)[1];
                 this.inCheck = [x, y];
-                this.squares[x][y].block = this.red;
-                this.squares[x][y].coord = this.black;
+                this.squares[x][y].block = this.checkCol;
+                this.squares[x][y].coord = this.changedCoordCol;
                 if(this.hasMoves(this.whiteMove) == false){
                     console.log('checkmate');
                     this.playing = false;
@@ -928,18 +928,18 @@ class board{
         if (this.inCheck != 0){ // keep any red check blocks
             let king_x = this.inCheck[0];
             let king_y = this.inCheck[1];
-            this.squares[king_x][king_y].block = this.red;
-            this.squares[king_x][king_y].coord = this.black;
+            this.squares[king_x][king_y].block = this.checkCol;
+            this.squares[king_x][king_y].coord = this.changedCoordCol;
         }
         for (let i = 0; i < this.prev.length; i++){
             let x = this.prev[i][0];
             let y = this.prev[i][1];
-            if (this.squares[x][y].block == this.white){
-                this.squares[x][y].block = this.lightMagenta;
+            if (this.squares[x][y].block == this.lightSqCol){
+                this.squares[x][y].block = this.lightPrevCol;
             } else {
-                this.squares[x][y].block = this.magenta;
+                this.squares[x][y].block = this.darkPrevCol;
             }
-            this.squares[x][y].coord = this.black;
+            this.squares[x][y].coord = this.changedCoordCol;
         }
     }
     movingVariableHandle(){
@@ -1167,12 +1167,12 @@ class board{
             for (let i = 0; i < this.prev.length; i++){
                 let x = this.prev[i][0];
                 let y = this.prev[i][1];
-                if (this.squares[x][y].block == this.white){
-                    this.squares[x][y].block = this.lightMagenta;
+                if (this.squares[x][y].block == this.lightSqCol){
+                    this.squares[x][y].block = this.lightPrevCol;
                 } else {
-                    this.squares[x][y].block = this.magenta;
+                    this.squares[x][y].block = this.darkPrevCol;
                 }
-                this.squares[x][y].coord = this.black;
+                this.squares[x][y].coord = this.changedCoordCol;
             }
     }
     isCheck(white){
