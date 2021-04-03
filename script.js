@@ -581,7 +581,6 @@ class pawn extends pieces{
                             try{
                                 if (this.board.blackPieces[i].justMoved == true){
                                     this.legal.push([this.x + x, this.y - 1]);
-                                    this.take.push([this.x + x, this.y]);
                                     if (x == -1){
                                         return 'enP-left';
                                     } else {
@@ -603,7 +602,6 @@ class pawn extends pieces{
                             try{
                                 if (this.board.whitePieces[i].justMoved == true){
                                     this.legal.push([this.x + x, this.y + 1]);
-                                    this.take.push([this.x + x, this.y]);
                                     if (x == -1){
                                         return 'enP-left';
                                     } else {
