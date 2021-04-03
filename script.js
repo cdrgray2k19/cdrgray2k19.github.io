@@ -581,6 +581,7 @@ class pawn extends pieces{
                             try{
                                 if (this.board.blackPieces[i].justMoved == true){
                                     this.legal.push([this.x + x, this.y - 1]);
+                                    this.take.push([this.x + x, this.y]);
                                     if (x == -1){
                                         return 'enP-left';
                                     } else {
@@ -602,6 +603,7 @@ class pawn extends pieces{
                             try{
                                 if (this.board.whitePieces[i].justMoved == true){
                                     this.legal.push([this.x + x, this.y + 1]);
+                                    this.take.push([this.x + x, this.y]);
                                     if (x == -1){
                                         return 'enP-left';
                                     } else {
@@ -782,9 +784,9 @@ class board{
                 }
             } else if (this.msg == 'enP-left' || this.msg == 'enP-right'){
                 this.pieceTake(this.movingPiece.x, originalY, this.movingPiece.white);
+            } else {
+                this.pieceTake(this.movingPiece.x, this.movingPiece.y, this.movingPiece.white); // check for piece take
             }
-            
-            this.pieceTake(this.movingPiece.x, this.movingPiece.y, this.movingPiece.white); // check for piece take
             
             this.updateTakeArr(this.whiteMove); // update current colors for taking moves
 
