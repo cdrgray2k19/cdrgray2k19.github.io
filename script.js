@@ -1262,7 +1262,6 @@ function main(){
 
 
     function frame(){
-        
         b.ctx.clearRect(0, 0, b.width, b.height);
         
         
