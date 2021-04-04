@@ -17,31 +17,24 @@ class king extends pieces{
         super(x, y, white, board);
         this.text = 'K';
         this.moved = false;
-        //this.imgLoad = false;
         this.image = new Image();
         if (this.white){
             this.image.src = '/pieces/kingW.png';
         } else {
             this.image.src = '/pieces/kingB.png';
         }
-        /*this.image.onload = function(){
-            this.imgLoad = true;
-        }*/
     }
     display(){
-        /*if (this.imgLoad == true){
+        try{
             this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
-        } else {
+        } catch {
             if (this.white){
                 this.board.ctx.fillStyle = '#808080';
             }else{
                 this.board.ctx.fillStyle = '#000000';
             }
             this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
-        }*/
-
-        this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
-
+        }
 
     }
     mapLegal(){ // add kingside and queenside castling function - check two squares for no knight and no bishop and then check that king hasnt been moved and rook hasnt been moved, then check for checks on all squares that king is at or crosses
@@ -147,30 +140,24 @@ class queen extends pieces{
     constructor(x, y, white, board){
         super(x, y, white, board);
         this.text = 'Q';
-        //this.imgLoad = false;
         this.image = new Image();
         if (this.white){
             this.image.src = '/pieces/queenW.png';
         } else {
             this.image.src = '/pieces/queenB.png';
         }
-        /*this.image.onload = function(){
-            this.imgLoad = true;
-        }*/
     }
     display(){
-        /*if (this.imgLoad == true){
+        try{
             this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
-        } else {
+        } catch {
             if (this.white){
                 this.board.ctx.fillStyle = '#808080';
             }else{
                 this.board.ctx.fillStyle = '#000000';
             }
             this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
-        }*/
-
-        this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
+        }
     }
     mapLegal(){
         this.legal = [];
@@ -285,30 +272,24 @@ class rook extends pieces{
         super(x, y, white, board);
         this.text = 'R';
         this.moved = false;
-        //this.imgLoad = false;
         this.image = new Image();
         if (this.white){
             this.image.src = '/pieces/rookW.png';
         } else {
             this.image.src = '/pieces/rookB.png';
         }
-        /*this.image.onload = function(){
-            this.imgLoad = true;
-        }*/
     }
     display(){
-        /*if (this.imgLoad == true){
+        try{
             this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
-        } else {
+        } catch {
             if (this.white){
                 this.board.ctx.fillStyle = '#808080';
             }else{
                 this.board.ctx.fillStyle = '#000000';
             }
             this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
-        }*/
-
-        this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
+        }
     }
     mapLegal(){
         this.legal = [];
@@ -370,30 +351,24 @@ class bishop extends pieces{
     constructor(x, y, white, board){
         super(x, y, white, board);
         this.text = 'B';
-        //this.imgLoad = false;
         this.image = new Image();
         if (this.white){
             this.image.src = '/pieces/bishopW.png';
         } else {
             this.image.src = '/pieces/bishopB.png';
         }
-        /*this.image.onload = function(){
-            this.imgLoad = true;
-        }*/
     }
     display(){
-        /*if (this.imgLoad == true){
+        try{
             this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
-        } else {
+        } catch {
             if (this.white){
                 this.board.ctx.fillStyle = '#808080';
             }else{
                 this.board.ctx.fillStyle = '#000000';
             }
             this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
-        }*/
-
-        this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
+        }
     }
     mapLegal(){
         this.legal = [];
@@ -459,30 +434,24 @@ class knight extends pieces{
     constructor(x, y, white, board){
         super(x, y, white, board);
         this.text = 'N';
-        //this.imgLoad = false;
         this.image = new Image();
         if (this.white){
             this.image.src = '/pieces/knightW.png';
         } else {
             this.image.src = '/pieces/knightB.png';
         }
-        /*this.image.onload = function(){
-            this.imgLoad = true;
-        }*/
     }
     display(){
-        /*if (this.imgLoad == true){
+        try{
             this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
-        } else {
+        } catch {
             if (this.white){
                 this.board.ctx.fillStyle = '#808080';
             }else{
                 this.board.ctx.fillStyle = '#000000';
             }
             this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
-        }*/
-
-        this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
+        }
     }
     mapLegal(){
         this.legal = [];
@@ -508,30 +477,24 @@ class pawn extends pieces{
         this.text = '';
         this.moved = false;
         this.justMoved = false;
-        //this.imgLoad = false;
         this.image = new Image();
         if (this.white){
             this.image.src = '/pieces/pawnW.png';
         } else {
             this.image.src = '/pieces/pawnB.png';
         }
-        /*this.image.onload = function(){
-            this.imgLoad = true;
-        }*/
     }
     display(){
-        /*if (this.imgLoad == true){
-            this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
-        } else {
+        try{
+            this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 20, this.y * this.board.sqSize + 20, this.board.sqSize - 40, this.board.sqSize - 40);
+        } catch {
             if (this.white){
                 this.board.ctx.fillStyle = '#808080';
             }else{
                 this.board.ctx.fillStyle = '#000000';
             }
             this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
-        }*/
-
-        this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 20, this.y * this.board.sqSize + 20, this.board.sqSize - 40, this.board.sqSize - 40);
+        }
     }
     mapLegal(){ // add varaible which allows pawn to indicate if its just been moved and then write function to check for en passant moves
         this.legal = [];
@@ -626,7 +589,7 @@ class board{
         this.ctx = this.canvas.getContext("2d");
         this.ctx.textAlgin = 'center';
         this.smallFont = "15px Georgia";
-        //this.bigFont = "30px Georgia";
+        this.bigFont = "30px Georgia";
         this.width = this.canvas.clientWidth;
         this.height = this.canvas.clientHeight;
         this.sqSize = this.width/8;
@@ -733,7 +696,7 @@ class board{
         }
     }
     drawPieces(){
-        //this.ctx.font = this.bigFont;
+        this.ctx.font = this.bigFont;
         for (let i = 0; i < this.whitePieces.length; i++){
             this.whitePieces[i].display();
         }
