@@ -607,8 +607,8 @@ class board{
         this.changedCoordCol = '#000000';
         this.darkSqCol = '#0000ff';
         this.checkCol = '#ff0000';
-        this.lightPrevCol = '#fdfd96';//ff9eff - light magenta
-        this.darkPrevCol = '#ffff00';//ff00ff - magenta
+        this.lightPrevCol = '#fdfd96';
+        this.darkPrevCol = '#ffff00';
         this.selectedCol = '#6be2f9';
         this.lightLegalCol = '#39ff14';
         this.darkLegalCol = '#22bc22';
