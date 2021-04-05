@@ -592,7 +592,7 @@ class board{
         this.bigFont = "30px Georgia";
         this.width = this.canvas.clientWidth;
         this.height = this.canvas.clientHeight;
-        this.sqSize = this.width/8;
+        this.sqSize = this.height/8;
         this.whitePieces = [];
         this.blackPieces = [];
         this.whiteMove = true;
@@ -604,14 +604,13 @@ class board{
         this.letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
         this.notation = '';
         this.lightSqCol = '#ffffff';
+        this.darkSqCol = '#d2b48c';
+        this.checkCol = '#f54c4c';
+        this.lightPrevCol = '#e4d00a';
+        this.darkPrevCol = '#d4af37';
+        this.lightLegalCol = '#aae346';
+        this.darkLegalCol = '#87d620';
         this.changedCoordCol = '#000000';
-        this.darkSqCol = '#0000ff';
-        this.checkCol = '#ff0000';
-        this.lightPrevCol = '#fdfd96';
-        this.darkPrevCol = '#ffff00';
-        this.selectedCol = '#6be2f9';
-        this.lightLegalCol = '#39ff14';
-        this.darkLegalCol = '#22bc22';
         this.createGrid();
         this.createPieces();
         this.updateTakeArr(true);
@@ -726,7 +725,11 @@ class board{
         this.pieceUpdateLegal(piece);
         
         //update squares
-        this.squares[this.movingPiece.x][this.movingPiece.y].block = this.selectedCol;
+        if (this.squares[this.movingPiece.x][this.movingPiece.y].block == this.lightSqCol){
+            this.squares[this.movingPiece.x][this.movingPiece.y].block = this.lightPrevCol;
+        } else {
+            this.squares[this.movingPiece.x][this.movingPiece.y].block = this.darkPrevCol;
+        }
         this.squares[this.movingPiece.x][this.movingPiece.y].coord = this.changedCoordCol;
         for(let i = 0; i < this.movingPiece.legal.length;i++){
             if ((this.movingPiece.legal[i][0] + this.movingPiece.legal[i][1]) % 2 == 0){
@@ -1240,12 +1243,13 @@ class board{
     }
 }
 function main(){
+    
     b = new board();
 
     b.canvas.addEventListener('mousemove', function(evt) {
         let rect = b.canvas.getBoundingClientRect();
-        let x = (evt.clientX - rect.left - 5);
-        let y = (evt.clientY - rect.top - 5);
+        let x = (evt.clientX - rect.left);
+        let y = (evt.clientY - rect.top);
         b.mouse = [];
         b.mouse.push(x);
         b.mouse.push(y);
@@ -1258,12 +1262,12 @@ function main(){
         }
     });
 
-    frame()
+    
+    frame();
 
 
-    function frame(){
+    function frame(w, h){
         b.ctx.clearRect(0, 0, b.width, b.height);
-        
         
         b.drawGrid();
         b.drawPieces();
