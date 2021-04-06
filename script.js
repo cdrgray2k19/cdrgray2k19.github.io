@@ -942,6 +942,7 @@ class board{
 
 
         } else {
+            this.movingPiece = 0;
             this.mousePress1(); // check if same color piece has been clicked which would restart process
         }
     }
