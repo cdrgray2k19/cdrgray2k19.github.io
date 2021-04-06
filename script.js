@@ -619,8 +619,8 @@ class board{
         this.endMsgBox = document.querySelector('#canvasMsgBox');
         this.endMsg = '';
         this.winnerMsg = '';
-        this.whiteTime = 10;
-        this.blackTime = 10;
+        this.whiteTime = 600;
+        this.blackTime = 600;
         this.startTime = new Date().getTime();
         this.endTime = 0;
         this.initTime();
