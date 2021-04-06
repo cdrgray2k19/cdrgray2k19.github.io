@@ -4,10 +4,35 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <title>Chess</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap" rel="stylesheet">
     <link href="style.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
-    <canvas id='c' width="640" height="640"></canvas>
+    <canvas id='c' width="640" height="640" class='shown'></canvas>
+    <div id='infoBox' class='shown'>
+      <div id='btn-group'>
+        <button id='resign'>resign</button>
+        <button id='draw'>draw</button>
+      </div>
+      <p id='infoTxt'>moves:</p>
+      <div id='notation-board'>
+        <ol id='white-moves'>
+        </ol>
+        <ul id='black-moves'>
+        </ul>
+      </div>
+    </div>
+    <div id='canvasMsgBox' class='hidden'>
+      <p id='endMsg'>Error</p>
+      <p id='winnerMsg'>Error</p>
+      <button id='newGame'>new game</button>
+    </div>
+    <div id='time' class='shown'>
+      <p id='blackTime'></p>
+      <p id='clockDivision'>-----------</p>
+      <p id='whiteTime'></p>
+    </div>
     <script src="script.js"></script>
   </body>
 </html>

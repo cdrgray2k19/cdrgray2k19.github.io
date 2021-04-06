@@ -1,7 +1,8 @@
 html, body {
     height: 100%;
     margin: 0;
-    background-color: #2b2b2a;
+    background-color: #222222;
+    font-family: 'Open Sans', sans-serif;
 }
 
 #c{
@@ -11,4 +12,116 @@ html, body {
     transform: translate(-50%, -50%);
     margin: 0;
     padding: 0;
+}
+
+#canvasMsgBox{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    padding: 0;
+    background-color: #ffffff;
+    width: 35vmin;
+    height: 35vmin;
+    border-style: solid;
+    border-width: 0.4vmin;
+    border-radius: 4vmin;
+    border-color: black;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 3vmin;
+}
+
+.hidden{
+    visibility: hidden;
+}
+
+.shown{
+    visibility: visible;
+}
+
+#endMsg{
+    position: relative;
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    padding: 0;
+}
+#winnerMsg{
+    position: relative;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    padding: 0;
+    font-size: 2vmin;
+}
+#newGame{
+    position: relative;
+    top: 40%;
+}
+#time{
+    position: absolute;
+    top: 50%;
+    left: 15%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 7vmin;
+    color: #5c2626;
+}
+#clockDivision{
+    color: #000000;
+}
+
+#infoBox{
+    position: absolute;
+    left: 85%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 30vmin;
+    height: 50vmin;
+    background-color: #ffffff;
+    text-align: center;
+}
+
+#btn-group button{
+    position: relative;
+    width: 50%;
+    float: left;
+    display: table;
+}
+
+#btn-group:after{ /*removes floats*/
+    clear: both;
+    display: table;
+}
+#notation-board{
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    width: 80%;
+    height: 50%;
+    overflow: scroll;
+    margin: 0;
+    padding: 0;
+}
+
+#white-moves{
+    float: left;
+}
+
+#black-moves{
+    float: right;
+    list-style-type: none;
+}
+#notation-board:after{
+    clear: both;
+    display: table;
 }

@@ -26,7 +26,7 @@ class king extends pieces{
     }
     display(){
         try{
-            this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
+            this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + this.board.sqSize/8, this.y * this.board.sqSize + this.board.sqSize/8, this.board.sqSize - this.board.sqSize/4, this.board.sqSize - this.board.sqSize/4);
         } catch {
             if (this.white){
                 this.board.ctx.fillStyle = '#808080';
@@ -149,7 +149,7 @@ class queen extends pieces{
     }
     display(){
         try{
-            this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
+            this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + this.board.sqSize/8, this.y * this.board.sqSize + this.board.sqSize/8, this.board.sqSize - this.board.sqSize/4, this.board.sqSize - this.board.sqSize/4);
         } catch {
             if (this.white){
                 this.board.ctx.fillStyle = '#808080';
@@ -281,7 +281,7 @@ class rook extends pieces{
     }
     display(){
         try{
-            this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
+            this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + this.board.sqSize/8, this.y * this.board.sqSize + this.board.sqSize/8, this.board.sqSize - this.board.sqSize/4, this.board.sqSize - this.board.sqSize/4);
         } catch {
             if (this.white){
                 this.board.ctx.fillStyle = '#808080';
@@ -360,7 +360,7 @@ class bishop extends pieces{
     }
     display(){
         try{
-            this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
+            this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + this.board.sqSize/8, this.y * this.board.sqSize + this.board.sqSize/8, this.board.sqSize - this.board.sqSize/4, this.board.sqSize - this.board.sqSize/4);
         } catch {
             if (this.white){
                 this.board.ctx.fillStyle = '#808080';
@@ -443,7 +443,7 @@ class knight extends pieces{
     }
     display(){
         try{
-            this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 10, this.y * this.board.sqSize + 10, this.board.sqSize - 20, this.board.sqSize - 20);
+            this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + this.board.sqSize/8, this.y * this.board.sqSize + this.board.sqSize/8, this.board.sqSize - this.board.sqSize/4, this.board.sqSize - this.board.sqSize/4);
         } catch {
             if (this.white){
                 this.board.ctx.fillStyle = '#808080';
@@ -486,7 +486,7 @@ class pawn extends pieces{
     }
     display(){
         try{
-            this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + 20, this.y * this.board.sqSize + 20, this.board.sqSize - 40, this.board.sqSize - 40);
+            this.board.ctx.drawImage(this.image, this.x * this.board.sqSize + this.board.sqSize/4, this.y * this.board.sqSize + this.board.sqSize/4, this.board.sqSize - this.board.sqSize/2, this.board.sqSize - this.board.sqSize/2);
         } catch {
             if (this.white){
                 this.board.ctx.fillStyle = '#808080';
@@ -585,13 +585,14 @@ class pawn extends pieces{
 class board{
     constructor(){
         this.playing = true;
+        /* canvas initialisation*/
         this.canvas = document.querySelector('#c');
         this.ctx = this.canvas.getContext("2d");
-        this.ctx.textAlgin = 'center';
-        this.smallFont = "15px Georgia";
-        this.bigFont = "30px Georgia";
-        this.width = this.canvas.clientWidth;
-        this.height = this.canvas.clientHeight;
+        this.resizeCanvas();
+        /* --------- */
+        
+        this.width = 640;
+        this.height = 640;
         this.sqSize = this.height/8;
         this.whitePieces = [];
         this.blackPieces = [];
@@ -603,8 +604,8 @@ class board{
         this.prev = [];
         this.letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
         this.notation = '';
-        this.lightSqCol = '#ffffff';
-        this.darkSqCol = '#d2b48c';
+        this.lightSqCol = '#f1d9c0';
+        this.darkSqCol = '#a97a65';
         this.checkCol = '#f54c4c';
         this.lightPrevCol = '#e4d00a';
         this.darkPrevCol = '#d4af37';
@@ -615,6 +616,49 @@ class board{
         this.createPieces();
         this.updateTakeArr(true);
         this.updateTakeArr(false);
+        this.endMsgBox = document.querySelector('#canvasMsgBox');
+        this.endMsg = '';
+        this.winnerMsg = '';
+        this.whiteTime = 10;
+        this.blackTime = 10;
+        this.startTime = new Date().getTime();
+        this.endTime = 0;
+        this.initTime();
+        //this.timeHandle();
+    }
+
+    resizeCanvas(){
+        this.canvas_width = (window.innerWidth) * 0.7;
+        this.canvas_height = (window.innerHeight) * 0.7;
+        if (this.canvas_height > this.canvas_width){
+            this.canvas_height = this.canvas_width;
+        } else{
+            this.canvas_width = this.canvas_height;
+        }
+        this.ctx.textAlgin = 'center';
+        this.smallFont = "15px Georgia";
+        this.bigFont = "30px Georgia";
+
+        this.canvas.style.width = '' + String(this.canvas_width) + 'px';
+        this.canvas.style.height = '' + String(this.canvas_height) + 'px';
+    }
+
+    initTime(){
+        let value = Math.floor(this.whiteTime);
+        let min = Math.floor(value/60);
+        let sec = String(value % 60);
+        if (sec.length < 2){
+            sec = "0" + sec;
+        }
+        document.querySelector('#whiteTime').innerHTML = String(min) + ":" + String(sec);
+
+        value = Math.floor(this.blackTime);
+        min = Math.floor(value/60);
+        sec = String(value % 60);
+        if (sec.length < 2){
+            sec = "0" + sec;
+        }
+        document.querySelector('#blackTime').innerHTML = String(min) + ":" + String(sec);
     }
     
     
@@ -708,14 +752,14 @@ class board{
         if (this.whiteMove){
             for (let i = 0; i < this.whitePieces.length; i++){
                 let piece = this.whitePieces[i];
-                if (piece.x == Math.floor(this.mouse[0]/this.sqSize) && piece.y == Math.floor(this.mouse[1]/this.sqSize)){
+                if (piece.x == Math.floor(this.mouse[0]/(this.canvas_width/8)) && piece.y == Math.floor(this.mouse[1]/(this.canvas_width/8))){
                     this.piecePressed(piece);
                 }
             }
         } else {
             for (let i = 0; i < this.blackPieces.length; i++){
                 let piece = this.blackPieces[i];
-                if (piece.x == Math.floor(this.mouse[0]/this.sqSize) && piece.y == Math.floor(this.mouse[1]/this.sqSize)){
+                if (piece.x == Math.floor(this.mouse[0]/(this.canvas_width/8)) && piece.y == Math.floor(this.mouse[1]/(this.canvas_width/8))){
                     this.piecePressed(piece);
                 }
             }
@@ -820,8 +864,8 @@ class board{
 
         this.clearGrid();
 
-        let x = Math.floor(this.mouse[0]/this.sqSize);
-        let y = Math.floor(this.mouse[1]/this.sqSize);
+        let x = Math.floor(this.mouse[0]/(this.canvas_width/8));
+        let y = Math.floor(this.mouse[1]/(this.canvas_width/8));
         let pos = [x, y];
         let value = this.inArr(pos, this.movingPiece.legal);
 
@@ -860,9 +904,17 @@ class board{
             if(checkValue != 0){
                 this.notation += '+';
             }
-            console.log(this.notation);
+            //console.log(this.notation);
 
-            
+            let element = document.createElement('li');
+            if (!this.whiteMove){ // test if white just moved as we changed the value to check for checks
+                document.querySelector('#white-moves').appendChild(element);
+            } else {
+                document.querySelector('#black-moves').appendChild(element);
+            }
+
+            element.innerHTML += this.notation;
+            this.updateScroll();            
             
             if(checkValue != 0){ // check new color for checks before anything else
                 let x = this.isCheck(this.whiteMove)[0];
@@ -871,15 +923,22 @@ class board{
                 this.squares[x][y].block = this.checkCol;
                 this.squares[x][y].coord = this.changedCoordCol;
                 if(this.hasMoves(this.whiteMove) == false){
-                    console.log('checkmate');
+                    this.endMsg = 'checkmate';
                     this.playing = false;
+                    if (this.whiteMove){
+                        this.winnerMsg = 'black wins';
+                    } else {
+                        this.winnerMsg = 'white wins';
+                    }
                 }
             } else {
                 if(this.hasMoves(this.whiteMove) == false){
-                    console.log('stalemate');
+                    this.endMsg = 'stalemate';
                     this.playing = false;
+                    this.winnerMsg = 'draw'
                 }
             }
+            this.startTime = new Date().getTime();
 
 
         } else {
@@ -1093,7 +1152,7 @@ class board{
     }
     promotionHandle(){
         if (this.movingPiece.text == '' && (this.movingPiece.y == 0 || this.movingPiece.y == 7)){
-            if (this.white){
+            if (this.movingPiece.white){
                 this.whitePieces.push(new queen(this.movingPiece.x, this.movingPiece.y, this.movingPiece.white, this));
                 let index = this.whitePieces.indexOf(this.movingPiece);
                 this.whitePieces.splice(index, 1);
@@ -1166,6 +1225,10 @@ class board{
             }
         }
         return 0;
+    }
+    updateScroll(){
+        let div = document.querySelector('#notation-board');
+        div.scrollTop = div.scrollHeight;
     }
     hasMoves(white){
         if (white){
@@ -1241,10 +1304,52 @@ class board{
         }
         return false;
     }
+    timeHandle(){
+        this.endTime = new Date().getTime();
+        let difference = (this.endTime - this.startTime)/1000;
+        if (this.whiteMove){
+            this.whiteTime -= difference;
+            if (this.whiteTime <= 0){
+                document.querySelector('#whiteTime').innerHTML = "0:00";
+                this.playing = false;
+                this.endMsg = 'time out';
+                this.winnerMsg = 'black wins';
+            } else {
+                let value = Math.floor(this.whiteTime);
+                let min = Math.floor(value/60);
+                let sec = String(value % 60);
+                if (sec.length < 2){
+                    sec = "0" + sec;
+                }
+                document.querySelector('#whiteTime').innerHTML = String(min) + ":" + String(sec);
+            }
+        } else{
+            this.blackTime -= difference;
+            if (this.blackTime <= 0){
+                document.querySelector('#blackTime').innerHTML = "0:00";
+                this.playing = false;
+                this.endMsg = 'time out';
+                this.winnerMsg = 'white wins';
+            } else {
+                let value = Math.floor(this.blackTime);
+                let min = Math.floor(value/60);
+                let sec = String(value % 60);
+                if (sec.length < 2){
+                    sec = "0" + sec;
+                }
+                document.querySelector('#blackTime').innerHTML = String(min) + ":" + String(sec);
+            }
+        }
+        this.startTime = new Date().getTime();
+    }
 }
 function main(){
     
     b = new board();
+
+    window.addEventListener('resize', function(){
+        b.resizeCanvas();
+    });
 
     b.canvas.addEventListener('mousemove', function(evt) {
         let rect = b.canvas.getBoundingClientRect();
@@ -1262,19 +1367,22 @@ function main(){
         }
     });
 
-    
     frame();
 
 
-    function frame(w, h){
+    function frame(){
+        b.timeHandle();
         b.ctx.clearRect(0, 0, b.width, b.height);
         
         b.drawGrid();
         b.drawPieces();
 
-
         if (b.playing){
             requestAnimationFrame(frame);
+        } else {
+            document.querySelector('#endMsg').innerHTML = b.endMsg;
+            document.querySelector('#winnerMsg').innerHTML = b.winnerMsg;
+            b.endMsgBox.className = 'shown';
         }
     }
 }
