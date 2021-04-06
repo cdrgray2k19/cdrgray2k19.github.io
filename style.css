@@ -74,6 +74,12 @@ html, body {
     text-decoration: none;
     text-transform: uppercase;
     font-size: 7vmin;
+}
+
+.waiting{
+    color: #5c262641;
+}
+.moving{
     color: #5c2626;
 }
 #clockDivision{

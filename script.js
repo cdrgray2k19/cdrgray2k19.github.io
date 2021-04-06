@@ -898,6 +898,14 @@ class board{
             this.movingPiece = 0; // refresh moving piece variable for next go
             
             this.whiteMove = !(this.whiteMove); // change move color
+
+            if (this.whiteMove){
+                document.querySelector('#whiteTime').className = 'moving';
+                document.querySelector('#blackTime').className = 'waiting';
+            } else {
+                document.querySelector('#whiteTime').className = 'waiting';
+                document.querySelector('#blackTime').className = 'moving';
+            }
             
             let checkValue = this.isCheck(this.whiteMove);
 
