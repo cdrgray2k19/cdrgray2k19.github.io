@@ -52,7 +52,7 @@ html, body {
 }
 #winnerMsg{
     position: relative;
-    top: 30%;
+    top: 20%;
     left: 50%;
     transform: translate(-50%, -50%);
     margin: 0;
@@ -61,7 +61,7 @@ html, body {
 }
 #newGame{
     position: relative;
-    top: 40%;
+    top: 30%;
 }
 #time{
     position: absolute;
@@ -124,4 +124,53 @@ html, body {
 #notation-board:after{
     clear: both;
     display: table;
+}
+
+#timeOption{
+    position: relative;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    padding: 0;
+    font-size: 1.5vmin;
+}
+
+#welcomeElements{
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-size: 4vmin;
+    color: #8a880f;
+    display: block;
+    height: 50vh;
+    width: 50vh;
+}
+
+#firstGameWhiteClock{
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: block;
+    width: 50%;
+}
+#firstGameBlackClock{
+    position: relative;
+    top: 70%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: block;
+    width: 50%;
+}
+#startFirstGame{
+    position: relative;
+    top: 80%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: block;
 }

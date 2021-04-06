@@ -619,8 +619,8 @@ class board{
         this.endMsgBox = document.querySelector('#canvasMsgBox');
         this.endMsg = '';
         this.winnerMsg = '';
-        this.whiteTime = 600;
-        this.blackTime = 600;
+        this.whiteTime = 600; // default to 10 mins if html info not received
+        this.blackTime = 600; // default to 10 mins if html info not received
         this.startTime = new Date().getTime();
         this.endTime = 0;
         this.initTime();
@@ -1360,39 +1360,49 @@ class board{
 }
 function main(){
     
-    b = new board();
+    document.querySelector('#firstGameForm').addEventListener('submit', function(evt){
+        evt.preventDefault();
+        document.querySelector('#welcomeElements').className = 'hidden';
+        document.querySelector('#playingElements').className = 'shown';
+        let whiteTimeVal = document.querySelector('#firstGameWhiteClock').value;
+        let blackTimeVal = document.querySelector('#firstGameBlackClock').value;
+        b = new board();
+        b.whiteTime = whiteTimeVal;
+        b.blackTime = blackTimeVal;
+        b.initTime();
 
-    window.addEventListener('resize', function(){
-        b.resizeCanvas();
-    });
+        window.addEventListener('resize', function(){
+            b.resizeCanvas();
+        });
 
-    b.canvas.addEventListener('mousemove', function(evt) {
-        let rect = b.canvas.getBoundingClientRect();
-        let x = (evt.clientX - rect.left);
-        let y = (evt.clientY - rect.top);
-        b.mouse = [];
-        b.mouse.push(x);
-        b.mouse.push(y);
-    });
-    b.canvas.addEventListener('mousedown', function() {
-        if (b.movingPiece == 0){
-            b.mousePress1();
-        } else {
-            b.mousePress2();
-        }
-    });
+        b.canvas.addEventListener('mousemove', function(evt) {
+            let rect = b.canvas.getBoundingClientRect();
+            let x = (evt.clientX - rect.left);
+            let y = (evt.clientY - rect.top);
+            b.mouse = [];
+            b.mouse.push(x);
+            b.mouse.push(y);
+        });
+        b.canvas.addEventListener('mousedown', function() {
+            if (b.movingPiece == 0){
+                b.mousePress1();
+            } else {
+                b.mousePress2();
+            }
+        });
 
-    let resignBtn = document.querySelector('#resign');
-    resignBtn.addEventListener('click', function(){
-        b.resign()
-    });
+        let resignBtn = document.querySelector('#resign');
+        resignBtn.addEventListener('click', function(){
+            b.resign()
+        });
 
-    let drawBtn = document.querySelector('#draw');
-    drawBtn.addEventListener('click', function(){
-        b.draw();
-    });
+        let drawBtn = document.querySelector('#draw');
+        drawBtn.addEventListener('click', function(){
+            b.draw();
+        });
 
-    frame();
+        frame();
+    })
 
 
     function frame(){
@@ -1410,11 +1420,25 @@ function main(){
             b.endMsgBox.className = 'shown';
             let newGame = document.querySelector('#newGame');
             newGame.addEventListener('click', function(){
-                b.endMsgBox.className = 'hidden';
-                document.querySelector('#white-moves').innerHTML = "";
-                document.querySelector('#black-moves').innerHTML = "";
-                b = new board();
-                frame();
+                let div = document.querySelector('#timeOption');
+                div.className = 'shown';
+                let playBtn = document.querySelector('#newGameForm');
+                document.querySelector('#whiteTimeInput').value = '';
+                document.querySelector('#blackTimeInput').value = '';
+                playBtn.addEventListener('submit', function(evt){
+                    evt.preventDefault();
+                    let whiteTimeVal = document.querySelector('#whiteTimeInput').value;
+                    let blackTimeVal = document.querySelector('#blackTimeInput').value;
+                    b.endMsgBox.className = 'hidden';
+                    div.className = 'hidden'
+                    document.querySelector('#white-moves').innerHTML = "";
+                    document.querySelector('#black-moves').innerHTML = "";
+                    b = new board();
+                    b.whiteTime = whiteTimeVal;
+                    b.blackTime = blackTimeVal;
+                    b.initTime();
+                    frame();
+                });
             });
         }
     }

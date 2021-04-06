@@ -9,29 +9,49 @@
     <link href="style.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
-    <canvas id='c' width="640" height="640" class='shown'></canvas>
-    <div id='infoBox' class='shown'>
-      <div id='btn-group'>
-        <button id='resign'>resign</button>
-        <button id='draw'>draw</button>
-      </div>
-      <p id='infoTxt'>moves:</p>
-      <div id='notation-board'>
-        <ol id='white-moves'>
-        </ol>
-        <ul id='black-moves'>
-        </ul>
-      </div>
+    <div id='welcomeElements' class='shown'>
+      <h1>Chess</h1>
+      <h6>Charlie Gray</h3>
+      <form id='firstGameForm'>
+        <input id='firstGameWhiteClock' placeholder="white time (seconds)" required/>
+        <input id='firstGameBlackClock' placeholder="black time (seconds)" required/>
+        <br>
+        <button id='startFirstGame' type="submit">play</button>
+      </form>
     </div>
-    <div id='canvasMsgBox' class='hidden'>
-      <p id='endMsg'>Error</p>
-      <p id='winnerMsg'>Error</p>
-      <button id='newGame'>new game</button>
-    </div>
-    <div id='time' class='shown'>
-      <p id='blackTime'></p>
-      <p id='clockDivision'>-----------</p>
-      <p id='whiteTime'></p>
+    <div id='playingElements' class='hidden'>
+      <canvas id='c' width="640" height="640"></canvas>
+      <div id='infoBox'>
+        <div id='btn-group'>
+          <button id='resign'>resign</button>
+          <button id='draw'>draw</button>
+        </div>
+        <p id='infoTxt'>moves:</p>
+        <div id='notation-board'>
+          <ol id='white-moves'>
+          </ol>
+          <ul id='black-moves'>
+          </ul>
+        </div>
+      </div>
+      <div id='canvasMsgBox' class='hidden'>
+        <p id='endMsg'>Error</p>
+        <p id='winnerMsg'>Error</p>
+        <button id='newGame'>new game</button>
+        <div id='timeOption' class='hidden'>
+          <form id='newGameForm'>
+            <input id='whiteTimeInput' placeholder="white time (seconds)" required/>
+            <input id='blackTimeInput' placeholder="black time (seconds)" required/>
+            <br>
+            <button id='playNewGame' type="submit">play</button>
+          </form>
+        </div>
+      </div>
+      <div id='time'>
+        <p id='blackTime'></p>
+        <p id='clockDivision'>-----------</p>
+        <p id='whiteTime'></p>
+      </div>
     </div>
     <script src="script.js"></script>
   </body>
