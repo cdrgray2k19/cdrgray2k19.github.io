@@ -935,7 +935,7 @@ class board{
                 if(this.hasMoves(this.whiteMove) == false){
                     this.endMsg = 'stalemate';
                     this.playing = false;
-                    this.winnerMsg = 'draw'
+                    this.winnerMsg = 'draw';
                 }
             }
             this.startTime = new Date().getTime();
@@ -1342,6 +1342,20 @@ class board{
         }
         this.startTime = new Date().getTime();
     }
+    resign(){
+        this.endMsg = 'resignation';
+        this.playing = false;
+        if (this.whiteMove){
+            this.winnerMsg = 'black wins';
+        } else {
+            this.winnerMsg = 'white wins';
+        }
+    }
+    draw(){
+        this.endMsg = 'draw agreed';
+        this.playing = false;
+        this.winnerMsg = 'draw';
+    }
 }
 function main(){
     
@@ -1367,6 +1381,16 @@ function main(){
         }
     });
 
+    let resignBtn = document.querySelector('#resign');
+    resignBtn.addEventListener('click', function(){
+        b.resign()
+    });
+
+    let drawBtn = document.querySelector('#draw');
+    drawBtn.addEventListener('click', function(){
+        b.draw();
+    });
+
     frame();
 
 
@@ -1383,6 +1407,14 @@ function main(){
             document.querySelector('#endMsg').innerHTML = b.endMsg;
             document.querySelector('#winnerMsg').innerHTML = b.winnerMsg;
             b.endMsgBox.className = 'shown';
+            let newGame = document.querySelector('#newGame');
+            newGame.addEventListener('click', function(){
+                b.endMsgBox.className = 'hidden';
+                document.querySelector('#white-moves').innerHTML = "";
+                document.querySelector('#black-moves').innerHTML = "";
+                b = new board();
+                frame();
+            });
         }
     }
 }
