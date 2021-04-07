@@ -1428,6 +1428,7 @@ function main(){
             b.endMsgBox.className = 'shown';
             let newGame = document.querySelector('#newGame');
             newGame.addEventListener('click', function(){
+                newGame.className = 'hidden';
                 let div = document.querySelector('#timeOption');
                 div.className = 'shown';
                 let playBtn = document.querySelector('#newGameForm');
@@ -1438,7 +1439,8 @@ function main(){
                     let whiteTimeVal = document.querySelector('#whiteTimeInput').value;
                     let blackTimeVal = document.querySelector('#blackTimeInput').value;
                     b.endMsgBox.className = 'hidden';
-                    div.className = 'hidden'
+                    div.className = 'hidden';
+                    newGame.className = '';
                     document.querySelector('#white-moves').innerHTML = "";
                     document.querySelector('#black-moves').innerHTML = "";
                     b = new board();
