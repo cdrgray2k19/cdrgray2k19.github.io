@@ -19,9 +19,9 @@ class king extends pieces{
         this.moved = false;
         this.image = new Image();
         if (this.white){
-            this.image.src = '/pieces/kingW.png';
+            this.image.src = 'pieces/kingW.png';
         } else {
-            this.image.src = '/pieces/kingB.png';
+            this.image.src = 'pieces/kingB.png';
         }
     }
     display(){
@@ -142,9 +142,9 @@ class queen extends pieces{
         this.text = 'Q';
         this.image = new Image();
         if (this.white){
-            this.image.src = '/pieces/queenW.png';
+            this.image.src = 'pieces/queenW.png';
         } else {
-            this.image.src = '/pieces/queenB.png';
+            this.image.src = 'pieces/queenB.png';
         }
     }
     display(){
@@ -274,9 +274,9 @@ class rook extends pieces{
         this.moved = false;
         this.image = new Image();
         if (this.white){
-            this.image.src = '/pieces/rookW.png';
+            this.image.src = 'pieces/rookW.png';
         } else {
-            this.image.src = '/pieces/rookB.png';
+            this.image.src = 'pieces/rookB.png';
         }
     }
     display(){
@@ -353,9 +353,9 @@ class bishop extends pieces{
         this.text = 'B';
         this.image = new Image();
         if (this.white){
-            this.image.src = '/pieces/bishopW.png';
+            this.image.src = 'pieces/bishopW.png';
         } else {
-            this.image.src = '/pieces/bishopB.png';
+            this.image.src = 'pieces/bishopB.png';
         }
     }
     display(){
@@ -436,9 +436,9 @@ class knight extends pieces{
         this.text = 'N';
         this.image = new Image();
         if (this.white){
-            this.image.src = '/pieces/knightW.png';
+            this.image.src = 'pieces/knightW.png';
         } else {
-            this.image.src = '/pieces/knightB.png';
+            this.image.src = 'pieces/knightB.png';
         }
     }
     display(){
@@ -480,9 +480,9 @@ class pawn extends pieces{
         this.justMoved = false;
         this.image = new Image();
         if (this.white){
-            this.image.src = '/pieces/pawnW.png';
+            this.image.src = 'pieces/pawnW.png';
         } else {
-            this.image.src = '/pieces/pawnB.png';
+            this.image.src = 'pieces/pawnB.png';
         }
     }
     display(){
