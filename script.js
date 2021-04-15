@@ -1,4 +1,4 @@
-class pieces{
+class pieces{ // basic outline for each piece
     constructor(x, y, white, board){
         this.x = x;
         this.y = y;
@@ -8,8 +8,8 @@ class pieces{
         this.take = [];
     }
 
-    display(){}
-    mapLegal(){}
+    display(){} // displays piece
+    mapLegal(){} // using different function to calculate legal moves for each piece without looking for checks
 }
 
 class king extends pieces{
@@ -37,9 +37,9 @@ class king extends pieces{
         }
 
     }
-    mapLegal(){ // add kingside and queenside castling function - check two squares for no knight and no bishop and then check that king hasnt been moved and rook hasnt been moved, then check for checks on all squares that king is at or crosses
+    mapLegal(){ 
         this.legal = [];
-        for (let i = -1; i < 2; i++){
+        for (let i = -1; i < 2; i++){ // look at 3 by 3 square around king and check if friendly piece on squares
             for (let j = -1; j < 2; j++){
                 let x = this.x + i;
                 let y = this.y + j;
@@ -55,18 +55,18 @@ class king extends pieces{
         this.take = this.legal;
         let returnMsg = '';
         if (this.kingSideCastle()){
-            // need to check all squares out of check including current
+            
             this.legal.push([this.x + 2, this.y]);
             returnMsg = 'castle'
         }
         if (this.queenSideCastle()){
-            // need to check all squares out of check including current
+
             this.legal.push([this.x - 2, this.y]);
             returnMsg = 'castle'
         }
         return returnMsg;
     }
-    kingSideCastle(){
+    kingSideCastle(){ // check if pieces in way of castling  and rook has not moved
         let x = this.x;
         let y = this.y;
         if (this.moved == true){
@@ -100,7 +100,7 @@ class king extends pieces{
         }
         return false;
     }
-    queenSideCastle(){
+    queenSideCastle(){ // check if pieces in way of castling  and rook has not moved
         let x = this.x;
         let y = this.y;
         if (this.moved == true){
@@ -159,7 +159,7 @@ class queen extends pieces{
             this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
         }
     }
-    mapLegal(){
+    mapLegal(){ // uses for loops to calculate legal moves in each direction
         this.legal = [];
         this.up();
         this.down();
@@ -291,7 +291,7 @@ class rook extends pieces{
             this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
         }
     }
-    mapLegal(){
+    mapLegal(){ // uses for loops to calculate legal moves in each direction
         this.legal = [];
         this.up();
         this.down();
@@ -370,7 +370,7 @@ class bishop extends pieces{
             this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
         }
     }
-    mapLegal(){
+    mapLegal(){ // uses for loops to calculate legal moves in each direction
         this.legal = [];
         this.up_left();
         this.down_left();
@@ -453,7 +453,7 @@ class knight extends pieces{
             this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
         }
     }
-    mapLegal(){
+    mapLegal(){ // uses change in position in each direction to check for legal moves
         this.legal = [];
         const moves = [[-2, -1], [-2, 1], [-1, -2], [1, -2], [2, -1], [2, 1], [-1, 2], [1, 2]];
         for (let i = 0; i < moves.length; i++){
@@ -497,7 +497,7 @@ class pawn extends pieces{
             this.board.ctx.fillText(this.displayedText, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
         }
     }
-    mapLegal(){ // add varaible which allows pawn to indicate if its just been moved and then write function to check for en passant moves
+    mapLegal(){ // calculate legal moves forwards and also diagonally if pawn can take a piece
         this.legal = [];
         this.take = [];
         var dir = 1;
@@ -525,7 +525,7 @@ class pawn extends pieces{
             this.legal.push([this.x, y]);
         }
     }
-    diaganol(dir){
+    diaganol(dir){ // check if pieces can take diagonally and for en passant
         let y = this.y + (1*dir)
         if (this.board.pieceAt(this.x - 1, y, this.white) == false){
             this.legal.push([this.x - 1, y]);
@@ -592,20 +592,20 @@ class board{
         this.resizeCanvas();
         /* --------- */
         
-        this.width = 640;
+        this.width = 640; // set html sizes which will be used when drawing pieces
         this.height = 640;
         this.sqSize = this.height/8;
-        this.whitePieces = [];
+        this.whitePieces = []; // create arrays which will stores all pieces on board
         this.blackPieces = [];
         this.whiteMove = true;
-        this.mouse = [];
-        this.movingPiece = 0;
+        this.mouse = []; // stores array of x,y position in canvas
+        this.movingPiece = 0; // stores piece information if cliked on, else it stores 0 to indicate no pieces have been clicked on
         this.inCheck = 0; // if color which is being moved is not in check it stores 0 if it is then it stores an array with the king x,y pos in it to color its square
         this.msg = 0; // stores message that is received from maplegal function which can tell mousepress2 how to behave if different move called like castling or en passant
-        this.prev = [];
+        this.prev = []; // stores squares of oringinal and moved to squares
         this.letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
         this.notation = '';
-        this.lightSqCol = '#f1d9c0';
+        this.lightSqCol = '#f1d9c0'; // colors for squares depending on what actions are taking place
         this.darkSqCol = '#a97a65';
         this.checkCol = '#f54c4c';
         this.lightPrevCol = '#e4d00a';
@@ -613,11 +613,11 @@ class board{
         this.lightLegalCol = '#aae346';
         this.darkLegalCol = '#87d620';
         this.changedCoordCol = '#000000';
-        this.createGrid();
+        this.createGrid(); // create grid and pices and update both black and whites takeArrs to start
         this.createPieces();
         this.updateTakeArr(true);
         this.updateTakeArr(false);
-        this.endMsgBox = document.querySelector('#canvasMsgBox');
+        this.endMsgBox = document.querySelector('#canvasMsgBox'); // link html elements to javascript
         this.endMsg = '';
         this.winnerMsg = '';
         this.whiteTime = 600; // default to 10 mins if html info not received
@@ -625,18 +625,17 @@ class board{
         this.startTime = new Date().getTime();
         this.endTime = 0;
         this.initTime();
-        //this.timeHandle();
     }
 
     resizeCanvas(){
-        this.canvas_width = (window.innerWidth) * 0.7;
+        this.canvas_width = (window.innerWidth) * 0.7; // resize canvas to 0.7 of the minimum measurement
         this.canvas_height = (window.innerHeight) * 0.7;
         if (this.canvas_height > this.canvas_width){
             this.canvas_height = this.canvas_width;
         } else{
             this.canvas_width = this.canvas_height;
         }
-        this.ctx.textAlgin = 'center';
+        this.ctx.textAlgin = 'center'; // restore canvas elements as each time you resize canvas they are lost
         this.smallFont = "15px Georgia";
         this.bigFont = "30px Georgia";
 
@@ -645,7 +644,7 @@ class board{
     }
 
     initTime(){
-        let value = Math.floor(this.whiteTime);
+        let value = Math.floor(this.whiteTime); // display time
         let min = Math.floor(value/60);
         let sec = String(value % 60);
         if (sec.length < 2){
@@ -673,7 +672,7 @@ class board{
     }
 
 
-    createGrid(){
+    createGrid(){ // go through an 8 by 8 2d array which stores the square color and coordinate color of the square
         this.squares = [];
         for (let x = 0; x < 8; x++){
             for (let y = 0; y < 8; y++){
@@ -691,7 +690,7 @@ class board{
             }
         }
     }
-    drawGrid(){
+    drawGrid(){ // go through this.squares and draw each depending on their dictionary values
         for (let x = 0; x < 8; x++){
             for (let y = 0; y < 8; y++){
 
@@ -714,7 +713,7 @@ class board{
             }
         }
     }
-    createPieces(){
+    createPieces(){ // add peices to piece arrays
         this.whitePieces.push(new king(4, 7, true, this));
         this.whitePieces.push(new queen(3, 7, true, this));
         this.whitePieces.push(new rook(0, 7, true, this));
@@ -739,7 +738,7 @@ class board{
             this.blackPieces.push(new pawn(i, 1, false, this));
         }
     }
-    drawPieces(){
+    drawPieces(){ // reference display function of all pieces in arrays
         this.ctx.font = this.bigFont;
         for (let i = 0; i < this.whitePieces.length; i++){
             this.whitePieces[i].display();
@@ -749,7 +748,7 @@ class board{
         }
     }
 
-    mousePress1(){
+    mousePress1(){ // search pieces to see if mouse over any when clicked
         if (this.whiteMove){
             for (let i = 0; i < this.whitePieces.length; i++){
                 let piece = this.whitePieces[i];
@@ -766,7 +765,7 @@ class board{
             }
         }
     }
-    piecePressed(piece){
+    piecePressed(piece){ // update legal then change color of legal move squares to make obvious to player
         this.pieceUpdateLegal(piece);
         
         //update squares
@@ -785,7 +784,7 @@ class board{
             this.squares[this.movingPiece.legal[i][0]][this.movingPiece.legal[i][1]].coord = this.changedCoordCol;
         }
     }
-    pieceUpdateLegal(piece){
+    pieceUpdateLegal(piece){ // reference mapLegal which gets legal depending on rules and other pieces and then add checking logic to the moves
         this.movingPiece = piece;
         this.msg = this.movingPiece.mapLegal(); // get legal moves depending on board and store msg which stores any other info about the legal moves
         let originalX = this.movingPiece.x; // store original x and y positoin
@@ -795,7 +794,7 @@ class board{
         for(let i = 0; i < arr.length;i++){
             this.movingPiece.x = arr[i][0]; // temporarily move pieces
             this.movingPiece.y = arr[i][1]; // temporarily move pieces
-            if (this.msg == 'castle'){
+            if (this.msg == 'castle'){ // if the message is not an empty string then legalise the moves differently
                 let result = this.castle(this.movingPiece.x,originalX);
                 if(result != false){
                     if (result != true){
@@ -838,7 +837,7 @@ class board{
         this.movingPiece.x = originalX; // change x and y position back
         this.movingPiece.y = originalY;
     }
-    pieceAt(x, y, white){
+    pieceAt(x, y, white){ // returns true if a friendly piece in square, false if enemy piece on square, and 'null' if no pieces on square
 
         for (let i = 0; i < this.whitePieces.length; i++){
             if (this.whitePieces[i].x == x && this.whitePieces[i].y == y){
@@ -865,28 +864,28 @@ class board{
 
         this.clearGrid();
 
-        let x = Math.floor(this.mouse[0]/(this.canvas_width/8));
+        let x = Math.floor(this.mouse[0]/(this.canvas_width/8)); // evaluate board coordinates of mouse position
         let y = Math.floor(this.mouse[1]/(this.canvas_width/8));
         let pos = [x, y];
-        let value = this.inArr(pos, this.movingPiece.legal);
+        let value = this.inArr(pos, this.movingPiece.legal); // check if move in legal move of selected piece
 
         if (value){
-            let originalX = this.movingPiece.x;
+            let originalX = this.movingPiece.x; // store original values
             let originalY = this.movingPiece.y;
             this.movingPiece.x = x; // move
             this.movingPiece.y = y; // move
             
-            this.movingVariableHandle();
+            this.movingVariableHandle(); // change piece.moved and justMoved variables
 
-            this.notation = '';
+            this.notation = ''; // reset notation
 
-            this.msgHandle(originalX, originalY);
+            this.msgHandle(originalX, originalY); // handle move if message is not normal for castling and en passant
 
-            this.promotionHandle();
+            this.promotionHandle(); // handle piece promotion
             
             this.updateTakeArr(this.whiteMove); // update current colors for taking moves
 
-            this.inCheck = 0;
+            this.inCheck = 0; // reset values for next move
 
             this.msg = 0;
 
@@ -894,7 +893,7 @@ class board{
 
             this.createGrid(); // completely resets grid
 
-            this.updatePrev(originalX, originalY);
+            this.updatePrev(originalX, originalY); // update prev array to show most recent move
 
             this.movingPiece = 0; // refresh moving piece variable for next go
             
@@ -908,7 +907,7 @@ class board{
                 document.querySelector('#blackTime').className = 'moving';
             }
             
-            let checkValue = this.isCheck(this.whiteMove);
+            let checkValue = this.isCheck(this.whiteMove); //use checkvalue to evaluate position and last bits of notation
 
             if(checkValue != 0){
                 this.notation += '+';
@@ -916,14 +915,14 @@ class board{
             //console.log(this.notation);
 
             let element = document.createElement('li');
-            if (!this.whiteMove){ // test if white just moved as we changed the value to check for checks
+            if (!this.whiteMove){ //append notation to correct html element
                 document.querySelector('#white-moves').appendChild(element);
             } else {
                 document.querySelector('#black-moves').appendChild(element);
             }
 
             element.innerHTML += this.notation;
-            this.updateScroll();            
+            this.updateScroll(); //make scroll of notation div to lowest to show most recent moves          
             
             if(checkValue != 0){ // check new color for checks before anything else
                 let x = this.isCheck(this.whiteMove)[0];
@@ -950,7 +949,7 @@ class board{
             this.startTime = new Date().getTime();
 
 
-        } else {
+        } else { // if square not in legal moves then reset moving peice and check if other peice selected
             this.movingPiece = 0;
             this.mousePress1(); // check if same color piece has been clicked which would restart process
         }
@@ -975,7 +974,7 @@ class board{
             this.squares[x][y].coord = this.changedCoordCol;
         }
     }
-    movingVariableHandle(){
+    movingVariableHandle(){ // if justmoved and moved variables apply to piece, change as needed
         if (this.whiteMove){
             for (let i = 0; i < this.whitePieces.length; i++){
                 try{
@@ -1004,8 +1003,8 @@ class board{
             }
         }catch{}
     }
-    msgHandle(originalX, originalY){
-        if (this.msg == 'castle'){
+    msgHandle(originalX, originalY){ // handle notation and move differently if special move
+        if (this.msg == 'castle'){ // gets rook and moves it to otherside of king
             if (this.movingPiece.x - originalX == 2){
                 let piece = this.getRook(true);
                 piece.x = this.movingPiece.x - 1;
@@ -1017,7 +1016,7 @@ class board{
                 piece.moved = true;
                 this.notation = 'O-O-O';
             }
-        } else if (this.msg == 'enP-left' || this.msg == 'enP-right'){
+        } else if (this.msg == 'enP-left' || this.msg == 'enP-right'){ // takes piece to the side of the pawn not diagonally
             this.pieceTake(this.movingPiece.x, originalY, this.movingPiece.white);
             this.notation = 'x' + this.letters[this.movingPiece.x] + String(8-this.movingPiece.y) + 'e.p.';
         } else {
@@ -1140,7 +1139,7 @@ class board{
             return false;
         }
     }
-    pieceTake(x, y, white){
+    pieceTake(x, y, white){ // returns piece if taken and 0 if not
         if(white){
             for(let i = 0; i < this.blackPieces.length; i++){
                 if (this.blackPieces[i].x == x && this.blackPieces[i].y == y){
@@ -1160,7 +1159,7 @@ class board{
         }
         return 0;
     }
-    promotionHandle(){
+    promotionHandle(){ // handles promotion notation and logic
         if (this.movingPiece.text == '' && (this.movingPiece.y == 0 || this.movingPiece.y == 7)){
             if (this.movingPiece.white){
                 this.whitePieces.push(new queen(this.movingPiece.x, this.movingPiece.y, this.movingPiece.white, this));
@@ -1174,7 +1173,7 @@ class board{
             this.notation += 'Q';
         }
     }
-    updateTakeArr(white){
+    updateTakeArr(white){ // update possible taking squares of a color
         if(white){
             this.whiteTakeMoves = [];
             for (let i = 0; i < this.whitePieces.length; i++){
@@ -1193,7 +1192,7 @@ class board{
             }
         }
     }
-    updatePrev(originalX, originalY){
+    updatePrev(originalX, originalY){ //update most recent moves and their square colors
         this.prev.push([originalX, originalY]);
             this.prev.push([this.movingPiece.x, this.movingPiece.y]);
 
@@ -1208,7 +1207,7 @@ class board{
                 this.squares[x][y].coord = this.changedCoordCol;
             }
     }
-    isCheck(white){
+    isCheck(white){ // evaluate checks in a position using opposite sides taking moves
         if (white){
             for (let i = 0; i < this.whitePieces.length; i++){
                 if (this.whitePieces[i].constructor.name == king.name){
@@ -1236,11 +1235,11 @@ class board{
         }
         return 0;
     }
-    updateScroll(){
+    updateScroll(){ // make div scroll when new move added to notation
         let div = document.querySelector('#notation-board');
         div.scrollTop = div.scrollHeight;
     }
-    hasMoves(white){
+    hasMoves(white){ // check if any legal moves available for any pieces to see if position is in checkmate or stalemate
         if (white){
             for (let i = 0; i < this.whitePieces.length; i++){
                 let piece = this.whitePieces[i];
@@ -1314,7 +1313,7 @@ class board{
         }
         return false;
     }
-    timeHandle(){
+    timeHandle(){ // gets time between last reading and changes html values accordingly
         this.endTime = new Date().getTime();
         let difference = (this.endTime - this.startTime)/1000;
         if (this.whiteMove){
@@ -1352,7 +1351,7 @@ class board{
         }
         this.startTime = new Date().getTime();
     }
-    resign(){
+    resign(){ // ends game loop and changes values to display
         this.endMsg = 'resignation';
         this.playing = false;
         if (this.whiteMove){
@@ -1361,7 +1360,7 @@ class board{
             this.winnerMsg = 'white wins';
         }
     }
-    draw(){
+    draw(){ // ends game loop and changes values to display
         this.endMsg = 'draw agreed';
         this.playing = false;
         this.winnerMsg = 'draw';
@@ -1369,13 +1368,13 @@ class board{
 }
 function main(){
     
-    document.querySelector('#firstGameForm').addEventListener('submit', function(evt){
+    document.querySelector('#firstGameForm').addEventListener('submit', function(evt){ // adds listener for submition of first form
         evt.preventDefault();
         document.querySelector('#welcomeElements').className = 'hidden';
         document.querySelector('#playingElements').className = 'shown';
         let whiteTimeVal = document.querySelector('#firstGameWhiteClock').value;
         let blackTimeVal = document.querySelector('#firstGameBlackClock').value;
-        b = new board();
+        b = new board(); // creates new board
         b.whiteTime = whiteTimeVal;
         b.blackTime = blackTimeVal;
         b.initTime();
@@ -1384,7 +1383,7 @@ function main(){
             b.resizeCanvas();
         });
 
-        b.canvas.addEventListener('mousemove', function(evt) {
+        b.canvas.addEventListener('mousemove', function(evt) { // listens for mousemove to append to mouse array
             let rect = b.canvas.getBoundingClientRect();
             let x = (evt.clientX - rect.left);
             let y = (evt.clientY - rect.top);
@@ -1392,7 +1391,7 @@ function main(){
             b.mouse.push(x);
             b.mouse.push(y);
         });
-        b.canvas.addEventListener('mousedown', function() {
+        b.canvas.addEventListener('mousedown', function() { // listens for clicks to run mousePress1 or mousePress2 depending on whether or not a piece has been selected
             if (b.movingPiece == 0){
                 b.mousePress1();
             } else {
@@ -1400,12 +1399,12 @@ function main(){
             }
         });
 
-        let resignBtn = document.querySelector('#resign');
+        let resignBtn = document.querySelector('#resign'); // listen for resignation
         resignBtn.addEventListener('click', function(){
             b.resign()
         });
 
-        let drawBtn = document.querySelector('#draw');
+        let drawBtn = document.querySelector('#draw'); // listen for draw
         drawBtn.addEventListener('click', function(){
             b.draw();
         });
@@ -1415,15 +1414,15 @@ function main(){
 
 
     function frame(){
-        b.timeHandle();
-        b.ctx.clearRect(0, 0, b.width, b.height);
+        b.timeHandle(); // handle time each frame
+        b.ctx.clearRect(0, 0, b.width, b.height); // clear board
         
-        b.drawGrid();
-        b.drawPieces();
+        b.drawGrid(); // draw grid
+        b.drawPieces(); // draw pieces
 
-        if (b.playing){
+        if (b.playing){ // create new frame if playing
             requestAnimationFrame(frame);
-        } else {
+        } else { // update messages and listen for newgame and then play submitionss
             document.querySelector('#endMsg').innerHTML = b.endMsg;
             document.querySelector('#winnerMsg').innerHTML = b.winnerMsg;
             b.endMsgBox.className = 'shown';
