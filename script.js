@@ -1456,3 +1456,7 @@ function main(){
 }
 
 window.onload = main;
+
+function replace_pawn(){
+    document.getElementById("replacement").style.display = "block";
+}
