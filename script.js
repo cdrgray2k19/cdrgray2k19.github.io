@@ -475,6 +475,7 @@ class pawn extends pieces{
     constructor(x, y, white, board){
         super(x, y, white, board);
         this.text = '';
+        this.displayedText = 'P';
         this.moved = false;
         this.justMoved = false;
         this.image = new Image();
@@ -493,7 +494,7 @@ class pawn extends pieces{
             }else{
                 this.board.ctx.fillStyle = '#000000';
             }
-            this.board.ctx.fillText(this.text, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
+            this.board.ctx.fillText(this.this.displayedText, this.x * this.board.sqSize + this.board.sqSize/2, this.y * this.board.sqSize + this.board.sqSize/2);
         }
     }
     mapLegal(){ // add varaible which allows pawn to indicate if its just been moved and then write function to check for en passant moves
