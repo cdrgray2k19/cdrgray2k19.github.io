@@ -519,10 +519,12 @@ class pawn extends pieces{
         }
         for (let i = 0; i < len; i++){
             let y = this.y + (i + 1) * dir;
-            if (this.board.pieceAt(this.x, y, this.white) != 'null'){
-                return;
+            if (this.x >= 0 && this.x < 8 && y>=0 && y < 8){
+                if (this.board.pieceAt(this.x, y, this.white) != 'null'){
+                    return;
+                }
+                this.legal.push([this.x, y]);
             }
-            this.legal.push([this.x, y]);
         }
     }
     diaganol(dir){ // check if pieces can take diagonally and for en passant
@@ -625,6 +627,13 @@ class board{
         this.startTime = new Date().getTime();
         this.endTime = 0;
         this.initTime();
+        if (this.whiteMove){
+            document.querySelector('#whiteTime').className = 'moving';
+            document.querySelector('#blackTime').className = 'waiting';
+        } else {
+            document.querySelector('#whiteTime').className = 'waiting';
+            document.querySelector('#blackTime').className = 'moving';
+        }
     }
 
     resizeCanvas(){
@@ -881,78 +890,82 @@ class board{
 
             this.msgHandle(originalX, originalY); // handle move if message is not normal for castling and en passant
 
-            this.promotionHandle(); // handle piece promotion
+            let promotionResult = this.promotionHandle(originalX, originalY); // handle piece promotion
             
-            this.updateTakeArr(this.whiteMove); // update current colors for taking moves
-
-            this.inCheck = 0; // reset values for next move
-
-            this.msg = 0;
-
-            this.prev = [];
-
-            this.createGrid(); // completely resets grid
-
-            this.updatePrev(originalX, originalY); // update prev array to show most recent move
-
-            this.movingPiece = 0; // refresh moving piece variable for next go
-            
-            this.whiteMove = !(this.whiteMove); // change move color
-
-            if (this.whiteMove){
-                document.querySelector('#whiteTime').className = 'moving';
-                document.querySelector('#blackTime').className = 'waiting';
-            } else {
-                document.querySelector('#whiteTime').className = 'waiting';
-                document.querySelector('#blackTime').className = 'moving';
+            if (!promotionResult){
+                this.completeMove(originalX, originalY);
             }
-            
-            let checkValue = this.isCheck(this.whiteMove); //use checkvalue to evaluate position and last bits of notation
-
-            if(checkValue != 0){
-                this.notation += '+';
-            }
-            //console.log(this.notation);
-
-            let element = document.createElement('li');
-            if (!this.whiteMove){ //append notation to correct html element
-                document.querySelector('#white-moves').appendChild(element);
-            } else {
-                document.querySelector('#black-moves').appendChild(element);
-            }
-
-            element.innerHTML += this.notation;
-            this.updateScroll(); //make scroll of notation div to lowest to show most recent moves          
-            
-            if(checkValue != 0){ // check new color for checks before anything else
-                let x = this.isCheck(this.whiteMove)[0];
-                let y = this.isCheck(this.whiteMove)[1];
-                this.inCheck = [x, y];
-                this.squares[x][y].block = this.checkCol;
-                this.squares[x][y].coord = this.changedCoordCol;
-                if(this.hasMoves(this.whiteMove) == false){
-                    this.endMsg = 'checkmate';
-                    this.playing = false;
-                    if (this.whiteMove){
-                        this.winnerMsg = 'black wins';
-                    } else {
-                        this.winnerMsg = 'white wins';
-                    }
-                }
-            } else {
-                if(this.hasMoves(this.whiteMove) == false){
-                    this.endMsg = 'stalemate';
-                    this.playing = false;
-                    this.winnerMsg = 'draw';
-                }
-            }
-            this.startTime = new Date().getTime();
 
 
         } else { // if square not in legal moves then reset moving peice and check if other peice selected
             this.movingPiece = 0;
             this.mousePress1(); // check if same color piece has been clicked which would restart process
         }
+    }
+    completeMove(originalX, originalY){
+        this.updateTakeArr(this.whiteMove); // update current colors for taking moves
+
+        this.inCheck = 0; // reset values for next move
+
+        this.msg = 0;
+
+        this.prev = [];
+
+        this.createGrid(); // completely resets grid
+
+        this.updatePrev(originalX, originalY); // update prev array to show most recent move
+
+        this.movingPiece = 0; // refresh moving piece variable for next go
+            
+        this.whiteMove = !(this.whiteMove); // change move color
+
+        if (this.whiteMove){
+            document.querySelector('#whiteTime').className = 'moving';
+            document.querySelector('#blackTime').className = 'waiting';
+        } else {
+            document.querySelector('#whiteTime').className = 'waiting';
+            document.querySelector('#blackTime').className = 'moving';
+        }
+            
+        let checkValue = this.isCheck(this.whiteMove); //use checkvalue to evaluate position and last bits of notation
+
+        if(checkValue != 0){
+            this.notation += '+';
+        }
+
+        let element = document.createElement('li');
+        if (!this.whiteMove){ //append notation to correct html element
+            document.querySelector('#white-moves').appendChild(element);
+        } else {
+            document.querySelector('#black-moves').appendChild(element);
+        }
+
+        element.innerHTML += this.notation;
+        this.updateScroll(); //make scroll of notation div to lowest to show most recent moves          
+            
+        if(checkValue != 0){ // check new color for checks before anything else
+            let x = this.isCheck(this.whiteMove)[0];
+            let y = this.isCheck(this.whiteMove)[1];
+            this.inCheck = [x, y];
+            this.squares[x][y].block = this.checkCol;
+            this.squares[x][y].coord = this.changedCoordCol;
+            if(this.hasMoves(this.whiteMove) == false){
+                this.endMsg = 'checkmate';
+                this.playing = false;
+                if (this.whiteMove){
+                    this.winnerMsg = 'black wins';
+                } else {
+                    this.winnerMsg = 'white wins';
+                }
+            }
+        } else {
+            if(this.hasMoves(this.whiteMove) == false){
+                this.endMsg = 'stalemate';
+                this.playing = false;
+                this.winnerMsg = 'draw';
+            }
+        }
+        this.startTime = new Date().getTime();
     }
     clearGrid(){
         this.createGrid(); // remove any green legal blocks
@@ -1159,19 +1172,75 @@ class board{
         }
         return 0;
     }
-    promotionHandle(){ // handles promotion notation and logic
+    promotionHandle(originalX, originalY){ // handles promotion notation and logic
         if (this.movingPiece.text == '' && (this.movingPiece.y == 0 || this.movingPiece.y == 7)){
-            if (this.movingPiece.white){
-                this.whitePieces.push(new queen(this.movingPiece.x, this.movingPiece.y, this.movingPiece.white, this));
-                let index = this.whitePieces.indexOf(this.movingPiece);
-                this.whitePieces.splice(index, 1);
-            } else {
-                this.blackPieces.push(new queen(this.movingPiece.x, this.movingPiece.y, this.movingPiece.white, this));
-                let index = this.blackPieces.indexOf(this.movingPiece);
-                this.blackPieces.splice(index, 1);
-            }
-            this.notation += 'Q';
+            this.replace_pawn(originalX, originalY);
+            return true;
         }
+        return false;
+    }
+    replace_pawn(originalX, originalY){
+        document.querySelector('#replacement').style.display = "block";
+        let queenButton = document.querySelector('#qReplace');
+        let rookButton = document.querySelector('#rReplace');
+        let bishopButton = document.querySelector('#bReplace');
+        let knightButton = document.querySelector('#kReplace');
+        queenButton.addEventListener('click', function(){
+            b.notation += 'Q';
+            if (b.movingPiece.white){
+                b.whitePieces.push(new queen(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b));
+                let index = b.whitePieces.indexOf(b.movingPiece);
+                b.whitePieces.splice(index, 1);
+            } else {
+                b.blackPieces.push(new queen(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b));
+                let index = b.blackPieces.indexOf(b.movingPiece);
+                b.blackPieces.splice(index, 1);
+            }
+            document.getElementById("replacement").style.display = "none";
+            b.completeMove(originalX, originalY);
+        });
+        rookButton.addEventListener('click', function(){
+            b.notation += 'R';
+            if (b.movingPiece.white){
+                b.whitePieces.push(new rook(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b));
+                let index = b.whitePieces.indexOf(b.movingPiece);
+                b.whitePieces.splice(index, 1);
+            } else {
+                b.blackPieces.push(new rook(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b));
+                let index = b.blackPieces.indexOf(b.movingPiece);
+                b.blackPieces.splice(index, 1);
+            }
+            document.getElementById("replacement").style.display = "none";
+            b.completeMove(originalX, originalY);
+        });
+        bishopButton.addEventListener('click', function(){
+            b.notation += 'B';
+            if (b.movingPiece.white){
+                b.whitePieces.push(new bishop(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b));
+                let index = b.whitePieces.indexOf(b.movingPiece);
+                b.whitePieces.splice(index, 1);
+            } else {
+                b.blackPieces.push(new bishop(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b));
+                let index = b.blackPieces.indexOf(b.movingPiece);
+                b.blackPieces.splice(index, 1);
+            }
+            document.getElementById("replacement").style.display = "none";
+            b.completeMove(originalX, originalY);
+        });
+        knightButton.addEventListener('click', function(){
+            b.notation += 'N';
+            if (b.movingPiece.white){
+                b.whitePieces.push(new knight(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b));
+                let index = b.whitePieces.indexOf(b.movingPiece);
+                b.whitePieces.splice(index, 1);
+            } else {
+                b.blackPieces.push(new knight(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b));
+                let index = b.blackPieces.indexOf(b.movingPiece);
+                b.blackPieces.splice(index, 1);
+            }
+            document.getElementById("replacement").style.display = "none";
+            b.completeMove(originalX, originalY);
+        });
     }
     updateTakeArr(white){ // update possible taking squares of a color
         if(white){
@@ -1453,9 +1522,4 @@ function main(){
         }
     }
 }
-
 window.onload = main;
-
-function replace_pawn(){
-    document.getElementById("replacement").style.display = "block";
-}
