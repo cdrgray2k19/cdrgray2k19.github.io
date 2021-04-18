@@ -39,8 +39,8 @@ class board{
         this.blackTime = 600; // default to 10 mins if html info not received
         this.startTime = new Date().getTime();
         this.endTime = 0;
-        this.initTime();
-        if (this.whiteMove){
+        this.initTime(); // start dispalying time
+        if (this.whiteMove){ //configure clocks according to which color is first to move
             document.querySelector('#whiteTime').className = 'moving';
             document.querySelector('#blackTime').className = 'waiting';
         } else {
@@ -306,7 +306,7 @@ class board{
             let promotionResult = this.promotionHandle(originalX, originalY); // handle piece promotion
             
             if (!promotionResult){
-                this.completeMove(originalX, originalY);
+                this.afterPromotion(originalX, originalY);
             }
 
 
@@ -314,71 +314,6 @@ class board{
             this.movingPiece = 0;
             this.mousePress1(); // check if same color piece has been clicked which would restart process
         }
-    }
-    completeMove(originalX, originalY){
-        this.updateTakeArr(this.whiteMove); // update current colors for taking moves
-
-        this.inCheck = 0; // reset values for next move
-
-        this.msg = 0;
-
-        this.prev = [];
-
-        this.createGrid(); // completely resets grid
-
-        this.updatePrev(originalX, originalY); // update prev array to show most recent move
-
-        this.movingPiece = 0; // refresh moving piece variable for next go
-            
-        this.whiteMove = !(this.whiteMove); // change move color
-
-        if (this.whiteMove){
-            document.querySelector('#whiteTime').className = 'moving';
-            document.querySelector('#blackTime').className = 'waiting';
-        } else {
-            document.querySelector('#whiteTime').className = 'waiting';
-            document.querySelector('#blackTime').className = 'moving';
-        }
-            
-        let checkValue = this.isCheck(this.whiteMove); //use checkvalue to evaluate position and last bits of notation
-
-        if(checkValue != 0){
-            this.notation += '+';
-        }
-
-        let element = document.createElement('li');
-        if (!this.whiteMove){ //append notation to correct html element
-            document.querySelector('#white-moves').appendChild(element);
-        } else {
-            document.querySelector('#black-moves').appendChild(element);
-        }
-
-        element.innerHTML += this.notation;
-        this.updateScroll(); //make scroll of notation div to lowest to show most recent moves          
-            
-        if(checkValue != 0){ // check new color for checks before anything else
-            let x = this.isCheck(this.whiteMove)[0];
-            let y = this.isCheck(this.whiteMove)[1];
-            this.inCheck = [x, y];
-            this.squares[x][y].block = this.checkCol;
-            this.squares[x][y].coord = this.changedCoordCol;
-            if(this.hasMoves(this.whiteMove) == false){
-                this.endMsg = 'checkmate';
-                this.playing = false;
-                if (this.whiteMove){
-                    this.winnerMsg = 'black wins';
-                } else {
-                    this.winnerMsg = 'white wins';
-                }
-            }
-        } else {
-            if(this.hasMoves(this.whiteMove) == false){
-                this.endMsg = 'stalemate';
-                this.playing = false;
-                this.winnerMsg = 'draw';
-            }
-        }
-        this.startTime = new Date().getTime();
     }
     clearGrid(){
         this.createGrid(); // remove any green legal blocks
@@ -594,66 +529,113 @@ class board{
     }
     replace_pawn(originalX, originalY){
         document.querySelector('#replacement').style.display = "block";
+        
         let queenButton = document.querySelector('#qReplace');
         let rookButton = document.querySelector('#rReplace');
         let bishopButton = document.querySelector('#bReplace');
         let knightButton = document.querySelector('#kReplace');
+        
         queenButton.addEventListener('click', function(){
             b.notation += 'Q';
-            if (b.movingPiece.white){
-                b.whitePieces.push(new queen(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b));
-                let index = b.whitePieces.indexOf(b.movingPiece);
-                b.whitePieces.splice(index, 1);
-            } else {
-                b.blackPieces.push(new queen(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b));
-                let index = b.blackPieces.indexOf(b.movingPiece);
-                b.blackPieces.splice(index, 1);
-            }
-            document.getElementById("replacement").style.display = "none";
-            b.completeMove(originalX, originalY);
+            let newPiece = new queen(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b);
+            b.replaceForPiece(originalX, originalY, newPiece);
         });
+        
         rookButton.addEventListener('click', function(){
             b.notation += 'R';
-            if (b.movingPiece.white){
-                b.whitePieces.push(new rook(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b));
-                let index = b.whitePieces.indexOf(b.movingPiece);
-                b.whitePieces.splice(index, 1);
-            } else {
-                b.blackPieces.push(new rook(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b));
-                let index = b.blackPieces.indexOf(b.movingPiece);
-                b.blackPieces.splice(index, 1);
-            }
-            document.getElementById("replacement").style.display = "none";
-            b.completeMove(originalX, originalY);
+            let newPiece = new rook(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b);
+            b.replaceForPiece(originalX, originalY, newPiece);
         });
+        
         bishopButton.addEventListener('click', function(){
             b.notation += 'B';
-            if (b.movingPiece.white){
-                b.whitePieces.push(new bishop(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b));
-                let index = b.whitePieces.indexOf(b.movingPiece);
-                b.whitePieces.splice(index, 1);
-            } else {
-                b.blackPieces.push(new bishop(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b));
-                let index = b.blackPieces.indexOf(b.movingPiece);
-                b.blackPieces.splice(index, 1);
-            }
-            document.getElementById("replacement").style.display = "none";
-            b.completeMove(originalX, originalY);
+            let newPiece = new bishop(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b);
+            b.replaceForPiece(originalX, originalY, newPiece);
         });
+        
         knightButton.addEventListener('click', function(){
             b.notation += 'N';
-            if (b.movingPiece.white){
-                b.whitePieces.push(new knight(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b));
-                let index = b.whitePieces.indexOf(b.movingPiece);
-                b.whitePieces.splice(index, 1);
-            } else {
-                b.blackPieces.push(new knight(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b));
-                let index = b.blackPieces.indexOf(b.movingPiece);
-                b.blackPieces.splice(index, 1);
-            }
-            document.getElementById("replacement").style.display = "none";
-            b.completeMove(originalX, originalY);
+            let newPiece = new knight(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b);
+            b.replaceForPiece(originalX, originalY, newPiece);
         });
+    }
+    replaceForPiece(originalX, originalY, newPiece){
+        if (b.movingPiece.white){
+            b.whitePieces.push(newPiece);
+            let index = b.whitePieces.indexOf(b.movingPiece);
+            b.whitePieces.splice(index, 1);
+        } else {
+            b.blackPieces.push(newPiece);
+            let index = b.blackPieces.indexOf(b.movingPiece);
+            b.blackPieces.splice(index, 1);
+        }
+        document.getElementById("replacement").style.display = "none";
+        b.afterPromotion(originalX, originalY);
+    }
+    afterPromotion(originalX, originalY){
+        this.updateTakeArr(this.whiteMove); // update current colors for taking moves
+
+        this.inCheck = 0; // reset values for next move
+
+        this.msg = 0;
+
+        this.prev = [];
+
+        this.createGrid(); // completely resets grid
+
+        this.updatePrev(originalX, originalY); // update prev array to show most recent move
+
+        this.movingPiece = 0; // refresh moving piece variable for next go
+            
+        this.whiteMove = !(this.whiteMove); // change move color
+
+        if (this.whiteMove){
+            document.querySelector('#whiteTime').className = 'moving';
+            document.querySelector('#blackTime').className = 'waiting';
+        } else {
+            document.querySelector('#whiteTime').className = 'waiting';
+            document.querySelector('#blackTime').className = 'moving';
+        }
+            
+        let checkValue = this.isCheck(this.whiteMove); //use checkvalue to evaluate position and last bits of notation
+
+        if(checkValue != 0){
+            this.notation += '+';
+        }
+
+        let element = document.createElement('li');
+        if (!this.whiteMove){ //append notation to correct html element
+            document.querySelector('#white-moves').appendChild(element);
+        } else {
+            document.querySelector('#black-moves').appendChild(element);
+        }
+
+        element.innerHTML += this.notation;
+        this.updateScroll(); //make scroll of notation div to lowest to show most recent moves          
+            
+        if(checkValue != 0){ // check new color for checks before anything else
+            let x = this.isCheck(this.whiteMove)[0];
+            let y = this.isCheck(this.whiteMove)[1];
+            this.inCheck = [x, y];
+            this.squares[x][y].block = this.checkCol;
+            this.squares[x][y].coord = this.changedCoordCol;
+            if(this.hasMoves(this.whiteMove) == false){
+                this.endMsg = 'checkmate';
+                this.playing = false;
+                if (this.whiteMove){
+                    this.winnerMsg = 'black wins';
+                } else {
+                    this.winnerMsg = 'white wins';
+                }
+            }
+        } else {
+            if(this.hasMoves(this.whiteMove) == false){
+                this.endMsg = 'stalemate';
+                this.playing = false;
+                this.winnerMsg = 'draw';
+            }
+        }
+        this.startTime = new Date().getTime();
     }
     updateTakeArr(white){ // update possible taking squares of a color
         if(white){
