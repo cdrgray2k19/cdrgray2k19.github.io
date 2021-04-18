@@ -559,17 +559,17 @@ class board{
         });
     }
     replaceForPiece(originalX, originalY, newPiece){
-        if (b.movingPiece.white){
-            b.whitePieces.push(newPiece);
-            let index = b.whitePieces.indexOf(b.movingPiece);
-            b.whitePieces.splice(index, 1);
+        if (this.movingPiece.white){
+            this.whitePieces.push(newPiece);
+            let index = this.whitePieces.indexOf(this.movingPiece);
+            this.whitePieces.splice(index, 1);
         } else {
-            b.blackPieces.push(newPiece);
-            let index = b.blackPieces.indexOf(b.movingPiece);
-            b.blackPieces.splice(index, 1);
+            this.blackPieces.push(newPiece);
+            let index = this.blackPieces.indexOf(this.movingPiece);
+            this.blackPieces.splice(index, 1);
         }
         document.getElementById("replacement").style.display = "none";
-        b.afterPromotion(originalX, originalY);
+        this.afterPromotion(originalX, originalY);
     }
     afterPromotion(originalX, originalY){
         this.updateTakeArr(this.whiteMove); // update current colors for taking moves
@@ -581,11 +581,9 @@ class board{
         this.prev = [];
 
         this.createGrid(); // completely resets grid
-
         this.updatePrev(originalX, originalY); // update prev array to show most recent move
 
         this.movingPiece = 0; // refresh moving piece variable for next go
-            
         this.whiteMove = !(this.whiteMove); // change move color
 
         if (this.whiteMove){
@@ -657,18 +655,18 @@ class board{
     }
     updatePrev(originalX, originalY){ //update most recent moves and their square colors
         this.prev.push([originalX, originalY]);
-            this.prev.push([this.movingPiece.x, this.movingPiece.y]);
+        this.prev.push([this.movingPiece.x, this.movingPiece.y]);
 
-            for (let i = 0; i < this.prev.length; i++){
-                let x = this.prev[i][0];
-                let y = this.prev[i][1];
-                if (this.squares[x][y].block == this.lightSqCol){
-                    this.squares[x][y].block = this.lightPrevCol;
-                } else {
-                    this.squares[x][y].block = this.darkPrevCol;
-                }
-                this.squares[x][y].coord = this.changedCoordCol;
+        for (let i = 0; i < this.prev.length; i++){
+            let x = this.prev[i][0];
+            let y = this.prev[i][1];
+            if (this.squares[x][y].block == this.lightSqCol){
+                this.squares[x][y].block = this.lightPrevCol;
+            } else {
+                this.squares[x][y].block = this.darkPrevCol;
             }
+            this.squares[x][y].coord = this.changedCoordCol;
+        }
     }
     isCheck(white){ // evaluate checks in a position using opposite sides taking moves
         if (white){
