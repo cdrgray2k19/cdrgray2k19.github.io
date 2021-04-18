@@ -13,10 +13,11 @@
       <h1>Chess</h1>
       <h6>Charlie Gray</h3>
       <form id='firstGameForm'>
-        <input id='firstGameWhiteClock' placeholder="white time (seconds)" required/>
-        <input id='firstGameBlackClock' placeholder="black time (seconds)" required/>
-        <br>
+          <div id="starting-times">
+        <input id='firstGameWhiteClock' placeholder="white time (seconds)" type="number" required/>
+        <input id='firstGameBlackClock' placeholder="black time (seconds)" type="number" required/>
         <button id='startFirstGame' type="submit">play</button>
+          </div>
       </form>
     </div>
     <div id='playingElements' class='hidden'>
