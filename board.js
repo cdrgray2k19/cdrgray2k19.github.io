@@ -28,18 +28,15 @@ class board{
         this.lightLegalCol = '#aae346';
         this.darkLegalCol = '#87d620';
         this.changedCoordCol = '#000000';
-        this.createGrid(); // create grid and pices and update both black and whites takeArrs to start
+        this.createGrid(); // create grid and pieces and update both black and whites takeArrs to start
         this.createPieces();
-        this.updateTakeArr(true);
-        this.updateTakeArr(false);
+        this.updateTakeArr(this.whiteMove);
+        this.updateTakeArr(!this.whiteMove);
         this.endMsgBox = document.querySelector('#canvasMsgBox'); // link html elements to javascript
         this.endMsg = '';
         this.winnerMsg = '';
-        this.whiteTime = 600; // default to 10 mins if html info not received
-        this.blackTime = 600; // default to 10 mins if html info not received
         this.startTime = new Date().getTime();
         this.endTime = 0;
-        this.initTime(); // start dispalying time
         if (this.whiteMove){ //configure clocks according to which color is first to move
             document.querySelector('#whiteTime').className = 'moving';
             document.querySelector('#blackTime').className = 'waiting';
@@ -196,7 +193,9 @@ class board{
         } else {
             this.squares[this.movingPiece.x][this.movingPiece.y].block = this.darkPrevCol;
         }
+
         this.squares[this.movingPiece.x][this.movingPiece.y].coord = this.changedCoordCol;
+        
         for(let i = 0; i < this.movingPiece.legal.length;i++){
             if ((this.movingPiece.legal[i][0] + this.movingPiece.legal[i][1]) % 2 == 0){
                 this.squares[this.movingPiece.legal[i][0]][this.movingPiece.legal[i][1]].block = this.lightLegalCol;
@@ -324,7 +323,7 @@ class board{
             this.squares[king_x][king_y].block = this.checkCol;
             this.squares[king_x][king_y].coord = this.changedCoordCol;
         }
-        for (let i = 0; i < this.prev.length; i++){
+        for (let i = 0; i < this.prev.length; i++){ // keep any recent moves blocks
             let x = this.prev[i][0];
             let y = this.prev[i][1];
             if (this.squares[x][y].block == this.lightSqCol){
@@ -421,7 +420,7 @@ class board{
             return false;
         }
     }
-    getRook(king){
+    getRook(king){ // castle kingside or queenside
         if (king){
             if (this.whiteMove){
                 for (let i = 0; i < this.whitePieces.length; i++){
