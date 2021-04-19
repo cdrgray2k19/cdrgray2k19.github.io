@@ -112,6 +112,8 @@ function newGame(){ // display box at end with info and wait for use to play aga
         div.className = 'hidden';
         document.querySelector('#white-moves').innerHTML = "";
         document.querySelector('#black-moves').innerHTML = "";
+        document.querySelector('#blackTakenPieces').innerHTML = "";
+        document.querySelector('#whiteTakenPieces').innerHTML = "";
         addBoard(whiteTimeVal, blackTimeVal);
         frame();
     });
