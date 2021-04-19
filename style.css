@@ -15,27 +15,34 @@ html, body {
     z-index: 0;
 }
 
-#blackTakenPieces{
+#whiteTakenPieces{
     position: absolute;
     top: 10%;
     left: 50%;
+    width: 70vmin;
+    height: 10vh;
     transform: translate(-50%, -50%);
     margin: 0;
     padding: 0;
     z-index: 0;
 }
-#whiteTakenPieces{
+
+#blackTakenPieces{
     position: absolute;
-    top: 90%;
+    top: 92.5%;
     left: 50%;
+    width: 70vmin;
+    height: 10vh;
     transform: translate(-50%, -50%);
     margin: 0;
     padding: 0;
     z-index: 0;
 }
+
 .takenPieces{
     position: relative;
-    width: 6.5%;
+    width: 6vmin;
+    height: 6vmin;
 }
 
 #canvasMsgBox{

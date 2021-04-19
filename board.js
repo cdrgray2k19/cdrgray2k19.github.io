@@ -367,6 +367,7 @@ class board{
         }catch{}
     }
     msgHandle(){ // handle notation and move differently if special move
+        //change way loop handles special messages by saving special move coords then checking if a legal move is a special move
         if (this.msg == 'castle'){ // gets rook and moves it to otherside of king
             if (this.movingPiece.x - this.originalX == 2){
                 let piece = this.getRook(true);
@@ -380,7 +381,15 @@ class board{
                 this.notation = 'O-O-O';
             }
         } else if (this.msg == 'enP-left' || this.msg == 'enP-right'){ // takes piece to the side of the pawn not diagonally
-            this.pieceTake(this.movingPiece.x, this.originalY, this.movingPiece.white);
+            let takenPiece = this.pieceTake(this.movingPiece.x, this.originalY, this.movingPiece.white);
+            let el = document.createElement('img')
+            el.className = 'takenPieces';
+            el.src = takenPiece.image.src;
+            if (this.whiteMove){
+                document.querySelector('#blackTakenPieces').appendChild(el);
+            } else {
+                document.querySelector('#whiteTakenPieces').appendChild(el);
+            }
             this.notation = 'x' + this.letters[this.movingPiece.x] + String(8-this.movingPiece.y) + 'e.p.';
         } else {
             this.notation = this.movingPiece.text;
