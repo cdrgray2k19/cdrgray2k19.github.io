@@ -21,12 +21,19 @@
       </form>
     </div>
     <div id='playingElements' class='hidden'>
+      <div id='whiteTakenPieces'>
+
+      </div>
       <canvas id='c' width="640" height="640"></canvas>
+      <div id='blackTakenPieces'>
+
+      </div>
       <div id='infoBox'>
         <div id='btn-group'>
           <button id='resign'>resign</button>
           <button id='draw'>draw</button>
         </div>
+        
         <p id='infoTxt'>moves:</p>
         <div id='notation-board'>
           <ol id='white-moves'>
@@ -34,6 +41,7 @@
           <ul id='black-moves'>
           </ul>
         </div>
+        
       </div>
       <div id='canvasMsgBox' class='hidden'>
         <p id='endMsg'>Error</p>

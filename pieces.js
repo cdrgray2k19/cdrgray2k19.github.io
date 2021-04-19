@@ -67,17 +67,15 @@ class king extends pieces{
         return returnMsg;
     }
     kingSideCastle(){ // check if pieces in way of castling  and rook has not moved
-        let x = this.x;
-        let y = this.y;
         if (this.moved == true){
             return false;
         }
-        if (this.board.pieceAt(x + 1, y, this.white) != 'null' || this.board.pieceAt(x + 2, y, this.white) != 'null'){
+        if (this.board.pieceAt(this.x + 1, this.y, this.white) != 'null' || this.board.pieceAt(this.x + 2, this.y, this.white) != 'null'){
             return false;
         }
         if (this.white){
             for (let i = 0; i < this.board.whitePieces.length; i++){
-                if (this.board.whitePieces[i].x == x + 3 && this.board.whitePieces[i].y == y){
+                if (this.board.whitePieces[i].x == this.x + 3 && this.board.whitePieces[i].y == this.y){
                     let piece = this.board.whitePieces[i];
                     if (piece.constructor.name == rook.name){
                         if (piece.moved == false){
@@ -88,7 +86,7 @@ class king extends pieces{
             }
         } else {
             for (let i = 0; i < this.board.blackPieces.length; i++){
-                if (this.board.blackPieces[i].x == x + 3 && this.board.blackPieces[i].y == y){
+                if (this.board.blackPieces[i].x == this.x + 3 && this.board.blackPieces[i].y == this.y){
                     let piece = this.board.blackPieces[i];
                     if (piece.constructor.name == rook.name){
                         if (piece.moved == false){
@@ -101,17 +99,15 @@ class king extends pieces{
         return false;
     }
     queenSideCastle(){ // check if pieces in way of castling  and rook has not moved
-        let x = this.x;
-        let y = this.y;
         if (this.moved == true){
             return false;
         }
-        if (this.board.pieceAt(x - 1, y, this.white) != 'null' || this.board.pieceAt(x - 2, y, this.white) != 'null' || this.board.pieceAt(x - 3, y, this.white) != 'null'){
+        if (this.board.pieceAt(this.x - 1, this.y, this.white) != 'null' || this.board.pieceAt(this.x - 2, this.y, this.white) != 'null' || this.board.pieceAt(this.x - 3, this.y, this.white) != 'null'){
             return false;
         }
         if (this.white){
             for (let i = 0; i < this.board.whitePieces.length; i++){
-                if (this.board.whitePieces[i].x == x - 4 && this.board.whitePieces[i].y == y){
+                if (this.board.whitePieces[i].x == this.x - 4 && this.board.whitePieces[i].y == this.y){
                     let piece = this.board.whitePieces[i];
                     if (piece.constructor.name == rook.name){
                         if (piece.moved == false){
@@ -122,7 +118,7 @@ class king extends pieces{
             }
         } else {
             for (let i = 0; i < this.board.blackPieces.length; i++){
-                if (this.board.blackPieces[i].x == x - 4 && this.board.blackPieces[i].y == y){
+                if (this.board.blackPieces[i].x == this.x - 4 && this.board.blackPieces[i].y == this.y){
                     let piece = this.board.blackPieces[i];
                     if (piece.constructor.name == rook.name){
                         if (piece.moved == false){

@@ -15,6 +15,29 @@ html, body {
     z-index: 0;
 }
 
+#blackTakenPieces{
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    padding: 0;
+    z-index: 0;
+}
+#whiteTakenPieces{
+    position: absolute;
+    top: 90%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    padding: 0;
+    z-index: 0;
+}
+.takenPieces{
+    position: relative;
+    width: 6.5%;
+}
+
 #canvasMsgBox{
     position: absolute;
     top: 50%;

@@ -50,6 +50,35 @@ function addEvtListeners(){
     drawBtn.addEventListener('click', function(){
         b.draw();
     });
+
+    let queenButton = document.querySelector('#qReplace');
+    let rookButton = document.querySelector('#rReplace');
+    let bishopButton = document.querySelector('#bReplace');
+    let knightButton = document.querySelector('#kReplace');
+        
+    queenButton.addEventListener('click', function(){
+        b.notation += 'Q';
+        let newPiece = new queen(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b);
+        b.replaceForPiece(newPiece);
+    });
+        
+    rookButton.addEventListener('click', function(){
+        b.notation += 'R';
+        let newPiece = new rook(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b);
+        b.replaceForPiece(newPiece);
+    });
+        
+    bishopButton.addEventListener('click', function(){
+        b.notation += 'B';
+        let newPiece = new bishop(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b);
+        b.replaceForPiece(newPiece);
+    });
+        
+    knightButton.addEventListener('click', function(){
+        b.notation += 'N';
+        let newPiece = new knight(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b);
+        b.replaceForPiece(newPiece);
+    });
 }
 
 function frame(){
