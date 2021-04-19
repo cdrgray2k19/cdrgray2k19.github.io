@@ -15,6 +15,8 @@ class board{
         this.whiteMove = true;
         this.mouse = []; // stores array of x,y position in canvas
         this.movingPiece = 0; // stores piece information if cliked on, else it stores 0 to indicate no pieces have been clicked on
+        this.originalX = 0; // stores oringinal position of currently moving piecs
+        this.originalY = 0;
         this.inCheck = 0; // if color which is being moved is not in check it stores 0 if it is then it stores an array with the king x,y pos in it to color its square
         this.msg = 0; // stores message that is received from maplegal function which can tell mousepress2 how to behave if different move called like castling or en passant
         this.prev = []; // stores squares of oringinal and moved to squares
@@ -172,20 +174,22 @@ class board{
             for (let i = 0; i < this.whitePieces.length; i++){
                 let piece = this.whitePieces[i];
                 if (piece.x == Math.floor(this.mouse[0]/(this.canvas_width/8)) && piece.y == Math.floor(this.mouse[1]/(this.canvas_width/8))){
-                    this.piecePressed(piece);
+                    this.movingPiece = piece;
+                    this.piecePressed();
                 }
             }
         } else {
             for (let i = 0; i < this.blackPieces.length; i++){
                 let piece = this.blackPieces[i];
                 if (piece.x == Math.floor(this.mouse[0]/(this.canvas_width/8)) && piece.y == Math.floor(this.mouse[1]/(this.canvas_width/8))){
-                    this.piecePressed(piece);
+                    this.movingPiece = piece;
+                    this.piecePressed();
                 }
             }
         }
     }
-    piecePressed(piece){ // update legal then change color of legal move squares to make obvious to player
-        this.pieceUpdateLegal(piece);
+    piecePressed(){ // update legal then change color of legal move squares to make obvious to player
+        this.pieceUpdateLegal();
         
         //update squares
         if (this.squares[this.movingPiece.x][this.movingPiece.y].block == this.lightSqCol){
@@ -205,18 +209,17 @@ class board{
             this.squares[this.movingPiece.legal[i][0]][this.movingPiece.legal[i][1]].coord = this.changedCoordCol;
         }
     }
-    pieceUpdateLegal(piece){ // reference mapLegal which gets legal depending on rules and other pieces and then add checking logic to the moves
-        this.movingPiece = piece;
+    pieceUpdateLegal(){ // reference mapLegal which gets legal depending on rules and other pieces and then add checking logic to the moves
         this.msg = this.movingPiece.mapLegal(); // get legal moves depending on board and store msg which stores any other info about the legal moves
-        let originalX = this.movingPiece.x; // store original x and y positoin
-        let originalY = this.movingPiece.y;
+        this.originalX = this.movingPiece.x; // store original x and y positoin
+        this.originalY = this.movingPiece.y;
         let arr = this.movingPiece.legal; // make it easier to manipulate array
         let arr2 = []; // open array to store legal moves after checks analysed
         for(let i = 0; i < arr.length;i++){
             this.movingPiece.x = arr[i][0]; // temporarily move pieces
             this.movingPiece.y = arr[i][1]; // temporarily move pieces
             if (this.msg == 'castle'){ // if the message is not an empty string then legalise the moves differently
-                let result = this.castle(this.movingPiece.x,originalX);
+                let result = this.castle(this.movingPiece.x);
                 if(result != false){
                     if (result != true){
                         arr2.push([result[0], result[1]]);
@@ -224,7 +227,7 @@ class board{
                     continue;
                 }
             } else if (this.msg == 'enP-left'){
-                let result = this.enPLeft(this.movingPiece.x, originalX, originalY);
+                let result = this.enPLeft();
                 if(result != false){
                     if (result != 'fail'){
                         arr2.push([arr[i][0], arr[i][1]]);
@@ -232,7 +235,7 @@ class board{
                     continue;
                 }
             } else if (this.msg == 'enP-right'){
-                let result = this.enPRight(this.movingPiece.x, originalX, originalY);
+                let result = this.enPRight();
                 if(result != false){
                     if (result != 'fail'){
                         arr2.push([arr[i][0], arr[i][1]]);
@@ -255,8 +258,8 @@ class board{
         }
 
         this.movingPiece.legal = arr2; // change legal array to new check legal array
-        this.movingPiece.x = originalX; // change x and y position back
-        this.movingPiece.y = originalY;
+        this.movingPiece.x = this.originalX; // change x and y position back
+        this.movingPiece.y = this.originalY;
     }
     pieceAt(x, y, white){ // returns true if a friendly piece in square, false if enemy piece on square, and 'null' if no pieces on square
 
@@ -291,8 +294,8 @@ class board{
         let value = this.inArr(pos, this.movingPiece.legal); // check if move in legal move of selected piece
 
         if (value){
-            let originalX = this.movingPiece.x; // store original values
-            let originalY = this.movingPiece.y;
+            /*let this.originalX = this.movingPiece.x; // store original values
+            let this.originalY = this.movingPiece.y;*/
             this.movingPiece.x = x; // move
             this.movingPiece.y = y; // move
             
@@ -300,12 +303,12 @@ class board{
 
             this.notation = ''; // reset notation
 
-            this.msgHandle(originalX, originalY); // handle move if message is not normal for castling and en passant
+            this.msgHandle(); // handle move if message is not normal for castling and en passant
 
-            let promotionResult = this.promotionHandle(originalX, originalY); // handle piece promotion
+            let promotionResult = this.promotionHandle(); // handle piece promotion
             
             if (!promotionResult){
-                this.afterPromotion(originalX, originalY);
+                this.afterPromotion();
             }
 
 
@@ -363,52 +366,61 @@ class board{
             }
         }catch{}
     }
-    msgHandle(originalX, originalY){ // handle notation and move differently if special move
+    msgHandle(){ // handle notation and move differently if special move
         if (this.msg == 'castle'){ // gets rook and moves it to otherside of king
-            if (this.movingPiece.x - originalX == 2){
+            if (this.movingPiece.x - this.originalX == 2){
                 let piece = this.getRook(true);
                 piece.x = this.movingPiece.x - 1;
                 piece.moved = true;
                 this.notation = 'O-O';
-            } else if (this.movingPiece.x - originalX == -2){
+            } else if (this.movingPiece.x - this.originalX == -2){
                 let piece = this.getRook(false);
                 piece.x = this.movingPiece.x + 1;
                 piece.moved = true;
                 this.notation = 'O-O-O';
             }
         } else if (this.msg == 'enP-left' || this.msg == 'enP-right'){ // takes piece to the side of the pawn not diagonally
-            this.pieceTake(this.movingPiece.x, originalY, this.movingPiece.white);
+            this.pieceTake(this.movingPiece.x, this.originalY, this.movingPiece.white);
             this.notation = 'x' + this.letters[this.movingPiece.x] + String(8-this.movingPiece.y) + 'e.p.';
         } else {
             this.notation = this.movingPiece.text;
-            if (this.pieceTake(this.movingPiece.x, this.movingPiece.y, this.movingPiece.white) != 0){
+            let takenPiece = this.pieceTake(this.movingPiece.x, this.movingPiece.y, this.movingPiece.white)
+            if (takenPiece != 0){
+                let el = document.createElement('img')
+                el.className = 'takenPieces';
+                el.src = takenPiece.image.src;
+                if (this.whiteMove){
+                    document.querySelector('#blackTakenPieces').appendChild(el);
+                } else {
+                    document.querySelector('#whiteTakenPieces').appendChild(el);
+                }
                 this.notation += 'x';
             }
             this.notation += this.letters[this.movingPiece.x] + String(8-this.movingPiece.y);
         }
     }
-    castle(x,startX){
-        this.movingPiece.x = startX;
-        if (startX - x == 2){
+    castle(x){
+        this.movingPiece.x = this.originalX;
+        if (this.originalX - x == 2){
             //queen side castle
             if(this.inCheck){
                 return true;
             }
             for (let i = 1; i<3; i++){
-                this.movingPiece.x = startX - i;
+                this.movingPiece.x = this.originalX - i;
                 this.updateTakeArr(!this.whiteMove);
                 if (this.isCheck(this.whiteMove) != 0){
                     return true
                 }
             }
             return [x, this.movingPiece.y];
-        } else if (startX - x == -2){
+        } else if (this.originalX - x == -2){
             //king side castle
             if(this.inCheck){
                 return true;
             }
             for (let i = 1; i<3; i++){
-                this.movingPiece.x = startX + i;
+                this.movingPiece.x = this.originalX + i;
                 this.updateTakeArr(!this.whiteMove);
                 if (this.isCheck(this.whiteMove) != 0){
                     return true
@@ -451,9 +463,9 @@ class board{
             }
         }
     }
-    enPLeft(x, startX, startY){
-        if (startX - x == 1){
-            let takenPiece = this.pieceTake(this.movingPiece.x, startY, this.movingPiece.white);
+    enPLeft(){
+        if (this.originalX - this.movingPiece.x == 1){
+            let takenPiece = this.pieceTake(this.movingPiece.x, this.originalY, this.movingPiece.white);
             this.updateTakeArr(!this.whiteMove);
 
             if(this.isCheck(this.whiteMove) == 0){
@@ -475,9 +487,9 @@ class board{
             return false;
         }
     }
-    enPRight(x, startX, startY){
-        if (startX - x == -1){
-            let takenPiece = this.pieceTake(this.movingPiece.x, startY, this.movingPiece.white);
+    enPRight(){
+        if (this.originalX - this.movingPiece.x == -1){
+            let takenPiece = this.pieceTake(this.movingPiece.x, this.originalY, this.movingPiece.white);
             this.updateTakeArr(!this.whiteMove);
 
             if(this.isCheck(this.whiteMove) == 0){
@@ -519,46 +531,14 @@ class board{
         }
         return 0;
     }
-    promotionHandle(originalX, originalY){ // handles promotion notation and logic
+    promotionHandle(){ // handles promotion notation and logic
         if (this.movingPiece.text == '' && (this.movingPiece.y == 0 || this.movingPiece.y == 7)){
-            this.replace_pawn(originalX, originalY);
+            document.querySelector('#replacement').style.display = "block";
             return true;
         }
         return false;
     }
-    replace_pawn(originalX, originalY){
-        document.querySelector('#replacement').style.display = "block";
-        
-        let queenButton = document.querySelector('#qReplace');
-        let rookButton = document.querySelector('#rReplace');
-        let bishopButton = document.querySelector('#bReplace');
-        let knightButton = document.querySelector('#kReplace');
-        
-        queenButton.addEventListener('click', function(){
-            b.notation += 'Q';
-            let newPiece = new queen(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b);
-            b.replaceForPiece(originalX, originalY, newPiece);
-        });
-        
-        rookButton.addEventListener('click', function(){
-            b.notation += 'R';
-            let newPiece = new rook(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b);
-            b.replaceForPiece(originalX, originalY, newPiece);
-        });
-        
-        bishopButton.addEventListener('click', function(){
-            b.notation += 'B';
-            let newPiece = new bishop(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b);
-            b.replaceForPiece(originalX, originalY, newPiece);
-        });
-        
-        knightButton.addEventListener('click', function(){
-            b.notation += 'N';
-            let newPiece = new knight(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, b);
-            b.replaceForPiece(originalX, originalY, newPiece);
-        });
-    }
-    replaceForPiece(originalX, originalY, newPiece){
+    replaceForPiece(newPiece){
         if (this.movingPiece.white){
             this.whitePieces.push(newPiece);
             let index = this.whitePieces.indexOf(this.movingPiece);
@@ -569,9 +549,9 @@ class board{
             this.blackPieces.splice(index, 1);
         }
         document.getElementById("replacement").style.display = "none";
-        this.afterPromotion(originalX, originalY);
+        this.afterPromotion();
     }
-    afterPromotion(originalX, originalY){
+    afterPromotion(){
         this.updateTakeArr(this.whiteMove); // update current colors for taking moves
 
         this.inCheck = 0; // reset values for next move
@@ -581,7 +561,7 @@ class board{
         this.prev = [];
 
         this.createGrid(); // completely resets grid
-        this.updatePrev(originalX, originalY); // update prev array to show most recent move
+        this.updatePrev(); // update prev array to show most recent move
 
         this.movingPiece = 0; // refresh moving piece variable for next go
         this.whiteMove = !(this.whiteMove); // change move color
@@ -653,8 +633,8 @@ class board{
             }
         }
     }
-    updatePrev(originalX, originalY){ //update most recent moves and their square colors
-        this.prev.push([originalX, originalY]);
+    updatePrev(){ //update most recent moves and their square colors
+        this.prev.push([this.originalX, this.originalY]);
         this.prev.push([this.movingPiece.x, this.movingPiece.y]);
 
         for (let i = 0; i < this.prev.length; i++){
