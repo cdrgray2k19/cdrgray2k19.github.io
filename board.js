@@ -211,39 +211,30 @@ class board{
     }
     pieceUpdateLegal(){ // reference mapLegal which gets legal depending on rules and other pieces and then add checking logic to the moves
         this.msg = this.movingPiece.mapLegal(); // get legal moves depending on board and store msg which stores any other info about the legal moves
+        if (this.msg == []){
+            this.msg = [0];
+        }
         this.originalX = this.movingPiece.x; // store original x and y positoin
         this.originalY = this.movingPiece.y;
         let arr = this.movingPiece.legal; // make it easier to manipulate array
         let arr2 = []; // open array to store legal moves after checks analysed
+        let takenPiece = 0; // temporarily holds a taken piece to evaluate boards for checks so it can be pushed back into array
         for(let i = 0; i < arr.length;i++){
             this.movingPiece.x = arr[i][0]; // temporarily move pieces
             this.movingPiece.y = arr[i][1]; // temporarily move pieces
-            if (this.msg == 'castle'){ // if the message is not an empty string then legalise the moves differently
-                let result = this.castle(this.movingPiece.x);
-                if(result != false){
-                    if (result != true){
-                        arr2.push([result[0], result[1]]);
-                    }
-                    continue;
-                }
-            } else if (this.msg == 'enP-left'){
-                let result = this.enPLeft();
-                if(result != false){
-                    if (result != 'fail'){
+            if (this.msg[0] == 'castle'){ // if the message is not an empty string then legalise the moves differently
+                if (this.inArr([this.movingPiece.x, this.movingPiece.y], this.msg)){ // check if in this.msg
+                    let result = this.castle();
+                    if(result!=false){
                         arr2.push([arr[i][0], arr[i][1]]);
                     }
                     continue;
                 }
-            } else if (this.msg == 'enP-right'){
-                let result = this.enPRight();
-                if(result != false){
-                    if (result != 'fail'){
-                        arr2.push([arr[i][0], arr[i][1]]);
-                    }
-                    continue;
-                }
+            } else if (this.msg[0] == 'enP-left' || this.msg[0] == 'enP-right'){
+                takenPiece = this.pieceTake(this.movingPiece.x, this.originalY, this.movingPiece.white);
+            }else{
+                takenPiece = this.pieceTake(this.movingPiece.x, this.movingPiece.y, this.movingPiece.white);
             }
-            let takenPiece = this.pieceTake(this.movingPiece.x, this.movingPiece.y, this.movingPiece.white); // check if piece was taken whilst moving to square temporarily
             this.updateTakeArr(!this.whiteMove) // update opposite color available taking moves
             if(this.isCheck(this.whiteMove) == 0){
                 arr2.push([arr[i][0], arr[i][1]]); // if no checks are found for this move then append to new legal moves array
@@ -368,7 +359,7 @@ class board{
     }
     msgHandle(){ // handle notation and move differently if special move
         //change way loop handles special messages by saving special move coords then checking if a legal move is a special move
-        if (this.msg == 'castle'){ // gets rook and moves it to otherside of king
+        if (this.msg[0] == 'castle'){ // gets rook and moves it to otherside of king
             if (this.movingPiece.x - this.originalX == 2){
                 let piece = this.getRook(true);
                 piece.x = this.movingPiece.x - 1;
@@ -380,7 +371,7 @@ class board{
                 piece.moved = true;
                 this.notation = 'O-O-O';
             }
-        } else if (this.msg == 'enP-left' || this.msg == 'enP-right'){ // takes piece to the side of the pawn not diagonally
+        } else if (this.msg[0] == 'enP-left' || this.msg[0] == 'enP-right'){ // takes piece to the side of the pawn not diagonally
             let takenPiece = this.pieceTake(this.movingPiece.x, this.originalY, this.movingPiece.white);
             let el = document.createElement('img')
             el.className = 'takenPieces';
@@ -408,37 +399,34 @@ class board{
             this.notation += this.letters[this.movingPiece.x] + String(8-this.movingPiece.y);
         }
     }
-    castle(x){
-        this.movingPiece.x = this.originalX;
-        if (this.originalX - x == 2){
+    castle(){
+        let holdX = this.movingPiece.x;
+        if (this.originalX - this.movingPiece.x == 2){
             //queen side castle
             if(this.inCheck){
-                return true;
+                return false;
             }
             for (let i = 1; i<3; i++){
                 this.movingPiece.x = this.originalX - i;
                 this.updateTakeArr(!this.whiteMove);
                 if (this.isCheck(this.whiteMove) != 0){
-                    return true
+                    return false;
                 }
             }
-            return [x, this.movingPiece.y];
-        } else if (this.originalX - x == -2){
+            return [holdX, this.movingPiece.y];
+        } else if (this.originalX - this.movingPiece.x == -2){
             //king side castle
             if(this.inCheck){
-                return true;
+                return false;
             }
             for (let i = 1; i<3; i++){
                 this.movingPiece.x = this.originalX + i;
                 this.updateTakeArr(!this.whiteMove);
                 if (this.isCheck(this.whiteMove) != 0){
-                    return true
+                    return false;
                 }
             }
-            return [x, this.movingPiece.y];
-        } else {
-            this.movingPiece.x = x;
-            return false;
+            return [holdX, this.movingPiece.y];
         }
     }
     getRook(king){ // castle kingside or queenside
@@ -470,54 +458,6 @@ class board{
                     }
                 }
             }
-        }
-    }
-    enPLeft(){
-        if (this.originalX - this.movingPiece.x == 1){
-            let takenPiece = this.pieceTake(this.movingPiece.x, this.originalY, this.movingPiece.white);
-            this.updateTakeArr(!this.whiteMove);
-
-            if(this.isCheck(this.whiteMove) == 0){
-                if (this.movingPiece.white){
-                    this.blackPieces.push(takenPiece);
-                } else {
-                    this.whitePieces.push(takenPiece);
-                }
-                return 'success';
-            } else {
-                if (this.movingPiece.white){
-                    this.blackPieces.push(takenPiece);
-                } else {
-                    this.whitePieces.push(takenPiece);
-                }
-                return 'fail';
-            }
-        }else{
-            return false;
-        }
-    }
-    enPRight(){
-        if (this.originalX - this.movingPiece.x == -1){
-            let takenPiece = this.pieceTake(this.movingPiece.x, this.originalY, this.movingPiece.white);
-            this.updateTakeArr(!this.whiteMove);
-
-            if(this.isCheck(this.whiteMove) == 0){
-                if (this.movingPiece.white){
-                    this.blackPieces.push(takenPiece);
-                } else {
-                    this.whitePieces.push(takenPiece);
-                }
-                return 'success';
-            } else {
-                if (this.movingPiece.white){
-                    this.blackPieces.push(takenPiece);
-                } else {
-                    this.whitePieces.push(takenPiece);
-                }
-                return 'fail';
-            }
-        }else{
-            return false;
         }
     }
     pieceTake(x, y, white){ // returns piece if taken and 0 if not
