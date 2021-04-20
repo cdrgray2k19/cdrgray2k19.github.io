@@ -53,16 +53,21 @@ class king extends pieces{
             }
         }
         this.take = this.legal;
-        let returnMsg = '';
-        if (this.kingSideCastle()){
+        let returnMsg = [];
+        let kingVal = this.kingSideCastle();
+        let queenVal = this.queenSideCastle();
+        if (kingVal || queenVal){
+            returnMsg.push('castle');
+        }
+        if (kingVal){
             
             this.legal.push([this.x + 2, this.y]);
-            returnMsg = 'castle'
+            returnMsg.push([this.x + 2, this.y]);
         }
-        if (this.queenSideCastle()){
+        if (queenVal){
 
             this.legal.push([this.x - 2, this.y]);
-            returnMsg = 'castle'
+            returnMsg.push([this.x - 2, this.y]);
         }
         return returnMsg;
     }
@@ -166,7 +171,7 @@ class queen extends pieces{
         this.up_right();
         this.down_right();
         this.take = this.legal;
-        let returnMsg = '';
+        let returnMsg = [];
         return returnMsg;
     }
     up(){
@@ -294,7 +299,7 @@ class rook extends pieces{
         this.left();
         this.right();
         this.take = this.legal;
-        let returnMsg = '';
+        let returnMsg = [];
         return returnMsg;
     }
     up(){
@@ -373,7 +378,7 @@ class bishop extends pieces{
         this.up_right();
         this.down_right();
         this.take = this.legal;
-        let returnMsg = '';
+        let returnMsg = [];
         return returnMsg;
     }
     up_left(){
@@ -462,7 +467,7 @@ class knight extends pieces{
             }
         }
         this.take = this.legal;
-        let returnMsg = '';
+        let returnMsg = [];
         return returnMsg;
     }
 }
@@ -500,11 +505,11 @@ class pawn extends pieces{
         if (this.white){
             dir = -1
         }
-        let returnMsg = '';
+        let returnMsg = [];
         this.forward(dir);
         let result = this.diaganol(dir);
         if (result != false){
-            returnMsg = result
+            returnMsg = result;
         }
         return returnMsg;
     }
@@ -544,9 +549,9 @@ class pawn extends pieces{
                                 if (this.board.blackPieces[i].justMoved == true){
                                     this.legal.push([this.x + x, this.y - 1]);
                                     if (x == -1){
-                                        return 'enP-left';
+                                        return ['enP-left', [this.x + x, this.y - 1]];
                                     } else {
-                                        return 'enP-right';
+                                        return ['enP-right', [this.x + x, this.y - 1]];
                                     }
                                 }
                             }catch{}
@@ -565,9 +570,9 @@ class pawn extends pieces{
                                 if (this.board.whitePieces[i].justMoved == true){
                                     this.legal.push([this.x + x, this.y + 1]);
                                     if (x == -1){
-                                        return 'enP-left';
+                                        return ['enP-left', [this.x + x, this.y + 1]];
                                     } else {
-                                        return 'enP-right';
+                                        return ['enP-right', [this.x + x, this.y + 1]];
                                     }
                                 }
                             }catch{}
