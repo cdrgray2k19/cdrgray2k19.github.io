@@ -102,6 +102,13 @@ html, body {
     text-transform: uppercase;
     font-size: 7vmin;
     background-color:	#808080;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-clip: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem;
 }
 
 #inside-time{
@@ -118,6 +125,25 @@ html, body {
     color: #000000;
 }
 
+@media (max-width: 550px){
+    #infoBox, #time{
+       visibility:hidden;
+    }
+
+    #infoBox-narrow{
+        visibility: shown;
+    }
+}
+
+@media(min-width:550px){
+    #infoBox, #time{
+        visibility:shown;
+    }
+    #infoBox-narrow{
+        visibility: hidden;
+    }
+}
+
 #infoBox{
     position: absolute;
     left: 85%;
@@ -127,6 +153,14 @@ html, body {
     height: 50vmin;
     background-color: #ffffff;
     text-align: center;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem;
     z-index: 1;
 }
 
@@ -329,4 +363,8 @@ h6{
 #starting-times{
     width:80%;
     margin-left:10%;
+}
+
+#infoBox-narrow{
+    background-color: white;
 }
