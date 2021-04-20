@@ -367,4 +367,19 @@ h6{
 
 #infoBox-narrow{
     background-color: white;
+    position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1030;
+}
+
+#whiteTime-narrow{
+    float:right;
+    width:49%;
+}
+
+#blackTime-narrow{
+    float:left;
+    width: 49%;
 }
