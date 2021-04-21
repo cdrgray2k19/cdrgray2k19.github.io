@@ -6,6 +6,11 @@ class pieces{ // basic outline for each piece
         this.board = board;
         this.legal = [];
         this.take = [];
+        if (this.white){
+            this.board.whitePieces.push(this);
+        } else {
+            this.board.blackPieces.push(this);
+        }
     }
 
     display(){} // displays piece

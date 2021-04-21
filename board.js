@@ -135,28 +135,45 @@ class board{
         }
     }
     createPieces(){ // add peices to piece arrays
-        this.whitePieces.push(new king(4, 7, true, this));
-        this.whitePieces.push(new queen(3, 7, true, this));
-        this.whitePieces.push(new rook(0, 7, true, this));
-        this.whitePieces.push(new rook(7, 7, true, this));
-        this.whitePieces.push(new bishop(2, 7, true, this));
-        this.whitePieces.push(new bishop(5, 7, true, this));
-        this.whitePieces.push(new knight(1, 7, true, this));
-        this.whitePieces.push(new knight(6, 7, true, this));
-        for (let i = 0; i < 8; i++){
-            this.whitePieces.push(new pawn(i, 6, true, this));
-        }
-
-        this.blackPieces.push(new king(4, 0, false, this));
-        this.blackPieces.push(new queen(3, 0, false, this));
-        this.blackPieces.push(new rook(0, 0, false, this));
-        this.blackPieces.push(new rook(7, 0, false, this));
-        this.blackPieces.push(new bishop(2, 0, false, this));
-        this.blackPieces.push(new bishop(5, 0, false, this));
-        this.blackPieces.push(new knight(1, 0, false, this));
-        this.blackPieces.push(new knight(6, 0, false, this));
-        for (let i = 0; i < 8; i++){
-            this.blackPieces.push(new pawn(i, 1, false, this));
+        let FENcode = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'; // starting position
+        let x = 0;
+        let y = 0;
+        let white = 0;
+        for (let c of FENcode){
+            if (c == '/'){
+                x = 0;
+                y += 1;
+                continue;
+            } else if (c == parseInt(c)){
+                x += parseInt(c)
+                continue;
+            } else if (c == c.toUpperCase()){ // if letter is uppercase
+                white = true;
+                c = c.toLowerCase();
+            } else if (c == c.toLowerCase()){ // if letter is lowercase
+                white = false;
+            }
+            switch(c){
+                case 'k':
+                    new king(x, y, white, this);
+                    break;
+                case 'q':
+                    new queen(x, y, white, this);
+                    break;
+                case 'r':
+                    new rook(x, y, white, this);
+                    break;
+                case 'b':
+                    new bishop(x, y, white, this);
+                    break;
+                case 'n':
+                    new knight(x, y, white, this);
+                    break;
+                case 'p':
+                    new pawn(x, y, white, this);
+                    break;
+            }
+            x += 1;
         }
     }
     drawPieces(){ // reference display function of all pieces in arrays
