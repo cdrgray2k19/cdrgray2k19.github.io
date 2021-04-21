@@ -1,15 +1,16 @@
 class pieces{ // basic outline for each piece
-    constructor(x, y, white, board){
+    constructor(x, y, white, player, board){
         this.x = x;
         this.y = y;
         this.white = white;
+        this.player = player;
         this.board = board;
         this.legal = [];
         this.take = [];
-        if (this.white){
-            this.board.whitePieces.push(this);
+        if (this.player){
+            this.board.playerPieces.push(this);
         } else {
-            this.board.blackPieces.push(this);
+            this.board.computerPieces.push(this);
         }
     }
 
@@ -18,8 +19,8 @@ class pieces{ // basic outline for each piece
 }
 
 class king extends pieces{
-    constructor(x, y, white, board){
-        super(x, y, white, board);
+    constructor(x, y, white, player, board){
+        super(x, y, white, player, board);
         this.text = 'K';
         this.moved = false;
         this.image = new Image();
@@ -50,7 +51,7 @@ class king extends pieces{
                 let y = this.y + j;
                 if (x >= 0 && x < 8 && y>=0 && y < 8){
                     if (x != this.x || y != this.y){
-                        if (this.board.pieceAt(x, y, this.white) != true){
+                        if (this.board.pieceAt(x, y, this.player) != true){
                             this.legal.push([x, y]);
                         }
                     }
@@ -80,13 +81,13 @@ class king extends pieces{
         if (this.moved == true){
             return false;
         }
-        if (this.board.pieceAt(this.x + 1, this.y, this.white) != 'null' || this.board.pieceAt(this.x + 2, this.y, this.white) != 'null'){
+        if (this.board.pieceAt(this.x + 1, this.y, this.player) != 'null' || this.board.pieceAt(this.x + 2, this.y, this.player) != 'null'){
             return false;
         }
-        if (this.white){
-            for (let i = 0; i < this.board.whitePieces.length; i++){
-                if (this.board.whitePieces[i].x == this.x + 3 && this.board.whitePieces[i].y == this.y){
-                    let piece = this.board.whitePieces[i];
+        if (this.player){
+            for (let i = 0; i < this.board.playerPieces.length; i++){
+                if (this.board.playerPieces[i].x == this.x + 3 && this.board.playerPieces[i].y == this.y){
+                    let piece = this.board.playerPieces[i];
                     if (piece.constructor.name == rook.name){
                         if (piece.moved == false){
                             return true;
@@ -95,9 +96,9 @@ class king extends pieces{
                 }
             }
         } else {
-            for (let i = 0; i < this.board.blackPieces.length; i++){
-                if (this.board.blackPieces[i].x == this.x + 3 && this.board.blackPieces[i].y == this.y){
-                    let piece = this.board.blackPieces[i];
+            for (let i = 0; i < this.board.computerPieces.length; i++){
+                if (this.board.computerPieces[i].x == this.x + 3 && this.board.computerPieces[i].y == this.y){
+                    let piece = this.board.computerPieces[i];
                     if (piece.constructor.name == rook.name){
                         if (piece.moved == false){
                             return true;
@@ -112,13 +113,13 @@ class king extends pieces{
         if (this.moved == true){
             return false;
         }
-        if (this.board.pieceAt(this.x - 1, this.y, this.white) != 'null' || this.board.pieceAt(this.x - 2, this.y, this.white) != 'null' || this.board.pieceAt(this.x - 3, this.y, this.white) != 'null'){
+        if (this.board.pieceAt(this.x - 1, this.y, this.player) != 'null' || this.board.pieceAt(this.x - 2, this.y, this.player) != 'null' || this.board.pieceAt(this.x - 3, this.y, this.player) != 'null'){
             return false;
         }
-        if (this.white){
-            for (let i = 0; i < this.board.whitePieces.length; i++){
-                if (this.board.whitePieces[i].x == this.x - 4 && this.board.whitePieces[i].y == this.y){
-                    let piece = this.board.whitePieces[i];
+        if (this.player){
+            for (let i = 0; i < this.board.playerPieces.length; i++){
+                if (this.board.playerPieces[i].x == this.x - 4 && this.board.playerPieces[i].y == this.y){
+                    let piece = this.board.playerPieces[i];
                     if (piece.constructor.name == rook.name){
                         if (piece.moved == false){
                             return true;
@@ -127,9 +128,9 @@ class king extends pieces{
                 }
             }
         } else {
-            for (let i = 0; i < this.board.blackPieces.length; i++){
-                if (this.board.blackPieces[i].x == this.x - 4 && this.board.blackPieces[i].y == this.y){
-                    let piece = this.board.blackPieces[i];
+            for (let i = 0; i < this.board.computerPieces.length; i++){
+                if (this.board.computerPieces[i].x == this.x - 4 && this.board.computerPieces[i].y == this.y){
+                    let piece = this.board.computerPieces[i];
                     if (piece.constructor.name == rook.name){
                         if (piece.moved == false){
                             return true;
@@ -143,8 +144,8 @@ class king extends pieces{
 }
 
 class queen extends pieces{
-    constructor(x, y, white, board){
-        super(x, y, white, board);
+    constructor(x, y, white, player, board){
+        super(x, y, white, player, board);
         this.text = 'Q';
         this.image = new Image();
         if (this.white){
@@ -181,9 +182,9 @@ class queen extends pieces{
     }
     up(){
         for (let i = 0; i < this.y; i++){
-            if (this.board.pieceAt(this.x, this.y - i - 1, this.white) == true){
+            if (this.board.pieceAt(this.x, this.y - i - 1, this.player) == true){
                 return;
-            } else if (this.board.pieceAt(this.x, this.y - i - 1, this.white) == false){
+            } else if (this.board.pieceAt(this.x, this.y - i - 1, this.player) == false){
                 this.legal.push([this.x, this.y - i - 1]);
                 return;
             }
@@ -192,9 +193,9 @@ class queen extends pieces{
     }
     down(){
         for (let i = 0; i < 7 - this.y; i++){
-            if (this.board.pieceAt(this.x, this.y + i + 1, this.white) == true){
+            if (this.board.pieceAt(this.x, this.y + i + 1, this.player) == true){
                 return;
-            } else if (this.board.pieceAt(this.x, this.y + i + 1, this.white) == false){
+            } else if (this.board.pieceAt(this.x, this.y + i + 1, this.player) == false){
                 this.legal.push([this.x, this.y + i + 1]);
                 return;
             }
@@ -203,9 +204,9 @@ class queen extends pieces{
     }
     left(){
         for (let i = 0; i < this.x; i++){
-            if (this.board.pieceAt(this.x - i - 1, this.y, this.white) == true){
+            if (this.board.pieceAt(this.x - i - 1, this.y, this.player) == true){
                 return;
-            } else if (this.board.pieceAt(this.x - i - 1, this.y, this.white) == false){
+            } else if (this.board.pieceAt(this.x - i - 1, this.y, this.player) == false){
                 this.legal.push([this.x - i - 1, this.y]);
                 return;
             }
@@ -214,9 +215,9 @@ class queen extends pieces{
     }
     right(){
         for (let i = 0; i < 7 - this.x; i++){
-            if (this.board.pieceAt(this.x + i + 1, this.y, this.white) == true){
+            if (this.board.pieceAt(this.x + i + 1, this.y, this.player) == true){
                 return;
-            } else if (this.board.pieceAt(this.x + i + 1, this.y, this.white) == false){
+            } else if (this.board.pieceAt(this.x + i + 1, this.y, this.player) == false){
                 this.legal.push([this.x + i + 1, this.y]);
                 return;
             }
@@ -226,9 +227,9 @@ class queen extends pieces{
     up_left(){
         const min = Math.min(this.x, this.y);
         for (let i = 0; i < min; i++){
-            if (this.board.pieceAt(this.x - i - 1, this.y - i - 1, this.white) == true){
+            if (this.board.pieceAt(this.x - i - 1, this.y - i - 1, this.player) == true){
                 return;
-            } else if (this.board.pieceAt(this.x - i - 1, this.y - i - 1, this.white) == false){
+            } else if (this.board.pieceAt(this.x - i - 1, this.y - i - 1, this.player) == false){
                 this.legal.push([this.x - i - 1, this.y - i - 1]);
                 return;
             }
@@ -238,9 +239,9 @@ class queen extends pieces{
     down_left(){
         const min = Math.min(this.x, 7 - this.y);
         for (let i = 0; i < min; i++){
-            if (this.board.pieceAt(this.x - i - 1, this.y + i + 1, this.white) == true){
+            if (this.board.pieceAt(this.x - i - 1, this.y + i + 1, this.player) == true){
                 return;
-            } else if (this.board.pieceAt(this.x - i - 1, this.y + i + 1, this.white) == false){
+            } else if (this.board.pieceAt(this.x - i - 1, this.y + i + 1, this.player) == false){
                 this.legal.push([this.x - i - 1, this.y + i + 1]);
                 return;
             }
@@ -250,9 +251,9 @@ class queen extends pieces{
     up_right(){
         const min = Math.min(7 - this.x, this.y);
         for (let i = 0; i < min; i++){
-            if (this.board.pieceAt(this.x + i + 1, this.y - i - 1, this.white) == true){
+            if (this.board.pieceAt(this.x + i + 1, this.y - i - 1, this.player) == true){
                 return;
-            } else if (this.board.pieceAt(this.x + i + 1, this.y - i - 1, this.white) == false){
+            } else if (this.board.pieceAt(this.x + i + 1, this.y - i - 1, this.player) == false){
                 this.legal.push([this.x + i + 1, this.y - i - 1]);
                 return;
             }
@@ -262,9 +263,9 @@ class queen extends pieces{
     down_right(){
         const min = Math.min(7 - this.x, 7 - this.y);
         for (let i = 0; i < min; i++){
-            if (this.board.pieceAt(this.x + i + 1, this.y + i + 1, this.white) == true){
+            if (this.board.pieceAt(this.x + i + 1, this.y + i + 1, this.player) == true){
                 return;
-            } else if (this.board.pieceAt(this.x + i + 1, this.y + i + 1, this.white) == false){
+            } else if (this.board.pieceAt(this.x + i + 1, this.y + i + 1, this.player) == false){
                 this.legal.push([this.x + i + 1, this.y + i + 1]);
                 return;
             }
@@ -274,8 +275,8 @@ class queen extends pieces{
 }
 
 class rook extends pieces{
-    constructor(x, y, white, board){
-        super(x, y, white, board);
+    constructor(x, y, white, player, board){
+        super(x, y, white, player, board);
         this.text = 'R';
         this.moved = false;
         this.image = new Image();
@@ -309,9 +310,9 @@ class rook extends pieces{
     }
     up(){
         for (let i = 0; i < this.y; i++){
-            if (this.board.pieceAt(this.x, this.y - i - 1, this.white) == true){
+            if (this.board.pieceAt(this.x, this.y - i - 1, this.player) == true){
                 return;
-            } else if (this.board.pieceAt(this.x, this.y - i - 1, this.white) == false){
+            } else if (this.board.pieceAt(this.x, this.y - i - 1, this.player) == false){
                 this.legal.push([this.x, this.y - i - 1]);
                 return;
             }
@@ -320,9 +321,9 @@ class rook extends pieces{
     }
     down(){
         for (let i = 0; i < 7 - this.y; i++){
-            if (this.board.pieceAt(this.x, this.y + i + 1, this.white) == true){
+            if (this.board.pieceAt(this.x, this.y + i + 1, this.player) == true){
                 return;
-            } else if (this.board.pieceAt(this.x, this.y + i + 1, this.white) == false){
+            } else if (this.board.pieceAt(this.x, this.y + i + 1, this.player) == false){
                 this.legal.push([this.x, this.y + i + 1]);
                 return;
             }
@@ -331,9 +332,9 @@ class rook extends pieces{
     }
     left(){
         for (let i = 0; i < this.x; i++){
-            if (this.board.pieceAt(this.x - i - 1, this.y, this.white) == true){
+            if (this.board.pieceAt(this.x - i - 1, this.y, this.player) == true){
                 return;
-            } else if (this.board.pieceAt(this.x - i - 1, this.y, this.white) == false){
+            } else if (this.board.pieceAt(this.x - i - 1, this.y, this.player) == false){
                 this.legal.push([this.x - i - 1, this.y]);
                 return;
             }
@@ -342,9 +343,9 @@ class rook extends pieces{
     }
     right(){
         for (let i = 0; i < 7 - this.x; i++){
-            if (this.board.pieceAt(this.x + i + 1, this.y, this.white) == true){
+            if (this.board.pieceAt(this.x + i + 1, this.y, this.player) == true){
                 return;
-            } else if (this.board.pieceAt(this.x + i + 1, this.y, this.white) == false){
+            } else if (this.board.pieceAt(this.x + i + 1, this.y, this.player) == false){
                 this.legal.push([this.x + i + 1, this.y]);
                 return;
             }
@@ -354,8 +355,8 @@ class rook extends pieces{
 }
 
 class bishop extends pieces{
-    constructor(x, y, white, board){
-        super(x, y, white, board);
+    constructor(x, y, white, player, board){
+        super(x, y, white, player, board);
         this.text = 'B';
         this.image = new Image();
         if (this.white){
@@ -389,9 +390,9 @@ class bishop extends pieces{
     up_left(){
         const min = Math.min(this.x, this.y);
         for (let i = 0; i < min; i++){
-            if (this.board.pieceAt(this.x - i - 1, this.y - i - 1, this.white) == true){
+            if (this.board.pieceAt(this.x - i - 1, this.y - i - 1, this.player) == true){
                 return;
-            } else if (this.board.pieceAt(this.x - i - 1, this.y - i - 1, this.white) == false){
+            } else if (this.board.pieceAt(this.x - i - 1, this.y - i - 1, this.player) == false){
                 this.legal.push([this.x - i - 1, this.y - i - 1]);
                 return;
             }
@@ -401,9 +402,9 @@ class bishop extends pieces{
     down_left(){
         const min = Math.min(this.x, 7 - this.y);
         for (let i = 0; i < min; i++){
-            if (this.board.pieceAt(this.x - i - 1, this.y + i + 1, this.white) == true){
+            if (this.board.pieceAt(this.x - i - 1, this.y + i + 1, this.player) == true){
                 return;
-            } else if (this.board.pieceAt(this.x - i - 1, this.y + i + 1, this.white) == false){
+            } else if (this.board.pieceAt(this.x - i - 1, this.y + i + 1, this.player) == false){
                 this.legal.push([this.x - i - 1, this.y + i + 1]);
                 return;
             }
@@ -413,9 +414,9 @@ class bishop extends pieces{
     up_right(){
         const min = Math.min(7 - this.x, this.y);
         for (let i = 0; i < min; i++){
-            if (this.board.pieceAt(this.x + i + 1, this.y - i - 1, this.white) == true){
+            if (this.board.pieceAt(this.x + i + 1, this.y - i - 1, this.player) == true){
                 return;
-            } else if (this.board.pieceAt(this.x + i + 1, this.y - i - 1, this.white) == false){
+            } else if (this.board.pieceAt(this.x + i + 1, this.y - i - 1, this.player) == false){
                 this.legal.push([this.x + i + 1, this.y - i - 1]);
                 return;
             }
@@ -425,9 +426,9 @@ class bishop extends pieces{
     down_right(){
         const min = Math.min(7 - this.x, 7 - this.y);
         for (let i = 0; i < min; i++){
-            if (this.board.pieceAt(this.x + i + 1, this.y + i + 1, this.white) == true){
+            if (this.board.pieceAt(this.x + i + 1, this.y + i + 1, this.player) == true){
                 return;
-            } else if (this.board.pieceAt(this.x + i + 1, this.y + i + 1, this.white) == false){
+            } else if (this.board.pieceAt(this.x + i + 1, this.y + i + 1, this.player) == false){
                 this.legal.push([this.x + i + 1, this.y + i + 1]);
                 return;
             }
@@ -437,8 +438,8 @@ class bishop extends pieces{
 }
 
 class knight extends pieces{
-    constructor(x, y, white, board){
-        super(x, y, white, board);
+    constructor(x, y, white, player, board){
+        super(x, y, white, player, board);
         this.text = 'N';
         this.image = new Image();
         if (this.white){
@@ -466,7 +467,7 @@ class knight extends pieces{
             let x = this.x + moves[i][0];
             let y = this.y + moves[i][1];
             if (x >= 0 && x < 8 && y>=0 && y < 8){
-                if(this.board.pieceAt(x, y, this.white != true)){
+                if(this.board.pieceAt(x, y, this.player) != true){
                     this.legal.push([x, y]);
                 }
             }
@@ -478,8 +479,8 @@ class knight extends pieces{
 }
 
 class pawn extends pieces{
-    constructor(x, y, white, board){
-        super(x, y, white, board);
+    constructor(x, y, white, player, board){
+        super(x, y, white, player, board);
         this.text = '';
         this.displayedText = 'P';
         this.moved = false;
@@ -507,7 +508,7 @@ class pawn extends pieces{
         this.legal = [];
         this.take = [];
         var dir = 1;
-        if (this.white){
+        if (this.player){
             dir = -1
         }
         let returnMsg = [];
@@ -526,7 +527,7 @@ class pawn extends pieces{
         for (let i = 0; i < len; i++){
             let y = this.y + (i + 1) * dir;
             if (this.x >= 0 && this.x < 8 && y>=0 && y < 8){
-                if (this.board.pieceAt(this.x, y, this.white) != 'null'){
+                if (this.board.pieceAt(this.x, y, this.player) != 'null'){
                     return;
                 }
                 this.legal.push([this.x, y]);
@@ -535,23 +536,23 @@ class pawn extends pieces{
     }
     diaganol(dir){ // check if pieces can take diagonally and for en passant
         let y = this.y + (1*dir)
-        if (this.board.pieceAt(this.x - 1, y, this.white) == false){
+        if (this.board.pieceAt(this.x - 1, y, this.player) == false){
             this.legal.push([this.x - 1, y]);
             this.take.push([this.x - 1, y]);
         }
-        if (this.board.pieceAt(this.x + 1, y, this.white) == false){
+        if (this.board.pieceAt(this.x + 1, y, this.player) == false){
             this.legal.push([this.x + 1, y]);
             this.take.push([this.x + 1, y]);
         }
-        if(this.white){
+        if(this.player){
             if(this.y == 3){
                 let arr = [-1, 1];
                 for (let i = 0; i < arr.length; i++){
                     let x = arr[i];
-                    for (let i = 0; i<this.board.blackPieces.length; i++){
-                        if (this.board.blackPieces[i].x == this.x + x && this.board.blackPieces[i].y == this.y){
+                    for (let i = 0; i<this.board.computerPieces.length; i++){
+                        if (this.board.computerPieces[i].x == this.x + x && this.board.computerPieces[i].y == this.y){
                             try{
-                                if (this.board.blackPieces[i].justMoved == true){
+                                if (this.board.computerPieces[i].justMoved == true){
                                     this.legal.push([this.x + x, this.y - 1]);
                                     if (x == -1){
                                         return ['enP-left', [this.x + x, this.y - 1]];
@@ -569,10 +570,10 @@ class pawn extends pieces{
                 let arr = [-1, 1];
                 for (let i = 0; i < arr.length; i++){
                     let x = arr[i];
-                    for (let i = 0; i<this.board.whitePieces.length; i++){
-                        if (this.board.whitePieces[i].x == this.x + x && this.board.whitePieces[i].y == this.y){
+                    for (let i = 0; i<this.board.playerPieces.length; i++){
+                        if (this.board.playerPieces[i].x == this.x + x && this.board.playerPieces[i].y == this.y){
                             try{
-                                if (this.board.whitePieces[i].justMoved == true){
+                                if (this.board.playerPieces[i].justMoved == true){
                                     this.legal.push([this.x + x, this.y + 1]);
                                     if (x == -1){
                                         return ['enP-left', [this.x + x, this.y + 1]];
