@@ -17,7 +17,6 @@ html, body {
 
 #whiteTakenPieces{
     position: absolute;
-    top: 10%;
     left: 50%;
     width: 70vmin;
     height: 10vh;
@@ -29,7 +28,6 @@ html, body {
 
 #blackTakenPieces{
     position: absolute;
-    top: 92.5%;
     left: 50%;
     width: 70vmin;
     height: 10vh;
@@ -125,7 +123,7 @@ html, body {
     color: #000000;
 }
 
-@media (max-width: 550px){
+@media (max-width: 860px){
     #infoBox, #time{
        visibility:hidden;
     }
@@ -133,14 +131,37 @@ html, body {
     #infoBox-narrow{
         visibility: shown;
     }
+
+    #c{
+        top:45%;
+    }
+
+    #whiteTakenPieces{
+        top: 7%;
+    }
+
+    #blackTakenPieces{
+        top:87%;
+    }
 }
 
-@media(min-width:550px){
+@media(min-width:860px){
     #infoBox, #time{
         visibility:shown;
     }
     #infoBox-narrow{
         visibility: hidden;
+    }
+    #c{
+        top:50%;
+    }
+
+    #whiteTakenPieces{
+        top: 10%;
+    }
+
+    #blackTakenPieces{
+        top:92.7%
     }
 }
 
@@ -151,13 +172,12 @@ html, body {
     transform: translate(-50%, -50%);
     width: 30vmin;
     height: 50vmin;
-    background-color: #ffffff;
+    background-color: #ced4da;
     text-align: center;
   display: flex;
   flex-direction: column;
   min-width: 0;
   word-wrap: break-word;
-  background-color: #fff;
   background-clip: border-box;
   border: 1px solid rgba(0, 0, 0, 0.125);
   border-radius: 0.25rem;
@@ -166,9 +186,6 @@ html, body {
 
 #btn-group button{
     position: relative;
-    width: 50%;
-    float: left;
-    display: table;
 }
 
 #btn-group:after{ /*removes floats*/
@@ -179,11 +196,13 @@ html, body {
     position: relative;
     left: 50%;
     transform: translate(-50%, 0%);
-    width: 80%;
-    height: 50%;
+    height: 100%;
     overflow: scroll;
-    margin: 0;
     padding: 0;
+    background-color: white;
+    width: 95%;
+    margin-bottom:5px;
+    border-radius: 0.25rem;
 }
 
 #white-moves{
@@ -327,24 +346,9 @@ html, body {
 }
 
 
-/* Modal Header */
-.modal-header {
-  padding: 2px 16px;
-  background-color: #5cb85c;
-  color: white;
-}
 
-/* Modal Body */
 .modal-body {padding: 2px 16px;}
 
-/* Modal Footer */
-.modal-footer {
-  padding: 2px 16px;
-  background-color: #5cb85c;
-  color: white;
-}
-
-/* Modal Content */
 .modal-content {
   position: relative;
   background-color: #fefefe;
@@ -374,12 +378,49 @@ h6{
   z-index: 1030;
 }
 
-#whiteTime-narrow{
-    float:right;
-    width:49%;
+#whiteTime-narrow {
+    float: right;
+    width: 49%;
 }
 
 #blackTime-narrow{
     float:left;
     width: 49%;
+}
+
+#resign{
+    display: inline-block;
+    float:left;
+    width:45%;
+    line-height: 1.5;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+    margin-left:2.5%;
+    margin-top:3px;
+}
+
+#draw{
+    display: inline-block;
+    float:right;
+    width:45%;
+    line-height: 1.5;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+    margin-right:2.5%;
+    margin-top:3px;
+}
+
+#infoTxt{
+    margin-bottom:5px;
+    margin-top: 5px;
 }
