@@ -8,9 +8,9 @@ class pieces{ // basic outline for each piece
         this.legal = [];
         this.take = [];
         if (this.player){
-            this.board.playerPieces.push(this);
+            this.board.p.pieces.push(this);
         } else {
-            this.board.computerPieces.push(this);
+            this.board.c.pieces.push(this);
         }
     }
 
@@ -85,9 +85,9 @@ class king extends pieces{
             return false;
         }
         if (this.player){
-            for (let i = 0; i < this.board.playerPieces.length; i++){
-                if (this.board.playerPieces[i].x == this.x + 3 && this.board.playerPieces[i].y == this.y){
-                    let piece = this.board.playerPieces[i];
+            for (let i = 0; i < this.board.p.pieces.length; i++){
+                if (this.board.p.pieces[i].x == this.x + 3 && this.board.p.pieces[i].y == this.y){
+                    let piece = this.board.p.pieces[i];
                     if (piece.constructor.name == rook.name){
                         if (piece.moved == false){
                             return true;
@@ -96,9 +96,9 @@ class king extends pieces{
                 }
             }
         } else {
-            for (let i = 0; i < this.board.computerPieces.length; i++){
-                if (this.board.computerPieces[i].x == this.x + 3 && this.board.computerPieces[i].y == this.y){
-                    let piece = this.board.computerPieces[i];
+            for (let i = 0; i < this.board.c.pieces.length; i++){
+                if (this.board.c.pieces[i].x == this.x + 3 && this.board.c.pieces[i].y == this.y){
+                    let piece = this.board.c.pieces[i];
                     if (piece.constructor.name == rook.name){
                         if (piece.moved == false){
                             return true;
@@ -117,9 +117,9 @@ class king extends pieces{
             return false;
         }
         if (this.player){
-            for (let i = 0; i < this.board.playerPieces.length; i++){
-                if (this.board.playerPieces[i].x == this.x - 4 && this.board.playerPieces[i].y == this.y){
-                    let piece = this.board.playerPieces[i];
+            for (let i = 0; i < this.board.p.pieces.length; i++){
+                if (this.board.p.pieces[i].x == this.x - 4 && this.board.p.pieces[i].y == this.y){
+                    let piece = this.board.p.pieces[i];
                     if (piece.constructor.name == rook.name){
                         if (piece.moved == false){
                             return true;
@@ -128,9 +128,9 @@ class king extends pieces{
                 }
             }
         } else {
-            for (let i = 0; i < this.board.computerPieces.length; i++){
-                if (this.board.computerPieces[i].x == this.x - 4 && this.board.computerPieces[i].y == this.y){
-                    let piece = this.board.computerPieces[i];
+            for (let i = 0; i < this.board.c.pieces.length; i++){
+                if (this.board.c.pieces[i].x == this.x - 4 && this.board.c.pieces[i].y == this.y){
+                    let piece = this.board.c.pieces[i];
                     if (piece.constructor.name == rook.name){
                         if (piece.moved == false){
                             return true;
@@ -549,10 +549,10 @@ class pawn extends pieces{
                 let arr = [-1, 1];
                 for (let i = 0; i < arr.length; i++){
                     let x = arr[i];
-                    for (let i = 0; i<this.board.computerPieces.length; i++){
-                        if (this.board.computerPieces[i].x == this.x + x && this.board.computerPieces[i].y == this.y){
+                    for (let i = 0; i<this.board.c.pieces.length; i++){
+                        if (this.board.c.pieces[i].x == this.x + x && this.board.c.pieces[i].y == this.y){
                             try{
-                                if (this.board.computerPieces[i].justMoved == true){
+                                if (this.board.c.pieces[i].justMoved == true){
                                     this.legal.push([this.x + x, this.y - 1]);
                                     if (x == -1){
                                         return ['enP-left', [this.x + x, this.y - 1]];
@@ -570,10 +570,10 @@ class pawn extends pieces{
                 let arr = [-1, 1];
                 for (let i = 0; i < arr.length; i++){
                     let x = arr[i];
-                    for (let i = 0; i<this.board.playerPieces.length; i++){
-                        if (this.board.playerPieces[i].x == this.x + x && this.board.playerPieces[i].y == this.y){
+                    for (let i = 0; i<this.board.p.pieces.length; i++){
+                        if (this.board.p.pieces[i].x == this.x + x && this.board.p.pieces[i].y == this.y){
                             try{
-                                if (this.board.playerPieces[i].justMoved == true){
+                                if (this.board.p.pieces[i].justMoved == true){
                                     this.legal.push([this.x + x, this.y + 1]);
                                     if (x == -1){
                                         return ['enP-left', [this.x + x, this.y + 1]];

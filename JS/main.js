@@ -36,9 +36,9 @@ function addEvtListeners(){
     b.canvas.addEventListener('mousedown', function() { // listens for clicks to run mousePress1 or mousePress2 depending on whether or not a piece has been selected
         if (b.playerMove){
             if (b.movingPiece == 0){
-                b.mousePress1();
+                b.p.pickUp();
             } else {
-                b.mousePress2();
+                b.p.drop();
             }
         };
     });
@@ -60,30 +60,30 @@ function addEvtListeners(){
         
     queenButton.addEventListener('click', function(){
         b.notation += 'Q';
-        let newPiece = new queen(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, true, b); // send true as computer will evaluate best and add it itself so player is always true
-        b.replaceForPiece(newPiece);
+        new queen(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, true, b); // send true as computer will evaluate best and add it itself so player is always true
+        b.p.replaceForPiece();
     });
         
     rookButton.addEventListener('click', function(){
         b.notation += 'R';
-        let newPiece = new rook(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, true, b);
-        b.replaceForPiece(newPiece);
+        new rook(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, true, b);
+        b.p.replaceForPiece();
     });
         
     bishopButton.addEventListener('click', function(){
         b.notation += 'B';
-        let newPiece = new bishop(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, true, b);
-        b.replaceForPiece(newPiece);
+        new bishop(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, true, b);
+        b.p.replaceForPiece();
     });
         
     knightButton.addEventListener('click', function(){
         b.notation += 'N';
-        let newPiece = new knight(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, true, b);
-        b.replaceForPiece(newPiece);
+        new knight(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, true, b);
+        b.p.replaceForPiece();
     });
 }
 
-function frame(){
+function frame(){ // call computer if playerMove = false;
     b.timeHandle(); // handle time each frame
     b.ctx.clearRect(0, 0, b.width, b.height); // clear board
     

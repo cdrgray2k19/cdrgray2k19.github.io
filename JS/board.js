@@ -11,11 +11,8 @@ class board{
         this.height = 640;
         this.sqSize = this.height/8;
         
-        /*this.whitePieces = []; // create arrays which will stores all pieces on board
-        this.blackPieces = [];*/
-        
-        this.playerPieces = [];
-        this.computerPieces = [];
+        this.p = new player(this);
+        this.c = new computer(this);
 
         this.playerMove = true;
 
@@ -29,6 +26,7 @@ class board{
         this.prev = []; // stores squares of oringinal and moved to squares
         this.letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
         this.notation = '';
+        
         this.lightSqCol = '#f1d9c0'; // colors for squares depending on what actions are taking place
         this.darkSqCol = '#a97a65';
         this.checkCol = '#f54c4c';
@@ -37,15 +35,18 @@ class board{
         this.lightLegalCol = '#aae346';
         this.darkLegalCol = '#87d620';
         this.changedCoordCol = '#000000';
+        
         this.createGrid(); // create grid and pieces and update both black and whites takeArrs to start
         this.createPieces();
         this.updateTakeArr(this.playerMove);
         this.updateTakeArr(!this.playerMove);
+        
         this.endMsgBox = document.querySelector('#canvasMsgBox'); // link html elements to javascript
         this.endMsg = '';
         this.winnerMsg = '';
         this.startTime = new Date().getTime();
         this.endTime = 0;
+        
         if (this.playerMove){ //configure clocks according to which color is first to move
             document.querySelector('#playerTime').className = 'moving';
             document.querySelector('#computerTime').className = 'waiting';
@@ -53,8 +54,12 @@ class board{
             document.querySelector('#playerTime').className = 'waiting';
             document.querySelector('#computerTime').className = 'moving';
         }
-    }
 
+        if (!this.playerMove){
+            this.c.randomMove();
+        }
+    }
+    // good
     resizeCanvas(){
         this.canvas_width = (window.innerWidth) * 0.7; // resize canvas to 0.7 of the minimum measurement
         this.canvas_height = (window.innerHeight) * 0.7;
@@ -70,7 +75,7 @@ class board{
         this.canvas.style.width = '' + String(this.canvas_width) + 'px';
         this.canvas.style.height = '' + String(this.canvas_height) + 'px';
     }
-
+    // good
     initTime(){
         let value = Math.floor(this.playerTime); // display time
         let min = Math.floor(value/60);
@@ -89,7 +94,7 @@ class board{
         document.querySelector('#computerTime').innerHTML = String(min) + ":" + String(sec);
     }
     
-    
+    // good
     inArr(arr1, arr2){ // had problem comparing 2d array values so made this function which has a very general application
         for (let i = 0; i < arr2.length; i++){
             if(arr1[0] == arr2[i][0] && arr1[1] == arr2[i][1]){
@@ -99,7 +104,7 @@ class board{
         return false;
     }
 
-
+    // good
     createGrid(){ // go through an 8 by 8 2d array which stores the square color and coordinate color of the square
         this.squares = [];
         let val = 0
@@ -124,6 +129,7 @@ class board{
             }
         }
     }
+    // good
     drawGrid(){ // go through this.squares and draw each depending on their dictionary values
         for (let x = 0; x < 8; x++){
             for (let y = 0; y < 8; y++){
@@ -147,8 +153,10 @@ class board{
             }
         }
     }
+    // good
     createPieces(){ // add peices to piece arrays
-        let FENcode = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'; // starting position
+        //let FENcode = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'; // starting position
+        let FENcode = 'r2qkbnr/pP1bpppp/n/8/8/8/PPPP1PPP/RNBQKBNR';
         let x = 0;
         let y = 0;
         let white = 0;
@@ -195,74 +203,19 @@ class board{
             x += 1;
         }
     }
+    // good
     drawPieces(){ // reference display function of all pieces in arrays
         this.ctx.font = this.bigFont;
-        for (let i = 0; i < this.playerPieces.length; i++){
-            this.playerPieces[i].display();
+        for (let i = 0; i < this.p.pieces.length; i++){
+            this.p.pieces[i].display();
         }
-        for (let i = 0; i < this.computerPieces.length; i++){
-            this.computerPieces[i].display();
-        }
-    }
-
-    mousePress1(){ // search pieces to see if mouse over any when clicked
-        for (let i = 0; i < this.playerPieces.length; i++){
-            let piece = this.playerPieces[i];
-            if (piece.x == Math.floor(this.mouse[0]/(this.canvas_width/8)) && piece.y == Math.floor(this.mouse[1]/(this.canvas_width/8))){
-                this.movingPiece = piece;
-                this.piecePressed();
-            }
+        for (let i = 0; i < this.c.pieces.length; i++){
+            this.c.pieces[i].display();
         }
     }
-    piecePressed(){ // update legal then change color of legal move squares to make obvious to player
-        this.pieceUpdateLegal();
-        
-        //update squares
-        if (this.squares[this.movingPiece.x][this.movingPiece.y].block == this.lightSqCol){
-            this.squares[this.movingPiece.x][this.movingPiece.y].block = this.lightPrevCol;
-        } else {
-            this.squares[this.movingPiece.x][this.movingPiece.y].block = this.darkPrevCol;
-        }
 
-        this.squares[this.movingPiece.x][this.movingPiece.y].coord = this.changedCoordCol;
-        
-        for(let i = 0; i < this.movingPiece.legal.length;i++){
-            if ((this.movingPiece.legal[i][0] + this.movingPiece.legal[i][1]) % 2 == 0){
-                this.squares[this.movingPiece.legal[i][0]][this.movingPiece.legal[i][1]].block = this.lightLegalCol;
-            } else {
-                this.squares[this.movingPiece.legal[i][0]][this.movingPiece.legal[i][1]].block = this.darkLegalCol;
-            }
-            this.squares[this.movingPiece.legal[i][0]][this.movingPiece.legal[i][1]].coord = this.changedCoordCol;
-        }
-    }
-    randomMove(){
-        this.getMovablePiece();
-        let index = Math.floor(Math.random() * this.movingPiece.legal.length)
-        let move = this.movingPiece.legal[index];
-        let x = move[0];
-        let y = move[1];
-        this.movingPiece.x = x;
-        this.movingPiece.y = y;
 
-        this.movingVariableHandle(); // change piece.moved and justMoved variables
-
-        this.notation = ''; // reset notation
-
-        this.msgHandle(); // handle move if message is not normal for castling and en passant
-
-        this.afterPromotion();
-
-    }
-    getMovablePiece(){
-        let index = Math.floor(Math.random() * this.computerPieces.length)
-        let piece = this.computerPieces[index];
-
-        this.movingPiece = piece;
-        this.pieceUpdateLegal();
-        if (this.movingPiece.legal.length == 0){
-            this.getMovablePiece();
-        }
-    }
+    // ish good
     pieceUpdateLegal(){ // reference mapLegal which gets legal depending on rules and other pieces and then add checking logic to the moves
         this.msg = this.movingPiece.mapLegal(); // get legal moves depending on board and store msg which stores any other info about the legal moves
         if (this.msg == []){
@@ -276,15 +229,13 @@ class board{
         for(let i = 0; i < arr.length;i++){
             this.movingPiece.x = arr[i][0]; // temporarily move pieces
             this.movingPiece.y = arr[i][1]; // temporarily move pieces
-            if (this.msg[0] == 'castle'){ // if the message is not an empty string then legalise the moves differently
-                if (this.inArr([this.movingPiece.x, this.movingPiece.y], this.msg)){ // check if in this.msg
-                    let result = this.castle();
-                    if(result!=false){
-                        arr2.push([arr[i][0], arr[i][1]]);
-                    }
-                    continue;
+            if (this.msg[0] == 'castle' && this.inArr([this.movingPiece.x, this.movingPiece.y], this.msg)){ // if the message is not an empty string then legalise the moves differently
+                if(this.castle()){
+                    arr2.push([arr[i][0], arr[i][1]]);
                 }
-            } else if (this.msg[0] == 'enP-left' || this.msg[0] == 'enP-right'){
+                continue;
+            
+            } else if (this.msg[0] == 'enP-left' || this.msg[0] == 'enP-right' && this.inArr([this.movingPiece.x, this.movingPiece.y], this.msg)){
                 takenPiece = this.pieceTake(this.movingPiece.x, this.originalY, this.movingPiece.white);
             }else{
                 takenPiece = this.pieceTake(this.movingPiece.x, this.movingPiece.y, this.movingPiece.white);
@@ -295,9 +246,9 @@ class board{
             }
             if (takenPiece != 0){ // if piece was taken, now the evaluation of the board is done the piece can be pushed back into the nescessary array to be stored on the board
                 if (this.movingPiece.player){
-                    this.computerPieces.push(takenPiece);
+                    this.c.pieces.push(takenPiece);
                 } else {
-                    this.playerPieces.push(takenPiece);
+                    this.p.pieces.push(takenPiece);
                 }
             }
         }
@@ -306,10 +257,44 @@ class board{
         this.movingPiece.x = this.originalX; // change x and y position back
         this.movingPiece.y = this.originalY;
     }
+
+    castle(){
+        let holdX = this.movingPiece.x;
+        if (this.originalX - this.movingPiece.x == 2){
+            //queen side castle
+            if(this.inCheck){
+                return false;
+            }
+            for (let i = 1; i<3; i++){
+                this.movingPiece.x = this.originalX - i;
+                this.updateTakeArr(!this.playerMove);
+                if (this.isCheck(this.playerMove) != 0){
+                    return false;
+                }
+            }
+            //return [holdX, this.movingPiece.y];
+            return true;
+        } else if (this.originalX - this.movingPiece.x == -2){
+            //king side castle
+            if(this.inCheck){
+                return false;
+            }
+            for (let i = 1; i<3; i++){
+                this.movingPiece.x = this.originalX + i;
+                this.updateTakeArr(!this.playerMove);
+                if (this.isCheck(this.playerMove) != 0){
+                    return false;
+                }
+            }
+            //return [holdX, this.movingPiece.y];
+            return true;
+        }
+    }
+    // good
     pieceAt(x, y, player){ // returns true if a friendly piece in square, false if enemy piece on square, and 'null' if no pieces on square
 
-        for (let i = 0; i < this.playerPieces.length; i++){
-            if (this.playerPieces[i].x == x && this.playerPieces[i].y == y){
+        for (let i = 0; i < this.p.pieces.length; i++){
+            if (this.p.pieces[i].x == x && this.p.pieces[i].y == y){
                 if(player){
                     return true;
                 } else {
@@ -318,8 +303,8 @@ class board{
             }
         }
 
-        for (let i = 0; i < this.computerPieces.length; i++){
-            if (this.computerPieces[i].x == x && this.computerPieces[i].y == y){
+        for (let i = 0; i < this.c.pieces.length; i++){
+            if (this.c.pieces[i].x == x && this.c.pieces[i].y == y){
                 if(player){
                     return false;
                 } else {
@@ -329,41 +314,15 @@ class board{
         }
         return 'null';
     }
-    mousePress2(){
-
-        this.clearGrid();
-
+    // good
+    canMove(){
         let x = Math.floor(this.mouse[0]/(this.canvas_width/8)); // evaluate board coordinates of mouse position
         let y = Math.floor(this.mouse[1]/(this.canvas_width/8));
         let pos = [x, y];
-        let value = this.inArr(pos, this.movingPiece.legal); // check if move in legal move of selected piece
-
-        if (value){
-            /*let this.originalX = this.movingPiece.x; // store original values
-            let this.originalY = this.movingPiece.y;*/
-            this.movingPiece.x = x; // move
-            this.movingPiece.y = y; // move
-            
-            this.movingVariableHandle(); // change piece.moved and justMoved variables
-
-            this.notation = ''; // reset notation
-
-            this.msgHandle(); // handle move if message is not normal for castling and en passant
-
-            let promotionResult = this.promotionHandle(); // handle piece promotion
-            
-            if (!promotionResult){
-                this.afterPromotion();
-                if (this.playing){
-                    this.randomMove();
-                }
-            }
-
-        } else { // if square not in legal moves then reset moving peice and check if other peice selected
-            this.movingPiece = 0;
-            this.mousePress1(); // check if same color piece has been clicked which would restart process
-        }
+        let value = this.inArr(pos, this.movingPiece.legal);
+        return [value, x, y];
     }
+
     clearGrid(){
         this.createGrid(); // remove any green legal blocks
 
@@ -384,20 +343,21 @@ class board{
             this.squares[x][y].coord = this.changedCoordCol;
         }
     }
+    // try and add each loop to each specific player or computer script
     movingVariableHandle(){ // if justmoved and moved variables apply to piece, change as needed
         if (this.playerMove){
-            for (let i = 0; i < this.playerPieces.length; i++){
+            for (let i = 0; i < this.p.pieces.length; i++){
                 try{
-                    if (this.playerPieces[i].justMoved == true){
-                        this.playerPieces[i].justMoved = false;
+                    if (this.p.pieces[i].justMoved == true){
+                        this.p.pieces[i].justMoved = false;
                     }
                 }catch{}
             }
         } else {
-            for (let i = 0; i < this.computerPieces.length; i++){
+            for (let i = 0; i < this.c.pieces.length; i++){
                 try{
-                    if (this.computerPieces[i].justMoved == true){
-                        this.computerPieces[i].justMoved = false;
+                    if (this.c.pieces[i].justMoved == true){
+                        this.c.pieces[i].justMoved = false;
                     }
                 }catch{}
             }
@@ -414,9 +374,8 @@ class board{
         }catch{}
     }
     msgHandle(){ // handle notation and move differently if special move
-        //change way loop handles special messages by saving special move coords then checking if a legal move is a special move
-        if (this.msg[0] == 'castle'){ // gets rook and moves it to otherside of king
-            if (this.movingPiece.x - this.originalX == 2){
+        if (this.msg[0] == 'castle' && (this.inArr([this.movingPiece.x, this.movingPiece.y], this.msg))){ // gets rook and moves it to otherside of king
+            if (this.movingPiece.x - this.originalX == 2){    
                 let piece = this.getRook(true);
                 piece.x = this.movingPiece.x - 1;
                 piece.moved = true;
@@ -427,9 +386,9 @@ class board{
                 piece.moved = true;
                 this.notation = 'O-O-O';
             }
-        } else if (this.msg[0] == 'enP-left' || this.msg[0] == 'enP-right' && (this.movingPiece.x != this.originalX && this.pieceTake(this.movingPiece.x, this.movingPiece.y, this.movingPiece.player) == 0)){ // takes piece to the side of the pawn not diagonally
+        } else if (this.msg[0] == 'enP-left' || this.msg[0] == 'enP-right' && (this.inArr([this.movingPiece.x, this.movingPiece.y], this.msg))){ // takes piece to the side of the pawn not diagonally
             let takenPiece = this.pieceTake(this.movingPiece.x, this.originalY, this.movingPiece.player);
-            let el = document.createElement('img')
+            let el = document.createElement('img');
             el.className = 'takenPieces';
             el.src = takenPiece.image.src;
             if (this.playerMove){
@@ -438,11 +397,12 @@ class board{
                 document.querySelector('#playerTakenPieces').appendChild(el);
             }
             this.notation = 'x' + this.letters[this.movingPiece.x] + String(8-this.movingPiece.y) + 'e.p.';
+            
         } else {
             this.notation = this.movingPiece.text;
             let takenPiece = this.pieceTake(this.movingPiece.x, this.movingPiece.y, this.movingPiece.player)
             if (takenPiece != 0){
-                let el = document.createElement('img')
+                let el = document.createElement('img');
                 el.className = 'takenPieces';
                 el.src = takenPiece.image.src;
                 if (this.playerMove){
@@ -455,62 +415,32 @@ class board{
             this.notation += this.letters[this.movingPiece.x] + String(8-this.movingPiece.y);
         }
     }
-    castle(){
-        let holdX = this.movingPiece.x;
-        if (this.originalX - this.movingPiece.x == 2){
-            //queen side castle
-            if(this.inCheck){
-                return false;
-            }
-            for (let i = 1; i<3; i++){
-                this.movingPiece.x = this.originalX - i;
-                this.updateTakeArr(!this.playerMove);
-                if (this.isCheck(this.playerMove) != 0){
-                    return false;
-                }
-            }
-            return [holdX, this.movingPiece.y];
-        } else if (this.originalX - this.movingPiece.x == -2){
-            //king side castle
-            if(this.inCheck){
-                return false;
-            }
-            for (let i = 1; i<3; i++){
-                this.movingPiece.x = this.originalX + i;
-                this.updateTakeArr(!this.playerMove);
-                if (this.isCheck(this.playerMove) != 0){
-                    return false;
-                }
-            }
-            return [holdX, this.movingPiece.y];
-        }
-    }
     getRook(king){ // castle kingside or queenside
         if (king){
             if (this.playerMove){
-                for (let i = 0; i < this.playerPieces.length; i++){
-                    if (this.playerPieces[i].x == 7 && this.playerPieces[i].y == this.movingPiece.y){
-                        return this.playerPieces[i];
+                for (let i = 0; i < this.p.pieces.length; i++){
+                    if (this.p.pieces[i].x == 7 && this.p.pieces[i].y == this.movingPiece.y){
+                        return this.p.pieces[i];
                     }
                 }
             } else {
-                for (let i = 0; i < this.computerPieces.length; i++){
-                    if (this.computerPieces[i].x == 7 && this.computerPieces[i].y == this.movingPiece.y){
-                        return this.computerPieces[i];
+                for (let i = 0; i < this.c.pieces.length; i++){
+                    if (this.c.pieces[i].x == 7 && this.c.pieces[i].y == this.movingPiece.y){
+                        return this.c.pieces[i];
                     }
                 }
             }
         } else {
             if (this.playerMove){
-                for (let i = 0; i < this.playerPieces.length; i++){
-                    if (this.playerPieces[i].x == 0 && this.playerPieces[i].y == this.movingPiece.y){
-                        return this.playerPieces[i];
+                for (let i = 0; i < this.p.pieces.length; i++){
+                    if (this.p.pieces[i].x == 0 && this.p.pieces[i].y == this.movingPiece.y){
+                        return this.p.pieces[i];
                     }
                 }
             } else {
-                for (let i = 0; i < this.computerPieces.length; i++){
-                    if (this.computerPieces[i].x == 0 && this.computerPieces[i].y == this.movingPiece.y){
-                        return this.computerPieces[i];
+                for (let i = 0; i < this.c.pieces.length; i++){
+                    if (this.c.pieces[i].x == 0 && this.c.pieces[i].y == this.movingPiece.y){
+                        return this.c.pieces[i];
                     }
                 }
             }
@@ -518,48 +448,26 @@ class board{
     }
     pieceTake(x, y, player){ // returns piece if taken and 0 if not
         if(player){
-            for(let i = 0; i < this.computerPieces.length; i++){
-                if (this.computerPieces[i].x == x && this.computerPieces[i].y == y){
-                    let piece = this.computerPieces[i];
-                    this.computerPieces.splice(i, 1);
+            for(let i = 0; i < this.c.pieces.length; i++){
+                if (this.c.pieces[i].x == x && this.c.pieces[i].y == y){
+                    let piece = this.c.pieces[i];
+                    this.c.pieces.splice(i, 1);
                     return piece;
                 }
             }
         } else {
-            for(let i = 0; i < this.playerPieces.length; i++){
-                if (this.playerPieces[i].x == x && this.playerPieces[i].y == y){
-                    let piece = this.playerPieces[i];
-                    this.playerPieces.splice(i, 1);
+            for(let i = 0; i < this.p.pieces.length; i++){
+                if (this.p.pieces[i].x == x && this.p.pieces[i].y == y){
+                    let piece = this.p.pieces[i];
+                    this.p.pieces.splice(i, 1);
                     return piece;
                 }
             }
         }
         return 0;
     }
-    promotionHandle(){ // handles promotion notation and logic
-        if (this.movingPiece.text == '' && (this.movingPiece.y == 0 || this.movingPiece.y == 7)){
-            document.querySelector('#replacement').style.display = "block";
-            return true;
-        }
-        return false;
-    }
-    replaceForPiece(newPiece){
-        if (this.movingPiece.player){
-            this.playerPieces.push(newPiece);
-            let index = this.playerPieces.indexOf(this.movingPiece);
-            this.playerPieces.splice(index, 1);
-        } else {
-            this.computerPieces.push(newPiece);
-            let index = this.computerPieces.indexOf(this.movingPiece);
-            this.computerPieces.splice(index, 1);
-        }
-        document.getElementById("replacement").style.display = "none";
-        this.afterPromotion();
-        if (this.playing){
-            this.randomMove();
-        }
-    }
-    afterPromotion(){
+
+    completeMove(){
         this.updateTakeArr(this.playerMove); // update current colors for taking moves
 
         this.inCheck = 0; // reset values for next move
@@ -598,13 +506,15 @@ class board{
         element.innerHTML += this.notation;
         this.updateScroll(); //make scroll of notation div to lowest to show most recent moves          
             
+        let hasMoves = this.hasMoves(this.playerMove);
+
         if(checkValue != 0){ // check new color for checks before anything else
-            let x = this.isCheck(this.playerMove)[0];
-            let y = this.isCheck(this.playerMove)[1];
+            let x = checkValue[0];
+            let y = checkValue[1];
             this.inCheck = [x, y];
             this.squares[x][y].block = this.checkCol;
             this.squares[x][y].coord = this.changedCoordCol;
-            if(this.hasMoves(this.playerMove) == false){
+            if(hasMoves == false){
                 this.endMsg = 'checkmate';
                 this.playing = false;
                 if (this.playerMove){
@@ -614,7 +524,7 @@ class board{
                 }
             }
         } else {
-            if(this.hasMoves(this.playerMove) == false){
+            if(hasMoves == false){
                 this.endMsg = 'stalemate';
                 this.playing = false;
                 this.winnerMsg = 'draw';
@@ -625,18 +535,18 @@ class board{
     updateTakeArr(player){ // update possible taking squares of a color
         if(player){
             this.playerTakeMoves = [];
-            for (let i = 0; i < this.playerPieces.length; i++){
-                this.playerPieces[i].mapLegal();
-                for (let j = 0; j < this.playerPieces[i].take.length; j++){
-                    this.playerTakeMoves.push(this.playerPieces[i].take[j]);
+            for (let i = 0; i < this.p.pieces.length; i++){
+                this.p.pieces[i].mapLegal();
+                for (let j = 0; j < this.p.pieces[i].take.length; j++){
+                    this.playerTakeMoves.push(this.p.pieces[i].take[j]);
                 }
             }
         } else {
             this.computerTakeMoves = [];
-            for (let i = 0; i < this.computerPieces.length; i++){
-                this.computerPieces[i].mapLegal();
-                for (let j = 0; j < this.computerPieces[i].take.length; j++){
-                    this.computerTakeMoves.push(this.computerPieces[i].take[j]);
+            for (let i = 0; i < this.c.pieces.length; i++){
+                this.c.pieces[i].mapLegal();
+                for (let j = 0; j < this.c.pieces[i].take.length; j++){
+                    this.computerTakeMoves.push(this.c.pieces[i].take[j]);
                 }
             }
         }
@@ -658,10 +568,10 @@ class board{
     }
     isCheck(player){ // evaluate checks in a position using opposite sides taking moves
         if (player){
-            for (let i = 0; i < this.playerPieces.length; i++){
-                if (this.playerPieces[i].constructor.name == king.name){
-                    var x = this.playerPieces[i].x;
-                    var y = this.playerPieces[i].y;
+            for (let i = 0; i < this.p.pieces.length; i++){
+                if (this.p.pieces[i].constructor.name == king.name){
+                    var x = this.p.pieces[i].x;
+                    var y = this.p.pieces[i].y;
                 }
             }
             for (let i = 0; i < this.computerTakeMoves.length; i++){
@@ -670,10 +580,10 @@ class board{
                 }
             }
         } else {
-            for (let i = 0; i < this.computerPieces.length; i++){
-                if (this.computerPieces[i].constructor.name == king.name){
-                    var x = this.computerPieces[i].x;
-                    var y = this.computerPieces[i].y;
+            for (let i = 0; i < this.c.pieces.length; i++){
+                if (this.c.pieces[i].constructor.name == king.name){
+                    var x = this.c.pieces[i].x;
+                    var y = this.c.pieces[i].y;
                 }
             }
             for (let i = 0; i < this.playerTakeMoves.length; i++){
@@ -690,8 +600,8 @@ class board{
     }
     hasMoves(player){ // check if any legal moves available for any pieces to see if position is in checkmate or stalemate
         if (player){
-            for (let i = 0; i < this.playerPieces.length; i++){
-                let piece = this.playerPieces[i];
+            for (let i = 0; i < this.p.pieces.length; i++){
+                let piece = this.p.pieces[i];
                 piece.mapLegal();
                 let originalX = piece.x;
                 let originalY = piece.y;
@@ -704,9 +614,9 @@ class board{
                     if(this.isCheck(this.playerMove) == 0){
                         if (takenPiece != 0){
                             if (piece.player){
-                                this.computerPieces.push(takenPiece);
+                                this.c.pieces.push(takenPiece);
                             } else {
-                                this.playerPieces.push(takenPiece);
+                                this.p.pieces.push(takenPiece);
                             }
                         }
                         piece.x = originalX;
@@ -715,9 +625,9 @@ class board{
                     }
                     if (takenPiece != 0){
                         if (piece.player){
-                            this.computerPieces.push(takenPiece);
+                            this.c.pieces.push(takenPiece);
                         } else {
-                            this.playerPieces.push(takenPiece);
+                            this.p.pieces.push(takenPiece);
                         }
                     }
                 }
@@ -725,8 +635,8 @@ class board{
                 piece.y = originalY;
             }
         } else {
-            for (let i = 0; i < this.computerPieces.length; i++){
-                let piece = this.computerPieces[i];
+            for (let i = 0; i < this.c.pieces.length; i++){
+                let piece = this.c.pieces[i];
                 piece.mapLegal();
                 let originalX = piece.x;
                 let originalY = piece.y;
@@ -739,9 +649,9 @@ class board{
                     if(this.isCheck(this.playerMove) == 0){
                         if (takenPiece != 0){
                             if (piece.player){
-                                this.computerPieces.push(takenPiece);
+                                this.c.pieces.push(takenPiece);
                             } else {
-                                this.playerPieces.push(takenPiece);
+                                this.p.pieces.push(takenPiece);
                             }
                         }
                         piece.x = originalX;
@@ -750,9 +660,9 @@ class board{
                     }
                     if (takenPiece != 0){
                         if (piece.player){
-                            this.computerPieces.push(takenPiece);
+                            this.c.pieces.push(takenPiece);
                         } else {
-                            this.playerPieces.push(takenPiece);
+                            this.p.pieces.push(takenPiece);
                         }
                     }
                 }
@@ -808,10 +718,5 @@ class board{
         } else {
             this.winnerMsg = 'you won';
         }
-    }
-    draw(){ // ends game loop and changes values to display
-        this.endMsg = 'draw agreed';
-        this.playing = false;
-        this.winnerMsg = 'draw';
     }
 }
