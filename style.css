@@ -101,7 +101,7 @@ html, body {
     text-decoration: none;
     text-transform: uppercase;
     font-size: 7vmin;
-    background-color:	#808080;
+    /*background-color:	#808080;*/
 }
 
 #inside-time{
@@ -132,7 +132,7 @@ html, body {
 
 #btn-group button{
     position: relative;
-    width: 50%;
+    width: 100%;
     float: left;
     display: table;
 }
@@ -230,7 +230,7 @@ html, body {
     color: #212529;
     text-align: center;
     white-space: nowrap;
-    background-color: #e9ecef;
+    background-color: #e9ecef; 
     border: 1px solid #ced4da;
     border-radius: 0.25rem;
     margin:2.5px;

@@ -67,13 +67,13 @@ class king extends pieces{
         }
         if (kingVal){
             
-            this.legal.push([this.x + 2, this.y]);
-            returnMsg.push([this.x + 2, this.y]);
+            this.legal.push([this.x + this.board.castleDir * 2, this.y]);
+            returnMsg.push([this.x + this.board.castleDir * 2, this.y]);
         }
         if (queenVal){
 
-            this.legal.push([this.x - 2, this.y]);
-            returnMsg.push([this.x - 2, this.y]);
+            this.legal.push([this.x - this.board.castleDir * 2, this.y]);
+            returnMsg.push([this.x - this.board.castleDir * 2, this.y]);
         }
         return returnMsg;
     }
@@ -81,12 +81,12 @@ class king extends pieces{
         if (this.moved == true){
             return false;
         }
-        if (this.board.pieceAt(this.x + 1, this.y, this.player) != 'null' || this.board.pieceAt(this.x + 2, this.y, this.player) != 'null'){
+        if (this.board.pieceAt(this.x + this.board.castleDir * 1, this.y, this.player) != 'null' || this.board.pieceAt(this.x + this.board.castleDir * 2, this.y, this.player) != 'null'){
             return false;
         }
         if (this.player){
             for (let i = 0; i < this.board.p.pieces.length; i++){
-                if (this.board.p.pieces[i].x == this.x + 3 && this.board.p.pieces[i].y == this.y){
+                if (this.board.p.pieces[i].x == this.x + this.board.castleDir * 3 && this.board.p.pieces[i].y == this.y){
                     let piece = this.board.p.pieces[i];
                     if (piece.constructor.name == rook.name){
                         if (piece.moved == false){
@@ -97,7 +97,7 @@ class king extends pieces{
             }
         } else {
             for (let i = 0; i < this.board.c.pieces.length; i++){
-                if (this.board.c.pieces[i].x == this.x + 3 && this.board.c.pieces[i].y == this.y){
+                if (this.board.c.pieces[i].x == this.x + this.board.castleDir * 3 && this.board.c.pieces[i].y == this.y){
                     let piece = this.board.c.pieces[i];
                     if (piece.constructor.name == rook.name){
                         if (piece.moved == false){
@@ -113,12 +113,12 @@ class king extends pieces{
         if (this.moved == true){
             return false;
         }
-        if (this.board.pieceAt(this.x - 1, this.y, this.player) != 'null' || this.board.pieceAt(this.x - 2, this.y, this.player) != 'null' || this.board.pieceAt(this.x - 3, this.y, this.player) != 'null'){
+        if (this.board.pieceAt(this.x - this.board.castleDir * 1, this.y, this.player) != 'null' || this.board.pieceAt(this.x - this.board.castleDir * 2, this.y, this.player) != 'null' || this.board.pieceAt(this.x - this.board.castleDir * 3, this.y, this.player) != 'null'){
             return false;
         }
         if (this.player){
             for (let i = 0; i < this.board.p.pieces.length; i++){
-                if (this.board.p.pieces[i].x == this.x - 4 && this.board.p.pieces[i].y == this.y){
+                if (this.board.p.pieces[i].x == this.x - this.board.castleDir * 4 && this.board.p.pieces[i].y == this.y){
                     let piece = this.board.p.pieces[i];
                     if (piece.constructor.name == rook.name){
                         if (piece.moved == false){
@@ -129,7 +129,7 @@ class king extends pieces{
             }
         } else {
             for (let i = 0; i < this.board.c.pieces.length; i++){
-                if (this.board.c.pieces[i].x == this.x - 4 && this.board.c.pieces[i].y == this.y){
+                if (this.board.c.pieces[i].x == this.x - this.board.castleDir * 4 && this.board.c.pieces[i].y == this.y){
                     let piece = this.board.c.pieces[i];
                     if (piece.constructor.name == rook.name){
                         if (piece.moved == false){

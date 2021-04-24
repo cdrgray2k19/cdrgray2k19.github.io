@@ -48,11 +48,6 @@ function addEvtListeners(){
         b.resign()
     });
 
-    /*let drawBtn = document.querySelector('#draw'); // listen for draw
-    drawBtn.addEventListener('click', function(){
-        b.draw();
-    });*/
-
     let queenButton = document.querySelector('#qReplace');
     let rookButton = document.querySelector('#rReplace');
     let bishopButton = document.querySelector('#bReplace');

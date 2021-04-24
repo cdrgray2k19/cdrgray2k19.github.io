@@ -14,9 +14,16 @@ class board{
         this.p = new player(this);
         this.c = new computer(this);
 
-        this.playerMove = true;
+        this.playerMove = false;
 
-        this.isPlayerWhite = true;
+        this.isPlayerWhite = false;
+
+        if (this.isPlayerWhite){ // reverses coordinates tested if player at bottom with black pieces
+            this.castleDir = 1;
+        } else {
+            this.castleDir = -1;
+        }
+
         this.mouse = []; // stores array of x,y position in canvas
         this.movingPiece = 0; // stores piece information if cliked on, else it stores 0 to indicate no pieces have been clicked on
         this.originalX = 0; // stores oringinal position of currently moving piecs
@@ -56,7 +63,7 @@ class board{
         }
 
         if (!this.playerMove){
-            this.c.randomMove();
+            this.c.move();
         }
     }
     // good
@@ -109,9 +116,9 @@ class board{
         this.squares = [];
         let val = 0
         if (this.isPlayerWhite){
-            val = 0;
-        } else {
             val = 1;
+        } else {
+            val = 0;
         }
         for (let x = 0; x < 8; x++){
             for (let y = 0; y < 8; y++){
@@ -155,8 +162,8 @@ class board{
     }
     // good
     createPieces(){ // add peices to piece arrays
-        //let FENcode = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'; // starting position
-        let FENcode = 'r2qkbnr/pP1bpppp/n/8/8/8/PPPP1PPP/RNBQKBNR';
+        //let FENcode = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'; // starting position white bottom
+        let FENcode = 'RNBKQBNR/PPPPPPPP/8/8/8/8/pppppppp/rnbkqbnr'; // starting position black bottom
         let x = 0;
         let y = 0;
         let white = 0;
@@ -214,6 +221,51 @@ class board{
         }
     }
 
+    createFen(){
+        let allPieces = this.p.pieces.concat(this.c.pieces);
+        let empty = 0;
+        let text = '';
+        let fen = '';
+        for (let y = 0; y < 8; y++){
+            for (let x = 0; x < 8; x++){
+                let piece = this.posGet(x, y, allPieces);
+                if (piece != 0){
+                    if (empty > 0){
+                        fen += String(empty);
+                        empty = 0;
+                    }
+                    if (piece.text != ''){
+                        text = piece.text;
+                    } else{
+                        text = piece.displayedText;
+                    }
+                    if (!piece.white){
+                        text = text.toLowerCase();
+                    }
+                    fen += text;
+                } else {
+                    empty += 1;
+                }
+            }
+            if (empty > 0){
+                fen += String(empty);
+                empty = 0;
+            }
+            if (y < 7){
+                fen += '/';
+            }
+        }
+        return fen;
+    }
+
+    posGet(x, y, allPieces){
+        for (let i = 0; i < allPieces.length; i++){
+            if (allPieces[i].x == x && allPieces[i].y == y){
+                return allPieces[i];
+            }
+        }
+        return 0;
+    }
 
     // ish good
     pieceUpdateLegal(){ // reference mapLegal which gets legal depending on rules and other pieces and then add checking logic to the moves
@@ -236,9 +288,9 @@ class board{
                 continue;
             
             } else if (this.msg[0] == 'enP-left' || this.msg[0] == 'enP-right' && this.inArr([this.movingPiece.x, this.movingPiece.y], this.msg)){
-                takenPiece = this.pieceTake(this.movingPiece.x, this.originalY, this.movingPiece.white);
+                takenPiece = this.pieceTake(this.movingPiece.x, this.originalY, this.movingPiece.player);
             }else{
-                takenPiece = this.pieceTake(this.movingPiece.x, this.movingPiece.y, this.movingPiece.white);
+                takenPiece = this.pieceTake(this.movingPiece.x, this.movingPiece.y, this.movingPiece.player);
             }
             this.updateTakeArr(!this.playerMove) // update opposite color available taking moves
             if(this.isCheck(this.playerMove) == 0){
@@ -252,14 +304,12 @@ class board{
                 }
             }
         }
-
         this.movingPiece.legal = arr2; // change legal array to new check legal array
         this.movingPiece.x = this.originalX; // change x and y position back
         this.movingPiece.y = this.originalY;
     }
 
     castle(){
-        let holdX = this.movingPiece.x;
         if (this.originalX - this.movingPiece.x == 2){
             //queen side castle
             if(this.inCheck){
@@ -272,7 +322,6 @@ class board{
                     return false;
                 }
             }
-            //return [holdX, this.movingPiece.y];
             return true;
         } else if (this.originalX - this.movingPiece.x == -2){
             //king side castle
@@ -286,7 +335,6 @@ class board{
                     return false;
                 }
             }
-            //return [holdX, this.movingPiece.y];
             return true;
         }
     }
@@ -375,18 +423,20 @@ class board{
     }
     msgHandle(){ // handle notation and move differently if special move
         if (this.msg[0] == 'castle' && (this.inArr([this.movingPiece.x, this.movingPiece.y], this.msg))){ // gets rook and moves it to otherside of king
-            if (this.movingPiece.x - this.originalX == 2){    
+            if (this.movingPiece.x - this.originalX == this.castleDir * 2){    
                 let piece = this.getRook(true);
-                piece.x = this.movingPiece.x - 1;
+                piece.x = this.movingPiece.x - this.castleDir * 1;
                 piece.moved = true;
                 this.notation = 'O-O';
-            } else if (this.movingPiece.x - this.originalX == -2){
+            } else if (this.movingPiece.x - this.originalX == this.castleDir * -2){
                 let piece = this.getRook(false);
-                piece.x = this.movingPiece.x + 1;
+                piece.x = this.movingPiece.x + this.castleDir * 1;
                 piece.moved = true;
                 this.notation = 'O-O-O';
             }
+        
         } else if (this.msg[0] == 'enP-left' || this.msg[0] == 'enP-right' && (this.inArr([this.movingPiece.x, this.movingPiece.y], this.msg))){ // takes piece to the side of the pawn not diagonally
+            
             let takenPiece = this.pieceTake(this.movingPiece.x, this.originalY, this.movingPiece.player);
             let el = document.createElement('img');
             el.className = 'takenPieces';
@@ -399,6 +449,7 @@ class board{
             this.notation = 'x' + this.letters[this.movingPiece.x] + String(8-this.movingPiece.y) + 'e.p.';
             
         } else {
+            
             this.notation = this.movingPiece.text;
             let takenPiece = this.pieceTake(this.movingPiece.x, this.movingPiece.y, this.movingPiece.player)
             if (takenPiece != 0){
@@ -413,19 +464,28 @@ class board{
                 this.notation += 'x';
             }
             this.notation += this.letters[this.movingPiece.x] + String(8-this.movingPiece.y);
+        
         }
     }
     getRook(king){ // castle kingside or queenside
+        let kingRookX, queenRookX;
+        if (this.castleDir == 1){
+            kingRookX = 7;
+            queenRookX = 0;
+        } else {
+            kingRookX = 0;
+            queenRookX = 7;
+        }
         if (king){
             if (this.playerMove){
                 for (let i = 0; i < this.p.pieces.length; i++){
-                    if (this.p.pieces[i].x == 7 && this.p.pieces[i].y == this.movingPiece.y){
+                    if (this.p.pieces[i].x == kingRookX && this.p.pieces[i].y == this.movingPiece.y){
                         return this.p.pieces[i];
                     }
                 }
             } else {
                 for (let i = 0; i < this.c.pieces.length; i++){
-                    if (this.c.pieces[i].x == 7 && this.c.pieces[i].y == this.movingPiece.y){
+                    if (this.c.pieces[i].x == kingRookX && this.c.pieces[i].y == this.movingPiece.y){
                         return this.c.pieces[i];
                     }
                 }
@@ -433,13 +493,13 @@ class board{
         } else {
             if (this.playerMove){
                 for (let i = 0; i < this.p.pieces.length; i++){
-                    if (this.p.pieces[i].x == 0 && this.p.pieces[i].y == this.movingPiece.y){
+                    if (this.p.pieces[i].x == queenRookX && this.p.pieces[i].y == this.movingPiece.y){
                         return this.p.pieces[i];
                     }
                 }
             } else {
                 for (let i = 0; i < this.c.pieces.length; i++){
-                    if (this.c.pieces[i].x == 0 && this.c.pieces[i].y == this.movingPiece.y){
+                    if (this.c.pieces[i].x == queenRookX && this.c.pieces[i].y == this.movingPiece.y){
                         return this.c.pieces[i];
                     }
                 }
@@ -497,17 +557,24 @@ class board{
         }
 
         let element = document.createElement('li');
-        if (!this.playerMove){ //append notation to correct html element
-            document.querySelector('#white-moves').appendChild(element);
+        if (this.isPlayerWhite){
+            if (!this.playerMove){ //append notation to correct html element
+                document.querySelector('#white-moves').appendChild(element);
+            } else {
+                document.querySelector('#black-moves').appendChild(element);
+            }
         } else {
-            document.querySelector('#black-moves').appendChild(element);
+            if (!this.playerMove){ //append notation to correct html element
+                document.querySelector('#black-moves').appendChild(element);
+            } else {
+                document.querySelector('#white-moves').appendChild(element);
+            }
         }
 
         element.innerHTML += this.notation;
         this.updateScroll(); //make scroll of notation div to lowest to show most recent moves          
             
-        let hasMoves = this.hasMoves(this.playerMove);
-
+        let hasMoves = this.hasMoves();
         if(checkValue != 0){ // check new color for checks before anything else
             let x = checkValue[0];
             let y = checkValue[1];
@@ -598,78 +665,30 @@ class board{
         let div = document.querySelector('#notation-board');
         div.scrollTop = div.scrollHeight;
     }
-    hasMoves(player){ // check if any legal moves available for any pieces to see if position is in checkmate or stalemate
-        if (player){
+    hasMoves(){ // check if any legal moves available for any pieces to see if position is in checkmate or stalemate
+        if (this.playerMove){
             for (let i = 0; i < this.p.pieces.length; i++){
-                let piece = this.p.pieces[i];
-                piece.mapLegal();
-                let originalX = piece.x;
-                let originalY = piece.y;
-                let arr = piece.legal;
-                for(let i = 0; i < arr.length;i++){
-                    piece.x = arr[i][0];
-                    piece.y = arr[i][1];
-                    let takenPiece = this.pieceTake(piece.x, piece.y, piece.player);
-                    this.updateTakeArr(!this.playerMove)
-                    if(this.isCheck(this.playerMove) == 0){
-                        if (takenPiece != 0){
-                            if (piece.player){
-                                this.c.pieces.push(takenPiece);
-                            } else {
-                                this.p.pieces.push(takenPiece);
-                            }
-                        }
-                        piece.x = originalX;
-                        piece.y = originalY;
-                        return true
-                    }
-                    if (takenPiece != 0){
-                        if (piece.player){
-                            this.c.pieces.push(takenPiece);
-                        } else {
-                            this.p.pieces.push(takenPiece);
-                        }
-                    }
+                this.movingPiece = this.p.pieces[i];
+                this.pieceUpdateLegal();
+                if (this.movingPiece.legal.length > 0){
+                    this.movingPiece = 0;
+                    this.msg = 0;
+                    return true;
                 }
-                piece.x = originalX;
-                piece.y = originalY;
             }
         } else {
             for (let i = 0; i < this.c.pieces.length; i++){
-                let piece = this.c.pieces[i];
-                piece.mapLegal();
-                let originalX = piece.x;
-                let originalY = piece.y;
-                let arr = piece.legal;
-                for(let i = 0; i < arr.length;i++){
-                    piece.x = arr[i][0];
-                    piece.y = arr[i][1];
-                    let takenPiece = this.pieceTake(piece.x, piece.y, piece.player);
-                    this.updateTakeArr(!this.playerMove)
-                    if(this.isCheck(this.playerMove) == 0){
-                        if (takenPiece != 0){
-                            if (piece.player){
-                                this.c.pieces.push(takenPiece);
-                            } else {
-                                this.p.pieces.push(takenPiece);
-                            }
-                        }
-                        piece.x = originalX;
-                        piece.y = originalY;
-                        return true
-                    }
-                    if (takenPiece != 0){
-                        if (piece.player){
-                            this.c.pieces.push(takenPiece);
-                        } else {
-                            this.p.pieces.push(takenPiece);
-                        }
-                    }
+                this.movingPiece = this.c.pieces[i];
+                this.pieceUpdateLegal();
+                if (this.movingPiece.legal.length > 0){
+                    this.movingPiece = 0;
+                    this.msg = 0;
+                    return true;
                 }
-                piece.x = originalX;
-                piece.y = originalY;
             }
         }
+        this.movingPiece = 0;
+        this.msg = 0;
         return false;
     }
     timeHandle(){ // gets time between last reading and changes html values accordingly
@@ -713,10 +732,6 @@ class board{
     resign(){ // ends game loop and changes values to display
         this.endMsg = 'resignation';
         this.playing = false;
-        if (this.playerMove){
-            this.winnerMsg = 'computer won';
-        } else {
-            this.winnerMsg = 'you won';
-        }
+        this.winnerMsg = 'computer won';
     }
 }

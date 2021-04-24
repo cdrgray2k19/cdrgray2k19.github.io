@@ -47,7 +47,7 @@ class player{ // add functions which will use general function in board.js to mo
             if (this.promotionHandle() == false){
                 this.board.completeMove();
                 if (this.board.playing){
-                    this.board.c.randomMove();
+                    this.board.c.move();
                 }
             }
         } else {
@@ -59,7 +59,6 @@ class player{ // add functions which will use general function in board.js to mo
     promotionHandle(){ // handles promotion notation and logic
         if (this.board.movingPiece.text == '' && (this.board.movingPiece.y == 0 || this.board.movingPiece.y == 7)){
             document.querySelector('#replacement').style.display = "block";
-            console.log(this.pieces);
             return true;
         }
         return false;
@@ -70,7 +69,7 @@ class player{ // add functions which will use general function in board.js to mo
         document.getElementById("replacement").style.display = "none";
         this.board.completeMove();
         if (this.board.playing){
-            this.board.c.randomMove();
+            this.board.c.move();
         }
     }
 }
