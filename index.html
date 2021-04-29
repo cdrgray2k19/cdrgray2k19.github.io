@@ -14,24 +14,23 @@
       <h6>Charlie Gray + Andrew Chan</h6>
       <form id='firstGameForm'>
           <div id="starting-times">
-        <input id='firstGameWhiteClock' placeholder="white time (seconds)" type="number" required/>
-        <input id='firstGameBlackClock' placeholder="black time (seconds)" type="number" required/>
+        <input id='firstGamePlayerClock' placeholder="player time (seconds)" type="number" required/>
+        <input id='firstGameComputerClock' placeholder="computer time (seconds)" type="number" required/>
         <button class='startFirstGame' type="submit">play</button>
           </div>
       </form>
     </div>
     <div id='playingElements' class='hidden'>
-      <div id='blackTakenPieces'>
+      <div id='computerTakenPieces'>
 
       </div>
       <canvas id='c' width="640" height="640"></canvas>
-      <div id='whiteTakenPieces'>
+      <div id='playerTakenPieces'>
 
       </div>
       <div id='infoBox'>
         <div id='btn-group'>
           <button id='resign'>resign</button>
-          <button id='draw'>draw</button>
         </div>
         
         <p id='infoTxt'>moves:</p>
@@ -52,8 +51,8 @@
         <p id='winnerMsg'>Error</p>
         <div id='timeOption' class='hidden'>
           <form id='newGameForm'>
-            <input id='whiteTimeInput' placeholder="white time (seconds)" required/>
-            <input id='blackTimeInput' placeholder="black time (seconds)" required/>
+            <input id='playerTimeInput' placeholder="player time (seconds)" required/>
+            <input id='computerTimeInput' placeholder="computer time (seconds)" required/>
             <br>
             <button id='playNewGame' type="submit">play</button>
           </form>
@@ -61,9 +60,9 @@
       </div>
       <div id='time'>
         <div id='inside-time'>
-            <p id='blackTime' class='waiting'></p>
+            <p id='computerTime' class='waiting'></p>
             <p id='clockDivision'>-----------</p>
-            <p id='whiteTime' class='moving'></p>
+            <p id='playerTime' class='moving'></p>
         </div>
       </div>
     </div>
@@ -80,8 +79,10 @@
                 </div>
               </div>
     </div>
-    <script src="pieces.js"></script>
-    <script src="board.js"></script>
-    <script src="script.js"></script>
+    <script src="JS/pieces.js"></script>
+    <script src="JS/player.js"></script>
+    <script src="JS/computer.js"></script>
+    <script src="JS/board.js"></script>
+    <script src="JS/main.js"></script>
   </body>
 </html>
