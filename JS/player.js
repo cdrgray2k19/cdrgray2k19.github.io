@@ -8,7 +8,7 @@ class player{ // add functions which will use general function in board.js to mo
             let piece = this.pieces[i];
             if (piece.x == Math.floor(this.board.mouse[0]/(this.board.canvas_width/8)) && piece.y == Math.floor(this.board.mouse[1]/(this.board.canvas_width/8))){
                 this.board.movingPiece = piece;
-                this.board.pieceUpdateLegal();
+                this.board.pieceUpdateLegal(this.board.movingPiece);
                 this.showLegal();
             }
         }

@@ -1,7 +1,9 @@
 class computer{ // add functions which will use general function in board.js to move AI
     constructor(board){ // need to use functions which will allow computer to move, then change variables, hangle msgs, update take arr, scan for check, checkmate, and stalemate
         this.board = board;
+        this.depth = 2;
         this.pieces = [];
+        this.val = 0;
     }
     move(){
         let move = this.pickPiece();
@@ -22,56 +24,50 @@ class computer{ // add functions which will use general function in board.js to 
 
     }
     pickPiece(){
-        let values = []
-        this.t = new tree(1, this);
-        for (let child of this.t.masterNode.children){
-            values.push(child.val);
-        }
-        let max = 0;
-        for (let i = 0; i < values.length; i++){
-            let v = values[i]
-            if (i == 0){
-                max = v;
-            } else {
-                if (this.board.isPlayerWhite){
-                    if (v < max){
-                        max = v
-                    }
-                } else {
-                    if (v > max){
-                        max = v
-                    }
-                }
-            }
-        }
-        let index, node;
-        let currentMax = this.t.masterNode.val;
-        if (max == currentMax){
+        this.t = new tree(this.depth, this);
+        //let current = evalPos(this.t.masterNode.fen);
+        //let best = this.t.masterNode.fen;
+        let n;
+        /*if (best == current){
             let possibleNodes = [];
             for (let child of this.t.masterNode.children){
                 if (child.val == currentMax){
                     possibleNodes.push(child);
                 }
             }
-            index = Math.floor(Math.random() * possibleNodes.length);
-            node = possibleNodes[index];
+            let index = Math.floor(Math.random() * possibleNodes.length);
+            console.log(index);
+            n = possibleNodes[index];
         } else {
-            index = values.indexOf(max);
-            node = this.t.masterNode.children[index];
+            let index = this.t.masterNode.children.indexOf(this.t.masterNode.val);
+            console.log(index);
+            n = this.t.masterNode.children[index];
+        }*/
+        let values = [];
+        for (let child of this.t.masterNode.children){
+            values.push(child.val);
         }
-        this.board.movingPiece = node.piece;
-        return [node.x, node.y];
+        let index = values.indexOf(this.t.masterNode.val);
+        n = this.t.masterNode.children[index];
+
+        this.board.movingPiece = n.piece;
+        return [n.x, n.y];
     }
 }
 class node{
-    constructor(fen, computer, x, y, piece){
+    constructor(fen, computer, x = 0, y = 0, piece = 0, originalX = 0, originalY = 0, takenPiece = 0, parent = 0){
         this.fen = fen;
         this.c = computer;
         this.x = x;
         this.y = y;
         this.piece = piece;
-        this.val = evalPos(this.fen);
+        this.originalX = originalX;
+        this.originalY = originalY;
+        this.takenPiece = takenPiece;
+        //this.val = evalPos(this.fen);
+        this.val = 0;
         this.children = [];
+        this.parent = parent;
     }
 }
 
@@ -80,24 +76,93 @@ class tree{
         this.depth = depth;
         this.c = computer;
         this.masterNode = new node(this.c.board.createFen(), this.c);
-        for (let piece of this.c.pieces){
-            let x = piece.x;
-            let y = piece.y;
-            this.c.board.movingPiece = piece;
-            this.c.board.pieceUpdateLegal();
-            for (let move of this.c.board.movingPiece.legal){
-                this.c.board.movingPiece.x = move[0];
-                this.c.board.movingPiece.y = move[1];
-                let takenPiece = this.c.board.pieceTake(move[0], move[1], piece.player);
-                this.masterNode.children.push(new node(this.c.board.createFen(), this.c, move[0], move[1], piece));
-                if (takenPiece!=0){
-                    this.c.board.p.pieces.push(takenPiece);
+        this.depthFunc(this.depth, this.masterNode);
+        console.log(this.c.val);
+    }
+
+    depthFunc(depth, parent){
+        if (depth == 0){
+            let n = parent;
+            n.val = evalPos(n.fen);
+            this.reMove(n);
+            this.c.val += 1; // for testing
+        } else {
+            let arr, takenPiece;
+            if ((this.depth-depth) % 2 == 0){
+                arr = this.c.pieces;
+            } else {
+                arr = this.c.board.p.pieces;
+            }
+            for (let piece of arr){
+                let x = piece.x;
+                let y = piece.y;
+                //this.c.board.movingPiece = piece;
+                this.c.board.pieceUpdateLegal(piece);
+                for (let move of piece.legal){
+                    //this.c.board.movingPiece = piece;
+                    piece.x = move[0];
+                    piece.y = move[1];
+                    takenPiece = this.c.board.pieceTake(move[0], move[1], piece.player);
+                    let n = new node(this.c.board.createFen(), this.c, move[0], move[1], piece, x, y, takenPiece, parent)
+                    parent.children.push(n);
+                    this.depthFunc(depth-1, n);
+                }
+                piece.x = x;
+                piece.y = y;
+                let values = [];
+                for (let child of parent.children){
+                    values.push(child.val)
+                }
+                if ((this.depth - depth)%2 == 0){
+                    parent.val = this.getMin(values);
+                } else {
+                    parent.val = this.getMax(values);
                 }
             }
-            this.c.board.movingPiece.x = x;
-            this.c.board.movingPiece.y = y;
+            
         }
-        this.c.board.movingPiece = 0;
+    }
+
+    getMax(arr){
+        let max = 0;
+        for (let i = 0; i < arr.length; i++){
+            if (i == 0){
+                max = arr[i];
+            } else {
+                if (arr[i] > max){
+                    max = arr[i];
+                }
+            }
+        }
+        return max
+    }
+
+    getMin(arr){
+        let min = 0;
+        for (let i = 0; i < arr.length; i++){
+            if (i == 0){
+                min = arr[i];
+            } else {
+                if (arr[i] < min){
+                    min = arr[i];
+                }
+            }
+        }
+        return min
+    }
+    
+    reMove(parent){
+        let piece = parent.piece;
+        piece.x = parent.originalX;
+        piece.y = parent.originalY;
+        let takenPiece = parent.takenPiece;
+        if (takenPiece != 0){
+            if (takenPiece.player){
+                this.c.board.p.pieces.push(takenPiece);
+            } else {
+                this.c.pieces.push(takenPiece);
+            }
+        }
     }
 }
 

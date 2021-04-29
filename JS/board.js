@@ -268,68 +268,69 @@ class board{
     }
 
     // ish good
-    pieceUpdateLegal(){ // reference mapLegal which gets legal depending on rules and other pieces and then add checking logic to the moves
-        this.msg = this.movingPiece.mapLegal(); // get legal moves depending on board and store msg which stores any other info about the legal moves
+    pieceUpdateLegal(piece){ // reference mapLegal which gets legal depending on rules and other pieces and then add checking logic to the moves
+        console.log(piece);
+        this.msg = piece.mapLegal(); // get legal moves depending on board and store msg which stores any other info about the legal moves
         if (this.msg == []){
             this.msg = [0];
         }
-        this.originalX = this.movingPiece.x; // store original x and y positoin
-        this.originalY = this.movingPiece.y;
-        let arr = this.movingPiece.legal; // make it easier to manipulate array
+        this.originalX = piece.x; // store original x and y positoin
+        this.originalY = piece.y;
+        let arr = piece.legal; // make it easier to manipulate array
         let arr2 = []; // open array to store legal moves after checks analysed
         let takenPiece = 0; // temporarily holds a taken piece to evaluate boards for checks so it can be pushed back into array
         for(let i = 0; i < arr.length;i++){
-            this.movingPiece.x = arr[i][0]; // temporarily move pieces
-            this.movingPiece.y = arr[i][1]; // temporarily move pieces
-            if (this.msg[0] == 'castle' && this.inArr([this.movingPiece.x, this.movingPiece.y], this.msg)){ // if the message is not an empty string then legalise the moves differently
-                if(this.castle()){
+            piece.x = arr[i][0]; // temporarily move pieces
+            piece.y = arr[i][1]; // temporarily move pieces
+            if (this.msg[0] == 'castle' && this.inArr([piece.x, piece.y], this.msg)){ // if the message is not an empty string then legalise the moves differently
+                if(this.castle(piece)){
                     arr2.push([arr[i][0], arr[i][1]]);
                 }
                 continue;
             
-            } else if (this.msg[0] == 'enP-left' || this.msg[0] == 'enP-right' && this.inArr([this.movingPiece.x, this.movingPiece.y], this.msg)){
-                takenPiece = this.pieceTake(this.movingPiece.x, this.originalY, this.movingPiece.player);
+            } else if (this.msg[0] == 'enP-left' || this.msg[0] == 'enP-right' && this.inArr([piece.x, piece.y], this.msg)){
+                takenPiece = this.pieceTake(piece.x, this.originalY, piece.player);
             }else{
-                takenPiece = this.pieceTake(this.movingPiece.x, this.movingPiece.y, this.movingPiece.player);
+                takenPiece = this.pieceTake(piece.x, piece.y, piece.player);
             }
             this.updateTakeArr(!this.playerMove) // update opposite color available taking moves
             if(this.isCheck(this.playerMove) == 0){
                 arr2.push([arr[i][0], arr[i][1]]); // if no checks are found for this move then append to new legal moves array
             }
             if (takenPiece != 0){ // if piece was taken, now the evaluation of the board is done the piece can be pushed back into the nescessary array to be stored on the board
-                if (this.movingPiece.player){
+                if (piece.player){
                     this.c.pieces.push(takenPiece);
                 } else {
                     this.p.pieces.push(takenPiece);
                 }
             }
         }
-        this.movingPiece.legal = arr2; // change legal array to new check legal array
-        this.movingPiece.x = this.originalX; // change x and y position back
-        this.movingPiece.y = this.originalY;
+        piece.legal = arr2; // change legal array to new check legal array
+        piece.x = this.originalX; // change x and y position back
+        piece.y = this.originalY;
     }
 
-    castle(){
-        if (this.originalX - this.movingPiece.x == 2){
+    castle(piece){
+        if (this.originalX - piece.x == 2){
             //queen side castle
             if(this.inCheck){
                 return false;
             }
             for (let i = 1; i<3; i++){
-                this.movingPiece.x = this.originalX - i;
+                piece.x = this.originalX - i;
                 this.updateTakeArr(!this.playerMove);
                 if (this.isCheck(this.playerMove) != 0){
                     return false;
                 }
             }
             return true;
-        } else if (this.originalX - this.movingPiece.x == -2){
+        } else if (this.originalX - piece.x == -2){
             //king side castle
             if(this.inCheck){
                 return false;
             }
             for (let i = 1; i<3; i++){
-                this.movingPiece.x = this.originalX + i;
+                piece.x = this.originalX + i;
                 this.updateTakeArr(!this.playerMove);
                 if (this.isCheck(this.playerMove) != 0){
                     return false;
@@ -669,7 +670,7 @@ class board{
         if (this.playerMove){
             for (let i = 0; i < this.p.pieces.length; i++){
                 this.movingPiece = this.p.pieces[i];
-                this.pieceUpdateLegal();
+                this.pieceUpdateLegal(this.movingPiece);
                 if (this.movingPiece.legal.length > 0){
                     this.movingPiece = 0;
                     this.msg = 0;
@@ -679,7 +680,7 @@ class board{
         } else {
             for (let i = 0; i < this.c.pieces.length; i++){
                 this.movingPiece = this.c.pieces[i];
-                this.pieceUpdateLegal();
+                this.pieceUpdateLegal(this.movingPiece);
                 if (this.movingPiece.legal.length > 0){
                     this.movingPiece = 0;
                     this.msg = 0;
