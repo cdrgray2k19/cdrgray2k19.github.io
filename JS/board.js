@@ -269,7 +269,6 @@ class board{
 
     // ish good
     pieceUpdateLegal(piece){ // reference mapLegal which gets legal depending on rules and other pieces and then add checking logic to the moves
-        console.log(piece);
         this.msg = piece.mapLegal(); // get legal moves depending on board and store msg which stores any other info about the legal moves
         if (this.msg == []){
             this.msg = [0];
