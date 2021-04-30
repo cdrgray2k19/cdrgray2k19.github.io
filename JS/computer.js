@@ -25,31 +25,16 @@ class computer{ // add functions which will use general function in board.js to 
     }
     pickPiece(){
         this.t = new tree(this.depth, this);
-        //let current = evalPos(this.t.masterNode.fen);
-        //let best = this.t.masterNode.fen;
-        let n;
-        /*if (best == current){
-            let possibleNodes = [];
-            for (let child of this.t.masterNode.children){
-                if (child.val == currentMax){
-                    possibleNodes.push(child);
-                }
-            }
-            let index = Math.floor(Math.random() * possibleNodes.length);
-            console.log(index);
-            n = possibleNodes[index];
-        } else {
-            let index = this.t.masterNode.children.indexOf(this.t.masterNode.val);
-            console.log(index);
-            n = this.t.masterNode.children[index];
-        }*/
-        let values = [];
+        let best = this.t.masterNode.val;
+        let possibleNodes = [];
         for (let child of this.t.masterNode.children){
-            values.push(child.val);
+            if (child.val == best){
+                possibleNodes.push(child);
+            }
         }
-        let index = values.indexOf(this.t.masterNode.val);
-        n = this.t.masterNode.children[index];
-
+        let index = Math.floor(Math.random() * possibleNodes.length);
+        let n = possibleNodes[index];
+        
         this.board.movingPiece = n.piece;
         return [n.x, n.y];
     }
@@ -84,7 +69,6 @@ class tree{
         if (depth == 0){
             let n = parent;
             n.val = evalPos(n.fen);
-            this.reMove(n);
             this.c.val += 1; // for testing
         } else {
             let arr, takenPiece;
@@ -96,27 +80,32 @@ class tree{
             for (let piece of arr){
                 let x = piece.x;
                 let y = piece.y;
-                //this.c.board.movingPiece = piece;
                 this.c.board.pieceUpdateLegal(piece);
                 for (let move of piece.legal){
-                    //this.c.board.movingPiece = piece;
                     piece.x = move[0];
                     piece.y = move[1];
                     takenPiece = this.c.board.pieceTake(move[0], move[1], piece.player);
                     let n = new node(this.c.board.createFen(), this.c, move[0], move[1], piece, x, y, takenPiece, parent)
                     parent.children.push(n);
                     this.depthFunc(depth-1, n);
+                    this.reMove(n)
                 }
-                piece.x = x;
-                piece.y = y;
                 let values = [];
                 for (let child of parent.children){
                     values.push(child.val)
                 }
                 if ((this.depth - depth)%2 == 0){
-                    parent.val = this.getMin(values);
+                    if (this.c.board.playerIswhite){
+                        parent.val = this.getMin(values);
+                    } else {
+                        parent.val = this.getMax(values);
+                    }
                 } else {
-                    parent.val = this.getMax(values);
+                    if (this.c.board.playerIswhite){
+                        parent.val = this.getMax(values);
+                    } else {
+                        parent.val = this.getMin(values);
+                    }
                 }
             }
             
@@ -151,11 +140,11 @@ class tree{
         return min
     }
     
-    reMove(parent){
-        let piece = parent.piece;
-        piece.x = parent.originalX;
-        piece.y = parent.originalY;
-        let takenPiece = parent.takenPiece;
+    reMove(node){
+        let piece = node.piece;
+        piece.x = node.originalX;
+        piece.y = node.originalY;
+        let takenPiece = node.takenPiece;
         if (takenPiece != 0){
             if (takenPiece.player){
                 this.c.board.p.pieces.push(takenPiece);
