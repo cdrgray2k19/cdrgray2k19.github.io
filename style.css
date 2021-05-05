@@ -186,8 +186,8 @@ html, body {
 
 #btn-group button{
     position: relative;
-    width: 100%;
-    float: left;
+    width: 70%;
+    left:12%;
     display: table;
 }
 
