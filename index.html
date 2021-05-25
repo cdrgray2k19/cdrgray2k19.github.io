@@ -13,11 +13,21 @@
       <h1>Chess</h1>
       <h6>Charlie Gray + Andrew Chan</h6>
       <form id='firstGameForm'>
-          <div id="starting-times">
-        <input id='firstGamePlayerClock' placeholder="player time (seconds)" type="number" required/>
-        <input id='firstGameComputerClock' placeholder="computer time (seconds)" type="number" required/>
+        <div id="starting-times">
+          <input id='firstGameComputerClock' placeholder="AI time (seconds)" type="number" required/>
+          <input id='firstGamePlayerClock' placeholder="your time (seconds)" type="number" required/>
+        </div>
+        
+        <div id='sliderBox'>
+          <p id='sliderTextBlack'>Black</p>
+          <label class="switch">
+            <input id='sliderInput' type="checkbox">
+            <span class="slider round"></span>
+          </label>
+          <p id='sliderTextWhite'>White</p>
+        </div>
+        <br>
         <button class='startFirstGame' type="submit">play</button>
-          </div>
       </form>
     </div>
     <div id='playingElements' class='hidden'>
@@ -51,10 +61,10 @@
         <p id='winnerMsg'>Error</p>
         <div id='timeOption' class='hidden'>
           <form id='newGameForm'>
-            <input id='playerTimeInput' placeholder="player time (seconds)" required/>
-            <input id='computerTimeInput' placeholder="computer time (seconds)" required/>
+            <input id='computerTimeInput' placeholder="AI time (seconds)" required/>
+            <input id='playerTimeInput' placeholder="your time (seconds)" required/>
             <br>
-            <button id='playNewGame' type="submit">play</button>
+            <button id='playNewGame' type="submit">restart</button>
           </form>
         </div>
       </div>
@@ -78,6 +88,7 @@
                     <button class="startFirstGame" id='kReplace'>Knight</button>
                 </div>
               </div>
+        </div>
     </div>
     <script src="JS/pieces.js"></script>
     <script src="JS/player.js"></script>

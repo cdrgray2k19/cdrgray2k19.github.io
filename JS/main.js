@@ -4,7 +4,14 @@ function game(){
     document.querySelector('#playingElements').className = 'shown';
     let playerTimeVal = document.querySelector('#firstGamePlayerClock').value;
     let computerTimeVal = document.querySelector('#firstGameComputerClock').value;
-    addBoard(playerTimeVal, computerTimeVal);
+    let white = document.querySelector('#sliderInput')
+    if (white.checked){
+        white = true;
+    } else {
+        white = false;
+    }
+
+    addBoard(playerTimeVal, computerTimeVal, white);
 
     addEvtListeners();
 
@@ -12,8 +19,8 @@ function game(){
 
 }
 
-function addBoard(pTime, cTime){
-    b = new board(); // creates new board
+function addBoard(pTime, cTime, white){
+    b = new board(white); // creates new board
     b.playerTime = pTime;
     b.computerTime = cTime;
     b.initTime();
@@ -99,20 +106,23 @@ function newGame(){ // display box at end with info and wait for use to play aga
     let div = document.querySelector('#timeOption');
     div.className = 'shown';
     let playBtn = document.querySelector('#newGameForm');
-    document.querySelector('#playerTimeInput').value = '';
-    document.querySelector('#computerTimeInput').value = '';
+    /*document.querySelector('#playerTimeInput').value = '';
+    */document.querySelector('#computerTimeInput').value = '';
     playBtn.addEventListener('submit', function(evt){
         evt.preventDefault();
-        let playerTimeVal = document.querySelector('#playerTimeInput').value;
-        let computerTimeVal = document.querySelector('#computerTimeInput').value;
+        /*let playerTimeVal = document.querySelector('#playerTimeInput').value;
+        let computerTimeVal = document.querySelector('#computerTimeInput').value;*/
         b.endMsgBox.className = 'hidden';
         div.className = 'hidden';
         document.querySelector('#white-moves').innerHTML = "";
         document.querySelector('#black-moves').innerHTML = "";
         document.querySelector('#computerTakenPieces').innerHTML = "";
         document.querySelector('#playerTakenPieces').innerHTML = "";
-        addBoard(playerTimeVal, computerTimeVal);
-        frame();
+        //addBoard(playerTimeVal, computerTimeVal);
+        document.querySelector('#welcomeElements').className = 'shown';
+        document.querySelector('#playingElements').className = 'hidden';
+        wait();
+        //frame();
     });
 }
 

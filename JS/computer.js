@@ -49,7 +49,6 @@ class node{
         this.originalX = originalX;
         this.originalY = originalY;
         this.takenPiece = takenPiece;
-        //this.val = evalPos(this.fen);
         this.val = 0;
         this.children = [];
         this.parent = parent;
@@ -63,12 +62,13 @@ class tree{
         this.masterNode = new node(this.c.board.createFen(), this.c);
         this.depthFunc(this.depth, this.masterNode);
         console.log(this.c.val);
+        console.log(this.masterNode);
     }
 
     depthFunc(depth, parent){
         if (depth == 0){
             let n = parent;
-            n.val = evalPos(n.fen);
+            n.val = (evalPos(n.fen));
             this.c.val += 1; // for testing
         } else {
             let arr, takenPiece;
@@ -96,15 +96,15 @@ class tree{
                 }
                 if ((this.depth - depth)%2 == 0){
                     if (this.c.board.playerIswhite){
-                        parent.val = this.getMin(values);
-                    } else {
                         parent.val = this.getMax(values);
+                    } else {
+                        parent.val = this.getMin(values);
                     }
                 } else {
                     if (this.c.board.playerIswhite){
-                        parent.val = this.getMax(values);
-                    } else {
                         parent.val = this.getMin(values);
+                    } else {
+                        parent.val = this.getMax(values);
                     }
                 }
             }
