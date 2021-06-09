@@ -104,22 +104,22 @@ class tree{
                 }
             }
             let values = [];
-                for (let child of parent.children){
-                    values.push(child.val)
-                }
-                if ((this.depth - depth)%2 == 0){
-                    if (this.c.board.isPlayerWhite){
-                        parent.val = this.getMin(values);
-                    } else {
-                        parent.val = this.getMax(values);
-                    }
+            for (let child of parent.children){
+                values.push(child.val)
+            }
+            if ((this.depth - depth)%2 == 0){
+                if (this.c.board.isPlayerWhite){
+                    parent.val = this.getMin(values);
                 } else {
-                    if (this.c.board.isPlayerWhite){
-                        parent.val = this.getMax(values);
-                    } else {
-                        parent.val = this.getMin(values);
-                    }
-                }  
+                    parent.val = this.getMax(values);
+                }
+            } else {
+                if (this.c.board.isPlayerWhite){
+                    parent.val = this.getMax(values);
+                } else {
+                    parent.val = this.getMin(values);
+                }
+            }  
         }
     }
 
