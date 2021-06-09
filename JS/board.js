@@ -455,7 +455,11 @@ class board{
             } else {
                 document.querySelector('#playerTakenPieces').appendChild(el);
             }
-            this.notation = 'x' + this.letters[this.movingPiece.x] + String(8-this.movingPiece.y) + 'e.p.';
+            if (this.isPlayerWhite){
+                this.notation = 'x' + this.letters[this.movingPiece.x] + String(8-this.movingPiece.y) + 'e.p.';
+            } else {
+                this.notation = 'x' + this.letters[7 - this.movingPiece.x ] + String(this.movingPiece.y + 1) + 'e.p.';
+            }
             
         } else {
             
@@ -472,7 +476,11 @@ class board{
                 }
                 this.notation += 'x';
             }
-            this.notation += this.letters[this.movingPiece.x] + String(8-this.movingPiece.y);
+            if (this.isPlayerWhite){
+                this.notation += this.letters[this.movingPiece.x] + String(8-this.movingPiece.y);
+            } else {
+                this.notation += this.letters[7 - this.movingPiece.x] + String(this.movingPiece.y + 1);
+            }
         
         }
     }
@@ -528,6 +536,7 @@ class board{
             for(let i = 0; i < this.p.pieces.length; i++){
                 if (this.p.pieces[i].x == x && this.p.pieces[i].y == y){
                     let piece = this.p.pieces[i];
+                    console.log(i);
                     this.p.pieces.splice(i, 1);
                     return piece;
                 }

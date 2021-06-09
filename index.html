@@ -9,13 +9,13 @@
     <link href="style.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
-    <div id='welcomeElements' class='shown'>
+    <div id='startElements' class='shown'>
       <h1>Chess</h1>
       <h6>Charlie Gray + Andrew Chan</h6>
       <form id='firstGameForm'>
         <div id="starting-times">
-          <input id='firstGameComputerClock' placeholder="AI time (seconds)" type="number" required/>
-          <input id='firstGamePlayerClock' placeholder="your time (seconds)" type="number" required/>
+          <input id='firstGameComputerClock' placeholder="AI time (seconds)" type="number" min=1 required/>
+          <input id='firstGamePlayerClock' placeholder="your time (seconds)" type="number" min=1 required/>
         </div>
         
         <div id='sliderBox'>
@@ -59,14 +59,7 @@
       <div id='canvasMsgBox' class='hidden'>
         <p id='endMsg'>Error</p>
         <p id='winnerMsg'>Error</p>
-        <div id='timeOption' class='hidden'>
-          <form id='newGameForm'>
-            <input id='computerTimeInput' placeholder="AI time (seconds)" required/>
-            <input id='playerTimeInput' placeholder="your time (seconds)" required/>
-            <br>
-            <button id='playNewGame' type="submit">restart</button>
-          </form>
-        </div>
+        <button id='restartGame' type="submit">restart</button>
       </div>
       <div id='time'>
         <div id='inside-time'>
