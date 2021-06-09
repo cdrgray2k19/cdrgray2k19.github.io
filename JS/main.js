@@ -1,19 +1,26 @@
 function game(){
     
-    document.querySelector('#welcomeElements').className = 'hidden';
+    document.querySelector('#startElements').className = 'hidden';
     document.querySelector('#playingElements').className = 'shown';
     let playerTimeVal = document.querySelector('#firstGamePlayerClock').value;
     let computerTimeVal = document.querySelector('#firstGameComputerClock').value;
-    addBoard(playerTimeVal, computerTimeVal);
+    let white = document.querySelector('#sliderInput')
+    if (white.checked){
+        white = true;
+    } else {
+        white = false;
+    }
+
+    addBoard(playerTimeVal, computerTimeVal, white);
 
     addEvtListeners();
-
+    
     frame();
 
 }
 
-function addBoard(pTime, cTime){
-    b = new board(); // creates new board
+function addBoard(pTime, cTime, white){
+    b = new board(white); // creates new board
     b.playerTime = pTime;
     b.computerTime = cTime;
     b.initTime();
@@ -21,6 +28,7 @@ function addBoard(pTime, cTime){
 
 function addEvtListeners(){
     window.addEventListener('resize', function(){
+        'resize';
         b.resizeCanvas();
     });
 
@@ -96,23 +104,10 @@ function newGame(){ // display box at end with info and wait for use to play aga
     document.querySelector('#endMsg').innerHTML = b.endMsg;
     document.querySelector('#winnerMsg').innerHTML = b.winnerMsg;
     b.endMsgBox.className = 'shown';
-    let div = document.querySelector('#timeOption');
-    div.className = 'shown';
-    let playBtn = document.querySelector('#newGameForm');
-    document.querySelector('#playerTimeInput').value = '';
-    document.querySelector('#computerTimeInput').value = '';
-    playBtn.addEventListener('submit', function(evt){
+    let playBtn = document.querySelector('#restartGame');
+    playBtn.addEventListener('click', function(evt){
         evt.preventDefault();
-        let playerTimeVal = document.querySelector('#playerTimeInput').value;
-        let computerTimeVal = document.querySelector('#computerTimeInput').value;
-        b.endMsgBox.className = 'hidden';
-        div.className = 'hidden';
-        document.querySelector('#white-moves').innerHTML = "";
-        document.querySelector('#black-moves').innerHTML = "";
-        document.querySelector('#computerTakenPieces').innerHTML = "";
-        document.querySelector('#playerTakenPieces').innerHTML = "";
-        addBoard(playerTimeVal, computerTimeVal);
-        frame();
+        location.reload();//just reloaded the page to start a new game but may have to create a function to reinitilaise the board
     });
 }
 
@@ -122,5 +117,4 @@ function wait(){
         game();
     });
 }
-
 window.onload = wait;

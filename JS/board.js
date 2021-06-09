@@ -1,5 +1,5 @@
 class board{
-    constructor(){
+    constructor(playerWhite){
         this.playing = true;
         /* canvas initialisation*/
         this.canvas = document.querySelector('#c');
@@ -14,9 +14,14 @@ class board{
         this.p = new player(this);
         this.c = new computer(this);
 
-        this.playerMove = false;
 
-        this.isPlayerWhite = false;
+        this.isPlayerWhite = playerWhite;
+
+        if (this.isPlayerWhite){
+            this.playerMove = true;
+        } else {
+            this.playerMove = false;
+        }
 
         if (this.isPlayerWhite){ // reverses coordinates tested if player at bottom with black pieces
             this.castleDir = 1;
@@ -66,7 +71,7 @@ class board{
             this.c.move();
         }
     }
-    // good
+
     resizeCanvas(){
         this.canvas_width = (window.innerWidth) * 0.7; // resize canvas to 0.7 of the minimum measurement
         this.canvas_height = (window.innerHeight) * 0.7;
@@ -82,7 +87,7 @@ class board{
         this.canvas.style.width = '' + String(this.canvas_width) + 'px';
         this.canvas.style.height = '' + String(this.canvas_height) + 'px';
     }
-    // good
+
     initTime(){
         let value = Math.floor(this.playerTime); // display time
         let min = Math.floor(value/60);
@@ -101,7 +106,6 @@ class board{
         document.querySelector('#computerTime').innerHTML = String(min) + ":" + String(sec);
     }
     
-    // good
     inArr(arr1, arr2){ // had problem comparing 2d array values so made this function which has a very general application
         for (let i = 0; i < arr2.length; i++){
             if(arr1[0] == arr2[i][0] && arr1[1] == arr2[i][1]){
@@ -111,18 +115,11 @@ class board{
         return false;
     }
 
-    // good
     createGrid(){ // go through an 8 by 8 2d array which stores the square color and coordinate color of the square
         this.squares = [];
-        let val = 0
-        if (this.isPlayerWhite){
-            val = 1;
-        } else {
-            val = 0;
-        }
         for (let x = 0; x < 8; x++){
             for (let y = 0; y < 8; y++){
-                if ((x+y) % 2 == val){
+                if ((x+y) % 2 == 0){
                     var block_num = this.lightSqCol;
                     var coord_num = this.darkSqCol;
                 } else {
@@ -136,8 +133,9 @@ class board{
             }
         }
     }
-    // good
+
     drawGrid(){ // go through this.squares and draw each depending on their dictionary values
+        let value;
         for (let x = 0; x < 8; x++){
             for (let y = 0; y < 8; y++){
 
@@ -148,22 +146,34 @@ class board{
                 if (x == 0){
                     this.ctx.fillStyle = color_coord;
                     this.ctx.font = this.smallFont;
-                    let value = 8 - y;
+                    if (this.isPlayerWhite){
+                        value = 8 - y;
+                    } else {
+                        value = y + 1;
+                    }
                     this.ctx.fillText(String(value), x * this.sqSize, y * this.sqSize + this.sqSize/6);
                 }
                 if (y == 7){
                     this.ctx.fillStyle = color_coord;
                     this.ctx.font = this.smallFont;
-                    let value = this.letters[x];
+                    if (this.isPlayerWhite){
+                        value = this.letters[x];
+                    } else {
+                        value = this.letters[7-x];
+                    }
                     this.ctx.fillText(value, x * this.sqSize + this.sqSize * 9/10, y * this.sqSize + this.sqSize* 14/15);
                 }
             }
         }
     }
-    // good
+
     createPieces(){ // add peices to piece arrays
-        //let FENcode = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'; // starting position white bottom
-        let FENcode = 'RNBKQBNR/PPPPPPPP/8/8/8/8/pppppppp/rnbkqbnr'; // starting position black bottom
+        let FENcode;
+        if (this.isPlayerWhite){
+            FENcode = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'; // starting position white bottom
+        } else {
+            FENcode = 'RNBKQBNR/PPPPPPPP/8/8/8/8/pppppppp/rnbkqbnr'; // starting position black bottom
+        }
         let x = 0;
         let y = 0;
         let white = 0;
@@ -210,7 +220,7 @@ class board{
             x += 1;
         }
     }
-    // good
+
     drawPieces(){ // reference display function of all pieces in arrays
         this.ctx.font = this.bigFont;
         for (let i = 0; i < this.p.pieces.length; i++){
@@ -267,7 +277,6 @@ class board{
         return 0;
     }
 
-    // ish good
     pieceUpdateLegal(piece){ // reference mapLegal which gets legal depending on rules and other pieces and then add checking logic to the moves
         this.msg = piece.mapLegal(); // get legal moves depending on board and store msg which stores any other info about the legal moves
         if (this.msg == []){
@@ -338,7 +347,7 @@ class board{
             return true;
         }
     }
-    // good
+
     pieceAt(x, y, player){ // returns true if a friendly piece in square, false if enemy piece on square, and 'null' if no pieces on square
 
         for (let i = 0; i < this.p.pieces.length; i++){
@@ -362,7 +371,7 @@ class board{
         }
         return 'null';
     }
-    // good
+
     canMove(){
         let x = Math.floor(this.mouse[0]/(this.canvas_width/8)); // evaluate board coordinates of mouse position
         let y = Math.floor(this.mouse[1]/(this.canvas_width/8));
@@ -391,7 +400,7 @@ class board{
             this.squares[x][y].coord = this.changedCoordCol;
         }
     }
-    // try and add each loop to each specific player or computer script
+
     movingVariableHandle(){ // if justmoved and moved variables apply to piece, change as needed
         if (this.playerMove){
             for (let i = 0; i < this.p.pieces.length; i++){
@@ -446,7 +455,11 @@ class board{
             } else {
                 document.querySelector('#playerTakenPieces').appendChild(el);
             }
-            this.notation = 'x' + this.letters[this.movingPiece.x] + String(8-this.movingPiece.y) + 'e.p.';
+            if (this.isPlayerWhite){
+                this.notation = 'x' + this.letters[this.movingPiece.x] + String(8-this.movingPiece.y) + 'e.p.';
+            } else {
+                this.notation = 'x' + this.letters[7 - this.movingPiece.x ] + String(this.movingPiece.y + 1) + 'e.p.';
+            }
             
         } else {
             
@@ -463,7 +476,11 @@ class board{
                 }
                 this.notation += 'x';
             }
-            this.notation += this.letters[this.movingPiece.x] + String(8-this.movingPiece.y);
+            if (this.isPlayerWhite){
+                this.notation += this.letters[this.movingPiece.x] + String(8-this.movingPiece.y);
+            } else {
+                this.notation += this.letters[7 - this.movingPiece.x] + String(this.movingPiece.y + 1);
+            }
         
         }
     }
@@ -519,6 +536,7 @@ class board{
             for(let i = 0; i < this.p.pieces.length; i++){
                 if (this.p.pieces[i].x == x && this.p.pieces[i].y == y){
                     let piece = this.p.pieces[i];
+                    console.log(i);
                     this.p.pieces.splice(i, 1);
                     return piece;
                 }

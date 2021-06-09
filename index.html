@@ -9,15 +9,25 @@
     <link href="style.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
-    <div id='welcomeElements' class='shown'>
+    <div id='startElements' class='shown'>
       <h1>Chess</h1>
       <h6>Charlie Gray + Andrew Chan</h6>
       <form id='firstGameForm'>
-          <div id="starting-times">
-        <input id='firstGamePlayerClock' placeholder="player time (seconds)" type="number" required/>
-        <input id='firstGameComputerClock' placeholder="computer time (seconds)" type="number" required/>
+        <div id="starting-times">
+          <input id='firstGameComputerClock' placeholder="AI time (seconds)" type="number" min=1 required/>
+          <input id='firstGamePlayerClock' placeholder="your time (seconds)" type="number" min=1 required/>
+        </div>
+        
+        <div id='sliderBox'>
+          <p id='sliderTextBlack'>Black</p>
+          <label class="switch">
+            <input id='sliderInput' type="checkbox">
+            <span class="slider round"></span>
+          </label>
+          <p id='sliderTextWhite'>White</p>
+        </div>
+        <br>
         <button class='startFirstGame' type="submit">play</button>
-          </div>
       </form>
     </div>
     <div id='playingElements' class='hidden'>
@@ -49,14 +59,7 @@
       <div id='canvasMsgBox' class='hidden'>
         <p id='endMsg'>Error</p>
         <p id='winnerMsg'>Error</p>
-        <div id='timeOption' class='hidden'>
-          <form id='newGameForm'>
-            <input id='playerTimeInput' placeholder="player time (seconds)" required/>
-            <input id='computerTimeInput' placeholder="computer time (seconds)" required/>
-            <br>
-            <button id='playNewGame' type="submit">play</button>
-          </form>
-        </div>
+        <button id='restartGame' type="submit">restart</button>
       </div>
       <div id='time'>
         <div id='inside-time'>
@@ -78,6 +81,7 @@
                     <button class="startFirstGame" id='kReplace'>Knight</button>
                 </div>
               </div>
+        </div>
     </div>
     <script src="JS/pieces.js"></script>
     <script src="JS/player.js"></script>
