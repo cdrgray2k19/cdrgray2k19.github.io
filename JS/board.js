@@ -433,12 +433,12 @@ class board{
     msgHandle(){ // handle notation and move differently if special move
         if (this.msg[0] == 'castle' && (this.inArr([this.movingPiece.x, this.movingPiece.y], this.msg))){ // gets rook and moves it to otherside of king
             if (this.movingPiece.x - this.originalX == this.castleDir * 2){    
-                let piece = this.getRook(true);
+                let piece = this.getRook(true, this.movingPiece.y, this.movingPiece.player);
                 piece.x = this.movingPiece.x - this.castleDir * 1;
                 piece.moved = true;
                 this.notation = 'O-O';
             } else if (this.movingPiece.x - this.originalX == this.castleDir * -2){
-                let piece = this.getRook(false);
+                let piece = this.getRook(false, this.movingPiece.y, this.movingPiece.player);
                 piece.x = this.movingPiece.x + this.castleDir * 1;
                 piece.moved = true;
                 this.notation = 'O-O-O';
@@ -484,7 +484,7 @@ class board{
         
         }
     }
-    getRook(king){ // castle kingside or queenside
+    getRook(king, y, player){ // castle kingside or queenside
         let kingRookX, queenRookX;
         if (this.castleDir == 1){
             kingRookX = 7;
@@ -494,29 +494,29 @@ class board{
             queenRookX = 7;
         }
         if (king){
-            if (this.playerMove){
+            if (player){
                 for (let i = 0; i < this.p.pieces.length; i++){
-                    if (this.p.pieces[i].x == kingRookX && this.p.pieces[i].y == this.movingPiece.y){
+                    if (this.p.pieces[i].x == kingRookX && this.p.pieces[i].y == y){
                         return this.p.pieces[i];
                     }
                 }
             } else {
                 for (let i = 0; i < this.c.pieces.length; i++){
-                    if (this.c.pieces[i].x == kingRookX && this.c.pieces[i].y == this.movingPiece.y){
+                    if (this.c.pieces[i].x == kingRookX && this.c.pieces[i].y == y){
                         return this.c.pieces[i];
                     }
                 }
             }
         } else {
-            if (this.playerMove){
+            if (player){
                 for (let i = 0; i < this.p.pieces.length; i++){
-                    if (this.p.pieces[i].x == queenRookX && this.p.pieces[i].y == this.movingPiece.y){
+                    if (this.p.pieces[i].x == queenRookX && this.p.pieces[i].y == y){
                         return this.p.pieces[i];
                     }
                 }
             } else {
                 for (let i = 0; i < this.c.pieces.length; i++){
-                    if (this.c.pieces[i].x == queenRookX && this.c.pieces[i].y == this.movingPiece.y){
+                    if (this.c.pieces[i].x == queenRookX && this.c.pieces[i].y == y){
                         return this.c.pieces[i];
                     }
                 }
@@ -536,7 +536,6 @@ class board{
             for(let i = 0; i < this.p.pieces.length; i++){
                 if (this.p.pieces[i].x == x && this.p.pieces[i].y == y){
                     let piece = this.p.pieces[i];
-                    console.log(i);
                     this.p.pieces.splice(i, 1);
                     return piece;
                 }
