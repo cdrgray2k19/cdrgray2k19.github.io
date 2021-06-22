@@ -44,7 +44,7 @@ class computer{ // add functions which will use general function in board.js to 
     }
 }
 class node{
-    constructor(fen, computer, x = 0, y = 0, piece = 0, originalX = 0, originalY = 0, takenPiece = 0, parent = 0, index = 0){
+    constructor(fen, computer, x = 0, y = 0, piece = 0, originalX = 0, originalY = 0, takenPiece = 0, parent = 0, array = []){
         this.fen = fen;
         this.c = computer;
         this.x = x;
@@ -56,7 +56,7 @@ class node{
         this.val = 0;
         this.children = [];
         this.parent = parent;
-        this.index = index;
+        this.array = array;
     }
 }
 
@@ -84,6 +84,10 @@ class tree{
                 arr = this.c.board.p.pieces;
                 altArr = this.c.pieces;
             }
+            let copy = [];
+            for (let p of altArr){
+                copy.push(p);
+            }
             for (let piece of arr){
                 let x = piece.x;
                 let y = piece.y;
@@ -91,16 +95,28 @@ class tree{
                 for (let move of piece.legal){
                     piece.x = move[0];
                     piece.y = move[1];
-                    for(let i = 0; i < altArr.length; i++){
-                        if (altArr[i].x == move[0] && altArr[i].y == move[1]){
-                            console.log(i);
+                    /*if (this.c.board.msg[0] == 'enP-left' || this.c.board.msg[0] == 'enP-right' && this.c.board.inArr([move[0], move[1]], this.c.board.msg)){
+                        takenPiece = this.c.board.pieceTake(move[0], y, piece.player);
+                        console.log('en passant');
+                    } else if (this.c.board.msg[0] == 'castle' && this.c.board.inArr([move[0], move[1]], this.c.board.msg)){
+                        let rook;
+                        if (move[0] - x == this.c.board.castleDir * 2){
+                            rook = this.c.board.getRook(true, move[1], piece.player);
+                            rook.x = piece.x - this.c.board.castleDir * 1;
+                        } else if (move[0] - x == this.c.board.castleDir * -2){
+                            rook = this.c.board.getRook(false, move[1], piece.player);
+                            rook.x = piece.x + this.c.board.castleDir * 1;
                         }
-                    }
+                        takenPiece = 'castle';
+                        console.log('castle');
+                    } else {
+                        takenPiece = this.c.board.pieceTake(move[0], move[1], piece.player);
+                    }*/
                     takenPiece = this.c.board.pieceTake(move[0], move[1], piece.player);
-                    let n = new node(this.c.board.createFen(), this.c, move[0], move[1], piece, x, y, takenPiece, parent)
-                    parent.children.push(n);
+                    let n = new node(this.c.board.createFen(), this.c, move[0], move[1], piece, x, y, takenPiece, parent, copy);
                     this.depthFunc(depth-1, n);
-                    this.reMove(n)
+                    parent.children.push(n);
+                    this.reMove(n);
                 }
             }
             let values = [];
@@ -152,19 +168,35 @@ class tree{
     }
     
     reMove(node){
+        let allPieces = this.c.board.p.pieces.concat(this.c.pieces);
         let piece = node.piece;
-        piece.x = node.originalX;
-        piece.y = node.originalY;
         let takenPiece = node.takenPiece;
         if (takenPiece != 0){
-            if (takenPiece.player){
-                this.c.board.p.pieces.splice(0, 0, takenPiece);
-                //this.c.board.p.pieces.push(takenPiece);
+            if (takenPiece == 'castle'){
+                let multiplier = (piece.x - node.originalX)/2;
+                let rook = this.c.board.posGet(piece.x - multiplier, piece.y, allPieces);
+                if (multiplier == 1){
+                    rook.x = 7;
+                } else {
+                    rook.x = 0;
+                }
             } else {
-                this.c.pieces.splice(0, 0, takenPiece);
-                //this.c.pieces.push(takenPiece);
+                let newArr;
+                if (takenPiece.player){
+                    newArr = this.c.board.p.pieces;
+                } else {
+                    newArr = this.c.pieces;
+                }
+                for (let i=0; i<node.array.length; i++){
+                    if (node.array[i] != newArr[i]){
+                        newArr.splice(i, 0, takenPiece);
+                        break;
+                    }
+                }
             }
         }
+        piece.x = node.originalX;
+        piece.y = node.originalY;
     }
 }
 
