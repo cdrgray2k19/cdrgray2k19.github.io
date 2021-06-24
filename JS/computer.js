@@ -1,7 +1,7 @@
 class computer{ // add functions which will use general function in board.js to move AI
     constructor(board){ // need to use functions which will allow computer to move, then change variables, hangle msgs, update take arr, scan for check, checkmate, and stalemate
         this.board = board;
-        this.depth = 3;
+        this.depth = 4;
         this.pieces = [];
         this.val = 0;
         this.fens = [];
