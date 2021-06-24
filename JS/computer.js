@@ -1,9 +1,10 @@
 class computer{ // add functions which will use general function in board.js to move AI
     constructor(board){ // need to use functions which will allow computer to move, then change variables, hangle msgs, update take arr, scan for check, checkmate, and stalemate
         this.board = board;
-        this.depth = 2;
+        this.depth = 3;
         this.pieces = [];
         this.val = 0;
+        this.fens = [];
     }
     move(){
         let move = this.pickPiece();
@@ -25,6 +26,16 @@ class computer{ // add functions which will use general function in board.js to 
     }
     pickPiece(){
         this.t = new tree(this.depth, this);
+        let positions = 0;
+        for (let child of this.t.masterNode.children){
+            for (let c of child.children){
+                for (let pos of c.children){
+                    positions += 1;
+                }
+            }
+            console.log(child.note + ': ' + positions)
+            positions = 0
+        }
         let values = [];
         for (let child of this.t.masterNode.children){
             values.push(child.val)
@@ -44,7 +55,7 @@ class computer{ // add functions which will use general function in board.js to 
     }
 }
 class node{
-    constructor(fen, computer, x = 0, y = 0, piece = 0, originalX = 0, originalY = 0, takenPiece = 0, parent = 0, array = []){
+    constructor(fen, computer, x = 0, y = 0, piece = 0, originalX = 0, originalY = 0, takenPiece = 0, parent = 0, array = [], note = ""){
         this.fen = fen;
         this.c = computer;
         this.x = x;
@@ -57,6 +68,7 @@ class node{
         this.children = [];
         this.parent = parent;
         this.array = array;
+        this.note = note;
     }
 }
 
@@ -68,12 +80,23 @@ class tree{
         this.depthFunc(this.depth, this.masterNode);
         console.log(this.c.val);
         console.log(this.masterNode);
+        //console.log(this.c.fens);
+        /*for (let i = 0; i<this.c.fens.length; i++){
+            for (let j = 0; j < this.c.fens.length; j++){
+                if (this.c.fens[i] == this.c.fens[j]){
+                    if (i != j){
+                        console.log('duplicate');
+                    }
+                }
+            }
+        }*/
     }
 
     depthFunc(depth, parent){
         if (depth == 0){
             let n = parent;
             n.val = (evalPos(n.fen));
+            this.c.fens.push(n.fen);
             this.c.val += 1; // for testing
         } else {
             let arr, altArr, takenPiece;
@@ -93,27 +116,49 @@ class tree{
                 let y = piece.y;
                 this.c.board.pieceUpdateLegal(piece);
                 for (let move of piece.legal){
+                    let notation = "";
                     piece.x = move[0];
                     piece.y = move[1];
-                    /*if (this.c.board.msg[0] == 'enP-left' || this.c.board.msg[0] == 'enP-right' && this.c.board.inArr([move[0], move[1]], this.c.board.msg)){
+                    if (this.c.board.isPlayerWhite){
+                        notation += this.c.board.letters[x] + String(8-y);
+                    } else {
+                        notation += this.c.board.letters[7 - x] + String(y + 1);
+                    }
+                    
+                    if (this.c.board.msg[0] == 'enP-left' || this.c.board.msg[0] == 'enP-right' && this.c.board.inArr([move[0], move[1]], this.c.board.msg)){
                         takenPiece = this.c.board.pieceTake(move[0], y, piece.player);
+                        /*if (this.c.board.isPlayerWhite){
+                            notation = 'x' + this.c.board.letters[move[0]] + String(8-move[1]) + 'e.p.';
+                        } else {
+                            notation = 'x' + this.c.board.letters[7 - move[0]] + String(move[1] + 1) + 'e.p.';
+                        }*/
                         console.log('en passant');
                     } else if (this.c.board.msg[0] == 'castle' && this.c.board.inArr([move[0], move[1]], this.c.board.msg)){
                         let rook;
                         if (move[0] - x == this.c.board.castleDir * 2){
                             rook = this.c.board.getRook(true, move[1], piece.player);
                             rook.x = piece.x - this.c.board.castleDir * 1;
+                            //notation = 'O-O';
                         } else if (move[0] - x == this.c.board.castleDir * -2){
                             rook = this.c.board.getRook(false, move[1], piece.player);
                             rook.x = piece.x + this.c.board.castleDir * 1;
+                            //notation = 'O-O-O';
                         }
                         takenPiece = 'castle';
                         console.log('castle');
                     } else {
+
                         takenPiece = this.c.board.pieceTake(move[0], move[1], piece.player);
-                    }*/
-                    takenPiece = this.c.board.pieceTake(move[0], move[1], piece.player);
-                    let n = new node(this.c.board.createFen(), this.c, move[0], move[1], piece, x, y, takenPiece, parent, copy);
+                        /*if (takenPiece != 0){
+                            notation += 'x';
+                        }*/
+                        if (this.c.board.isPlayerWhite){
+                            notation += this.c.board.letters[move[0]] + String(8-move[1]);
+                        } else {
+                            notation += this.c.board.letters[7 - move[0]] + String(move[1] + 1);
+                        }
+                    }
+                    let n = new node(this.c.board.createFen(), this.c, move[0], move[1], piece, x, y, takenPiece, parent, copy, notation);
                     this.depthFunc(depth-1, n);
                     parent.children.push(n);
                     this.reMove(n);
