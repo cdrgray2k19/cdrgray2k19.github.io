@@ -22,6 +22,7 @@ class board{
         } else {
             this.playerMove = false;
         }
+        //this.playerMove = false;
 
         if (this.isPlayerWhite){ // reverses coordinates tested if player at bottom with black pieces
             this.castleDir = 1;
@@ -401,7 +402,8 @@ class board{
         }
     }
 
-    movingVariableHandle(){ // if justmoved and moved variables apply to piece, change as needed
+    movingVariableHandle(piece){ // if justmoved and moved variables apply to piece, change as needed
+        let firstMove = false;
         if (this.playerMove){
             for (let i = 0; i < this.p.pieces.length; i++){
                 try{
@@ -422,13 +424,15 @@ class board{
 
 
         try{
-            if (this.movingPiece.moved == false){
-                this.movingPiece.moved = true; // tell pieces that need to now that they have moved
+            if (piece.moved == false){
+                piece.moved = true; // tell pieces that need to now that they have moved
+                firstMove = true;
                 try{
-                    this.movingPiece.justMoved = true;
+                    piece.justMoved = true;
                 }catch{}
             }
         }catch{}
+        return firstMove;
     }
     msgHandle(){ // handle notation and move differently if special move
         if (this.msg[0] == 'castle' && (this.inArr([this.movingPiece.x, this.movingPiece.y], this.msg))){ // gets rook and moves it to otherside of king

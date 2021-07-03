@@ -38,7 +38,7 @@ class player{ // add functions which will use general function in board.js to mo
             this.board.movingPiece.x = movePos[1];
             this.board.movingPiece.y = movePos[2];
             
-            this.board.movingVariableHandle();
+            this.board.movingVariableHandle(this.board.movingPiece);
             
             this.board.notation = '';
 

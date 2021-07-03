@@ -15,7 +15,7 @@ class computer{ // add functions which will use general function in board.js to 
         this.board.movingPiece.x = x;
         this.board.movingPiece.y = y;
 
-        this.board.movingVariableHandle(); // change piece.moved and justMoved variables
+        this.board.movingVariableHandle(this.board.movingPiece); // change piece.moved and justMoved variables
 
         this.board.notation = ''; // reset notation
 
@@ -26,16 +26,12 @@ class computer{ // add functions which will use general function in board.js to 
     }
     pickPiece(){
         this.t = new tree(this.depth, this);
-        let positions = 0;
+        /*let positions = 0;
         for (let child of this.t.masterNode.children){
-            for (let c of child.children){
-                for (let pos of c.children){
-                    positions += 1;
-                }
-            }
+            positions += 1
             console.log(child.note + ': ' + positions)
             positions = 0
-        }
+        }*/
         let values = [];
         for (let child of this.t.masterNode.children){
             values.push(child.val)
@@ -55,7 +51,7 @@ class computer{ // add functions which will use general function in board.js to 
     }
 }
 class node{
-    constructor(fen, computer, x = 0, y = 0, piece = 0, originalX = 0, originalY = 0, takenPiece = 0, parent = 0, array = [], note = ""){
+    constructor(fen, computer, x = 0, y = 0, piece = 0, originalX = 0, originalY = 0, takenPiece = 0, parent = 0, array = [], note = "", moved){
         this.fen = fen;
         this.c = computer;
         this.x = x;
@@ -69,6 +65,7 @@ class node{
         this.parent = parent;
         this.array = array;
         this.note = note;
+        this.moved = moved;
     }
 }
 
@@ -127,38 +124,29 @@ class tree{
                     
                     if (this.c.board.msg[0] == 'enP-left' || this.c.board.msg[0] == 'enP-right' && this.c.board.inArr([move[0], move[1]], this.c.board.msg)){
                         takenPiece = this.c.board.pieceTake(move[0], y, piece.player);
-                        /*if (this.c.board.isPlayerWhite){
-                            notation = 'x' + this.c.board.letters[move[0]] + String(8-move[1]) + 'e.p.';
-                        } else {
-                            notation = 'x' + this.c.board.letters[7 - move[0]] + String(move[1] + 1) + 'e.p.';
-                        }*/
                         console.log('en passant');
                     } else if (this.c.board.msg[0] == 'castle' && this.c.board.inArr([move[0], move[1]], this.c.board.msg)){
                         let rook;
                         if (move[0] - x == this.c.board.castleDir * 2){
                             rook = this.c.board.getRook(true, move[1], piece.player);
                             rook.x = piece.x - this.c.board.castleDir * 1;
-                            //notation = 'O-O';
                         } else if (move[0] - x == this.c.board.castleDir * -2){
                             rook = this.c.board.getRook(false, move[1], piece.player);
                             rook.x = piece.x + this.c.board.castleDir * 1;
-                            //notation = 'O-O-O';
                         }
                         takenPiece = 'castle';
                         console.log('castle');
                     } else {
 
                         takenPiece = this.c.board.pieceTake(move[0], move[1], piece.player);
-                        /*if (takenPiece != 0){
-                            notation += 'x';
-                        }*/
                         if (this.c.board.isPlayerWhite){
                             notation += this.c.board.letters[move[0]] + String(8-move[1]);
                         } else {
                             notation += this.c.board.letters[7 - move[0]] + String(move[1] + 1);
                         }
                     }
-                    let n = new node(this.c.board.createFen(), this.c, move[0], move[1], piece, x, y, takenPiece, parent, copy, notation);
+                    let moved = this.c.board.movingVariableHandle(piece);
+                    let n = new node(this.c.board.createFen(), this.c, move[0], move[1], piece, x, y, takenPiece, parent, copy, notation, moved);
                     this.depthFunc(depth-1, n);
                     parent.children.push(n);
                     this.reMove(n);
@@ -242,6 +230,9 @@ class tree{
         }
         piece.x = node.originalX;
         piece.y = node.originalY;
+        if (node.moved){
+            piece.moved = false;
+        }
     }
 }
 
