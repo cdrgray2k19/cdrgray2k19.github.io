@@ -1,9 +1,10 @@
+//roughly the same
 function game(){
     
     document.querySelector('#startElements').className = 'hidden';
     document.querySelector('#playingElements').className = 'shown';
-    let playerTimeVal = document.querySelector('#firstGamePlayerClock').value;
-    let computerTimeVal = document.querySelector('#firstGameComputerClock').value;
+    //let playerTimeVal = document.querySelector('#firstGamePlayerClock').value;
+    //let computerTimeVal = document.querySelector('#firstGameComputerClock').value;
     let white = document.querySelector('#sliderInput')
     if (white.checked){
         white = true;
@@ -11,7 +12,7 @@ function game(){
         white = false;
     }
 
-    addBoard(playerTimeVal, computerTimeVal, white);
+    addBoard(white);
 
     addEvtListeners();
     
@@ -19,11 +20,11 @@ function game(){
 
 }
 
-function addBoard(pTime, cTime, white){
+function addBoard(white){
     b = new board(white); // creates new board
-    b.playerTime = pTime;
-    b.computerTime = cTime;
-    b.initTime();
+    //b.playerTime = pTime;
+    //b.computerTime = cTime;
+    //b.initTime();
 }
 
 function addEvtListeners(){
@@ -51,10 +52,10 @@ function addEvtListeners(){
         };
     });
 
-    let resignBtn = document.querySelector('#resign'); // listen for resignation
+    /*let resignBtn = document.querySelector('#resign'); // listen for resignation
     resignBtn.addEventListener('click', function(){
         b.resign()
-    });
+    });*/
 
     let queenButton = document.querySelector('#qReplace');
     let rookButton = document.querySelector('#rReplace');
@@ -62,32 +63,38 @@ function addEvtListeners(){
     let knightButton = document.querySelector('#kReplace');
         
     queenButton.addEventListener('click', function(){
-        b.notation += 'Q';
-        new queen(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, true, b); // send true as computer will evaluate best and add it itself so player is always true
+        //b.notation += 'Q';
+        let i = b.p.pieces.indexOf(b.movingPiece);
+        b.p.pieces[i] = new queen(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, true, b);
+        //let piece = new queen(b.movingPiece.x + 1, b.movingPiece.y, b.movingPiece.white, true, b); // send true as computer will evaluate best and add it itself so player is always true
+        //b.movingPiece = piece;
         b.p.replaceForPiece();
     });
         
     rookButton.addEventListener('click', function(){
-        b.notation += 'R';
-        new rook(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, true, b);
+        //b.notation += 'R';
+        let i = b.p.pieces.indexOf(b.movingPiece);
+        b.p.pieces[i] = new rook(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, true, b);
         b.p.replaceForPiece();
     });
         
     bishopButton.addEventListener('click', function(){
-        b.notation += 'B';
-        new bishop(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, true, b);
+        //b.notation += 'B';
+        let i = b.p.pieces.indexOf(b.movingPiece);
+        b.p.pieces[i] = new bishop(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, true, b);
         b.p.replaceForPiece();
     });
         
     knightButton.addEventListener('click', function(){
-        b.notation += 'N';
-        new knight(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, true, b);
+        //b.notation += 'N';
+        let i = b.p.pieces.indexOf(b.movingPiece);
+        b.p.pieces[i] = new knight(b.movingPiece.x, b.movingPiece.y, b.movingPiece.white, true, b);
         b.p.replaceForPiece();
     });
 }
 
 function frame(){ // call computer if playerMove = false;
-    b.timeHandle(); // handle time each frame
+    //b.timeHandle(); // handle time each frame
     b.ctx.clearRect(0, 0, b.width, b.height); // clear board
     
     b.drawGrid(); // draw grid
@@ -117,5 +124,4 @@ function wait(){
         game();
     });
 }
-
 window.onload = wait;

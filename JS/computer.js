@@ -1,10 +1,9 @@
 class computer{ // add functions which will use general function in board.js to move AI
     constructor(board){ // need to use functions which will allow computer to move, then change variables, hangle msgs, update take arr, scan for check, checkmate, and stalemate
         this.board = board;
-        this.depth = 3;
+        this.depth = 2;
         this.pieces = [];
         this.val = 0;
-        this.fens = [];
     }
     move(){
         let move = this.pickPiece();
@@ -26,12 +25,18 @@ class computer{ // add functions which will use general function in board.js to 
     }
     pickPiece(){
         this.t = new tree(this.depth, this);
-        /*let positions = 0;
+        let positions = 0;
         for (let child of this.t.masterNode.children){
-            positions += 1
+            for (let a of child.children){
+                for (let b of a.children){
+                    for (let c of b.children){
+                        positions += 1;
+                    }
+                }
+            }
             console.log(child.note + ': ' + positions)
             positions = 0
-        }*/
+        }
         let values = [];
         for (let child of this.t.masterNode.children){
             values.push(child.val)
@@ -77,23 +82,12 @@ class tree{
         this.depthFunc(this.depth, this.masterNode);
         console.log(this.c.val);
         console.log(this.masterNode);
-        //console.log(this.c.fens);
-        /*for (let i = 0; i<this.c.fens.length; i++){
-            for (let j = 0; j < this.c.fens.length; j++){
-                if (this.c.fens[i] == this.c.fens[j]){
-                    if (i != j){
-                        console.log('duplicate');
-                    }
-                }
-            }
-        }*/
     }
 
     depthFunc(depth, parent){
         if (depth == 0){
             let n = parent;
             n.val = (evalPos(n.fen));
-            this.c.fens.push(n.fen);
             this.c.val += 1; // for testing
         } else {
             let arr, altArr, takenPiece;
@@ -112,6 +106,10 @@ class tree{
                 let x = piece.x;
                 let y = piece.y;
                 this.c.board.pieceUpdateLegal(piece);
+                /*let moveArray = [];
+                for (let m of piece.legal){
+                    moveArray.push(m)
+                }*/
                 for (let move of piece.legal){
                     let notation = "";
                     piece.x = move[0];
@@ -121,11 +119,10 @@ class tree{
                     } else {
                         notation += this.c.board.letters[7 - x] + String(y + 1);
                     }
-                    
                     if (this.c.board.msg[0] == 'enP-left' || this.c.board.msg[0] == 'enP-right' && this.c.board.inArr([move[0], move[1]], this.c.board.msg)){
                         takenPiece = this.c.board.pieceTake(move[0], y, piece.player);
                         console.log('en passant');
-                    } else if (this.c.board.msg[0] == 'castle' && this.c.board.inArr([move[0], move[1]], this.c.board.msg)){
+                    } else if (piece.text == 'K' && (Math.abs(piece.x - x) > 1)){
                         let rook;
                         if (move[0] - x == this.c.board.castleDir * 2){
                             rook = this.c.board.getRook(true, move[1], piece.player);
@@ -134,8 +131,13 @@ class tree{
                             rook = this.c.board.getRook(false, move[1], piece.player);
                             rook.x = piece.x + this.c.board.castleDir * 1;
                         }
+                        rook.moved = true;
                         takenPiece = 'castle';
-                        console.log('castle');
+                        if (arr == this.c.board.p.pieces){
+                            console.log('castle for player');
+                        } else{
+                            console.log('castle for computer');
+                        }
                     } else {
 
                         takenPiece = this.c.board.pieceTake(move[0], move[1], piece.player);
@@ -213,6 +215,8 @@ class tree{
                 } else {
                     rook.x = 0;
                 }
+                rook.moved = false;
+                //console.log('reverse castle')
             } else {
                 let newArr;
                 if (takenPiece.player){
