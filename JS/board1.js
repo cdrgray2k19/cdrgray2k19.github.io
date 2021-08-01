@@ -344,7 +344,7 @@ class board{
             if (piece.player){
                 if (y == 4){
                     if (originalY == 6){
-                        if (this.pieceAt(x - 1, y, player) == false || this.pieceAt(x + 1, y, player) == false){
+                        if (this.pieceAt(x - 1, y, piece.player) == false || this.pieceAt(x + 1, y, piece.player) == false){
                             let xTarget, yTarget;
                             if (this.isPlayerWhite){
                                 yTarget = 3;
@@ -361,7 +361,7 @@ class board{
             } else {
                 if (y == 3){
                     if (originalY == 1){
-                        if (this.pieceAt(x - 1, y, player) == false || this.pieceAt(x + 1, y, player) == false){
+                        if (this.pieceAt(x - 1, y, piece.player) == false || this.pieceAt(x + 1, y, piece.player) == false){
                             let xTarget, yTarget;
                             if (this.isPlayerWhite){
                                 yTarget = 6;
