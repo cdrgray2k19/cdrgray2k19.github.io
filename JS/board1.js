@@ -150,15 +150,15 @@ class board{
     
     createPieces(){
         //using new fen string to decide who moves
-        let string = "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1";
+        /*let string = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
         string = string.split("");
         string = string.reverse();
-        string = string.join("")
+        string = string.join("")*/
         
         if (this.isPlayerWhite){
             this.fen = {'position': 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR', 'activeCol': 'w', 'castling': 'KQkq', 'enP': '-'}; // starting position white bottom
         } else {
-            this.fen = {'position': string, 'activeCol': 'w', 'castling': '-', 'enP': '-'};
+            this.fen = {'position': 'RNBKQBNR/PPPPPPPP/8/8/8/8/pppppppp/rnbkqbnr', 'activeCol': 'w', 'castling': 'KQkq', 'enP': '-'};
         }
         let x = 0;
         let y = 0;
