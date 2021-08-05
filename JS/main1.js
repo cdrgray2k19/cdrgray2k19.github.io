@@ -16,7 +16,7 @@ function game(){
 
     addEvtListeners();
     
-    loop();
+    frame();
 
 }
 
@@ -102,15 +102,6 @@ function frame(){ // call computer if playerMove = false;
     if (b.playing){ // create new frame if playing
         requestAnimationFrame(frame);
     } else { // update messages and listen for newgame and then play submitionss
-        newGame();
-    }
-}
-
-
-function loop(board){
-    const frameWorker = new Worker('worker.js');
-    frameWorker.postMessage(board);
-    frameWorker.onmessage = function(evt){
         newGame();
     }
 }

@@ -349,8 +349,6 @@ class tree{
                     parent.val = 0;
                 }
                 parent.currentVal = parent.val;
-                this.c.val += 1;
-                parent.Apositions = 1;
             } else {
                 let values = [];
                 let numOfPositions = 0;

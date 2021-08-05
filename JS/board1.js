@@ -150,10 +150,15 @@ class board{
     
     createPieces(){
         //using new fen string to decide who moves
+        let string = "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1";
+        string = string.split("");
+        string = string.reverse();
+        string = string.join("")
+        
         if (this.isPlayerWhite){
             this.fen = {'position': 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR', 'activeCol': 'w', 'castling': 'KQkq', 'enP': '-'}; // starting position white bottom
         } else {
-            this.fen = {'position': 'RNBKQBNR/PPPPPPPP/8/8/8/8/pppppppp/rnbkqbnr', 'activeCol': 'w', 'castling': 'KQkq', 'enP': '-'};
+            this.fen = {'position': string, 'activeCol': 'w', 'castling': '-', 'enP': '-'};
         }
         let x = 0;
         let y = 0;
@@ -267,6 +272,12 @@ class board{
         }
         //need to use last move to decide about en passant and castling
         var castleRights = prevFen['castling'];
+        let yPos;
+        if (piece.player){
+            yPos = 7;
+        } else {
+            yPos = 0;
+        }
         if (piece.constructor.name == king.name){
             if(piece.white){
                 castleRights = castleRights.replaceAll('K', '');
@@ -276,7 +287,7 @@ class board{
                 castleRights = castleRights.replaceAll('q', '');
             }
         } else if (piece.constructor.name == rook.name){
-            if (originalX == 0){
+            if (originalX == 0 && originalY == yPos){
                 if (this.isPlayerWhite){
                     if (piece.white){
                         castleRights = castleRights.replaceAll('Q', '');
@@ -290,7 +301,7 @@ class board{
                         castleRights = castleRights.replaceAll('k', '');
                     }
                 }
-            } else if (originalX == 7){
+            } else if (originalX == 7 && originalY == yPos){
                 if (this.isPlayerWhite){
                     if (piece.white){
                         castleRights = castleRights.replaceAll('K', '');
@@ -306,9 +317,13 @@ class board{
                 }
             }
         }
-
+        if (takenPiece.player){
+            yPos = 7;
+        } else {
+            yPos = 0;
+        }
         if (takenPiece.constructor.name == rook.name){
-            if (takenPiece.x == 0){
+            if (takenPiece.x == 0 && takenPiece.y == yPos){
                 if (this.isPlayerWhite){
                     if (takenPiece.white){
                         castleRights = castleRights.replaceAll('Q', '');
@@ -322,7 +337,7 @@ class board{
                         castleRights = castleRights.replaceAll('k', '');
                     }
                 }
-            } else if (takenPiece.x == 7){
+            } else if (takenPiece.x == 7 && takenPiece.y == yPos){
                 if (this.isPlayerWhite){
                     if (takenPiece.white){
                         castleRights = castleRights.replaceAll('K', '');

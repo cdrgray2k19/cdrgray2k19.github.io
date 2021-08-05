@@ -82,7 +82,7 @@ class king extends pieces{
             }
             if (fen['castling'].includes('q')){
                 if (this.qCastle()){
-                    this.legal.push([this.x - (3 * this.board.castleDir), this.y, 'castle'])
+                    this.legal.push([this.x - (2 * this.board.castleDir), this.y, 'castle'])
                 }
             }
         }
@@ -507,6 +507,15 @@ class pawn extends pieces{
                 this.legal.push([this.x - 1, y, 'normal']);
                 this.take.push([this.x - 1, y, 'normal']);
             }
+        } else if (this.board.pieceAt(this.x - 1, y, this.player) == 'null'){
+            if (y == promotionY){
+                this.take.push([this.x - 1, y, 'queen']);
+                this.take.push([this.x - 1, y, 'rook']);
+                this.take.push([this.x - 1, y, 'bishop']);
+                this.take.push([this.x - 1, y, 'knight']);
+            } else {
+                this.take.push([this.x - 1, y, 'normal']);
+            }
         }
         if (this.board.pieceAt(this.x + 1, y, this.player) == false){
             if (y == promotionY){
@@ -523,6 +532,15 @@ class pawn extends pieces{
                 this.take.push([this.x + 1, y, 'normal']);
             }
             
+        } else if (this.board.pieceAt(this.x + 1, y, this.player) == 'null'){
+            if (y == promotionY){
+                this.take.push([this.x + 1, y, 'queen']);
+                this.take.push([this.x + 1, y, 'rook']);
+                this.take.push([this.x + 1, y, 'bishop']);
+                this.take.push([this.x + 1, y, 'knight']);
+            } else {
+                this.take.push([this.x + 1, y, 'normal']);
+            }
         }
 
         //write for en passant using fen

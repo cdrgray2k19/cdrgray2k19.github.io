@@ -1,5 +1,5 @@
 onmessage = function(board){
-    tick(board);
+    frame();
     postMessage('end of game');
 }
 
