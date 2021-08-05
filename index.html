@@ -13,6 +13,76 @@
       <h1>Chess</h1>
       <h6>Charlie Gray + Andrew Chan</h6>
       <form id='firstGameForm'>
+        <div id='sliderBox'>
+          <p id='sliderTextBlack'>Black</p>
+          <label class="switch">
+            <input id='sliderInput' type="checkbox">
+            <span class="slider round"></span>
+          </label>
+          <p id='sliderTextWhite'>White</p>
+        </div>
+        <br>
+        <button class='startFirstGame' type="submit">play</button>
+      </form>
+    </div>
+    <div id='playingElements' class='hidden'>
+      
+      <canvas id='c' width="640" height="640"></canvas>
+      
+      <!--<div id='infoBox'>
+        <div id='btn-group'>
+          <button id='resign'>resign</button>
+        </div>
+        
+        
+      </div>-->
+
+      
+
+      <div id='canvasMsgBox' class='hidden'>
+        <p id='endMsg'>Error</p>
+        <p id='winnerMsg'>Error</p>
+        <button id='restartGame' type="submit">restart</button>
+      </div>
+      
+    </div>
+
+    <div class="replacement" id="replacement">
+        <div class="chose-pawn-replacement">
+              <div class="modal-body">
+                <p>Please chose one of below:</p>
+                <div class="modal-buttons">
+                    <button class="startFirstGame" id='qReplace'>Queen</button>
+                    <button class="startFirstGame" id='rReplace'>Rook</button>
+                    <button class="startFirstGame" id='bReplace'>Bishop</button>
+                    <button class="startFirstGame" id='kReplace'>Knight</button>
+                </div>
+              </div>
+        </div>
+    </div>
+    <script src="JS/pieces1.js"></script>
+    <script src="JS/player1.js"></script>
+    <script src="JS/computer1.js"></script>
+    <script src="JS/board1.js"></script>
+    <script src="JS/main1.js"></script>
+  </body>
+</html>
+<!--
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Chess</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap" rel="stylesheet">
+    <link href="style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div id='startElements' class='shown'>
+      <h1>Chess</h1>
+      <h6>Charlie Gray + Andrew Chan</h6>
+      <form id='firstGameForm'>
         <div id="starting-times">
           <input id='firstGameComputerClock' placeholder="AI time (seconds)" type="number" min=1 required/>
           <input id='firstGamePlayerClock' placeholder="your time (seconds)" type="number" min=1 required/>
@@ -89,4 +159,4 @@
     <script src="JS/board.js"></script>
     <script src="JS/main.js"></script>
   </body>
-</html>
+</html>-->
