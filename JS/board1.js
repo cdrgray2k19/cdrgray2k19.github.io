@@ -694,17 +694,21 @@ class board{
         if (player){
             for (let i = 0; i < this.p.pieces.length; i++){
                 piece = this.p.pieces[i];
-                this.pieceUpdateLegal(piece, this.fen);
-                if (piece.legal.length > 0){
-                    return true;
+                if (!piece.taken){
+                    this.pieceUpdateLegal(piece, this.fen);
+                    if (piece.legal.length > 0){
+                        return true;
+                    }
                 }
             }
         } else {
             for (let i = 0; i < this.c.pieces.length; i++){
                 piece = this.c.pieces[i];
-                this.pieceUpdateLegal(piece, this.fen);
-                if (piece.legal.length > 0){
-                    return true;
+                if (!piece.taken){
+                    this.pieceUpdateLegal(piece, this.fen);
+                    if (piece.legal.length > 0){
+                        return true;
+                    }
                 }
             }
         }

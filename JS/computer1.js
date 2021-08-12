@@ -1,7 +1,7 @@
 class computer{
     constructor(board){
         this.board = board;
-        this.depth = 3;
+        this.depth = 4;
         this.pieces = [];
         this.val = 0;
     }
@@ -9,35 +9,15 @@ class computer{
     findMove(){
         this.t = new tree(this.depth, this);
         
-        let values = [];
-        for (let child of this.t.root.children){
-            values.push(child.val)
-        }
-        let best = this.t.root.val;
         let possibleNodes = [];
         for (let child of this.t.root.children){
-            if (child.val == best){
+            if (child.val == this.t.root.val){
                 possibleNodes.push(child);
             }
         }
-        let currentValues = [];
-        for (let pos of possibleNodes){
-            currentValues.push(pos.currentVal)
-        }
-        let bestVal;
-        if (this.board.isPlayerWhite){
-            bestVal = this.t.getMin(currentValues)
-        } else {
-            bestVal = this.t.getMax(currentValues)
-        }
-        let revisedNodes = [];
-        for (let pos of possibleNodes){
-            if (pos.currentVal == bestVal){
-                revisedNodes.push(pos);
-            }
-        }
-        let index = Math.floor(Math.random() * revisedNodes.length);
-        let n = revisedNodes[index];
+        //let index = Math.floor(Math.random() * revisedNodes.length);
+        let index = 0; // for testing so moves between alpha beta pruning and not can be compared
+        let n = possibleNodes[index];
         this.move(n);
     }
 
@@ -45,11 +25,11 @@ class computer{
         //move piece
         //take piece
         //reference board to complete move
-        this.board.movingPiece = node.movedPiece
+        this.board.movingPiece = node.movedPiece;
         this.board.originalX = this.board.movingPiece.x;
         this.board.originalY = this.board.movingPiece.y;
-        this.board.movingPiece.x = node.move[0]
-        this.board.movingPiece.y = node.move[1]
+        this.board.movingPiece.x = node.move[0];
+        this.board.movingPiece.y = node.move[1];
 
 
         let rookX, rookY, change;
@@ -109,20 +89,15 @@ class computer{
 }
 
 class node{
-    constructor(fen = null, originalPosition = null, parent = null, movedPiece = null, takenPiece = null, notation = null, move = null, isCheck = 0){
+    constructor(fen = null, originalPosition = null, parent = null, movedPiece = null, takenPiece = null, move = null){
         this.originalPosition = originalPosition;
         this.fen = fen;
         this.parent = parent;
         this.movedPiece = movedPiece;
         this.takenPiece = takenPiece;
-        this.notation = notation;
+        this.move = move;
         this.children = [];
         this.val = 0;
-        this.Apositions = 0;
-        this.positionChildren = [];
-        this.move = move;
-        this.isCheck = isCheck;
-        this.currentVal = evalPos(this.fen, this.isCheck); // current val allows any good moves to be made as computer was randomly stumbling upon good move order as it saw it had time - this helps it to acheive best position quicker
     }
 }
 
@@ -144,10 +119,14 @@ class tree{
         this.minimax(this.depth, this.root, maximisingPlayer, alpha, beta);
         console.log(this.root);
         console.log(this.c.val);
+        this.c.val = 0;
 
     }
     
     minimax(depth, parent, maximisingPlayer, alpha, beta){
+        
+        
+        
         //check if end of game
         let n = parent;
         try{
@@ -162,18 +141,19 @@ class tree{
                 } else {
                     n.val = 0;
                 }
-                n.currentVal = n.val;
                 if (depth == 0){
                     this.c.val += 1;
-                    n.Apositions = 1;
                 }
                 return;
             }
         } catch {}
+
+
+
+        //if end of search evaluate position
         if (depth == 0){
-            n.val = n.currentVal;
+            n.val = evalPos(n.fen);
             this.c.val += 1;
-            n.Apositions = 1;
         } else {
             let movingArr, takenPiece, rookPiece, rookX, rookY, change, tempPiece, moved;
             if ((this.depth - depth)%2 == 0){
@@ -187,9 +167,10 @@ class tree{
             } else {
                 extremeVal = Infinity;
             }
-            moved = false;
             for (let piece of movingArr){
                 if (!piece.taken){
+                    //save original position and update legal
+                    
                     let originalX = piece.x;
                     let originalY = piece.y;
                     this.c.board.pieceUpdateLegal(piece, parent.fen);
@@ -198,23 +179,11 @@ class tree{
                         legalMoves.push(m);
                     }
                     for (let move of legalMoves){
-                        if (!moved){
-                            moved = true;
-                        }
-                        let notation = '';
+                        //move piece whilst handling exception moves like castling and enP
+                        
                         let promoted = false;
                         piece.x = move[0];
                         piece.y = move[1];
-                        if (this.c.board.isPlayerWhite){
-                            notation += this.c.board.letters[originalX] + String(8-originalY);
-                        } else {
-                            notation += this.c.board.letters[7 - originalX] + String(originalY + 1);
-                        }
-                        if (this.c.board.isPlayerWhite){
-                            notation += this.c.board.letters[move[0]] + String(8-move[1]);
-                        } else {
-                            notation += this.c.board.letters[7 - move[0]] + String(move[1] + 1);
-                        }
                         let detail = move[2];
                         if (detail == 'enP'){
                             takenPiece = this.c.board.pieceTake(piece.x, originalY, piece.player);
@@ -244,7 +213,6 @@ class tree{
                                 //piece = movingArr[i];
                                 tempPiece = movingArr[i];
                                 promoted = true;
-                                notation += 'q';
                             
                             } else if (detail == 'rook'){
                                 
@@ -253,7 +221,6 @@ class tree{
                                 //piece = movingArr[i];
                                 tempPiece = movingArr[i];
                                 promoted = true;
-                                notation += 'r';
                             
                             } else if (detail == 'bishop'){
                                 
@@ -262,7 +229,6 @@ class tree{
                                 //piece = movingArr[i];
                                 tempPiece = movingArr[i];
                                 promoted = true;
-                                notation += 'b';
                             
                             } else if (detail == 'knight'){
                                 
@@ -271,7 +237,6 @@ class tree{
                                 //piece = movingArr[i];
                                 tempPiece = movingArr[i];
                                 promoted = true;
-                                notation += 'n';
                             
                             }
                             
@@ -279,24 +244,28 @@ class tree{
                             
                             takenPiece = this.c.board.pieceTake(piece.x, piece.y, piece.player);
                         }
+
+                        //create a newFen to send to child to determine moves allowed and board state
+
                         let newFen = this.c.board.createFen(parent.fen, piece, piece.x, piece.y, originalX, originalY, takenPiece);
                         let originalPosition = String(originalX) + String(originalY)
+                        //determine if in check to pass to eval func
+                        
                         this.c.board.updateTakeArr(piece.player);
                         let isCheck = 0; // returns 0 if no checks and true or false depending on which colour has checked the other with true being white
                         if (this.c.board.isCheck(!piece.player) != 0){
                             isCheck = piece.white;
                         }
-                        let n = new node(newFen, originalPosition, parent, piece, takenPiece, notation, move, isCheck);
-                        this.minimax(depth - 1, n, !maximisingPlayer, alpha, beta);
-                        if (maximisingPlayer){
-                            extremeVal = Math.max(extremeVal, n.val);
-                        } else {
-                            extremeVal = Math.min(extremeVal, n.val);
+                        //create new node and start new search
+                        let n = new node(newFen, originalPosition, parent, piece, takenPiece, move);
+                        let pruned = this.minimax(depth - 1, n, !maximisingPlayer, alpha, beta);
+
+                        if (!pruned){
+                            parent.children.push(n);
                         }
-                        parent.Apositions += 1;
-                        parent.children.push(n);
-                        parent.positionChildren.push(n.notation);
-                        parent.positionChildren.push(String(n.Apositions));
+                        
+                        //undo move for next move on this depth
+                        
                         if (detail == 'castle'){
                             rookPiece.x = rookX;
                             rookPiece.y = rookY;
@@ -306,60 +275,27 @@ class tree{
                             movingArr[i] = piece;
                         }
                         this.undoMove(n);
+
+                        //calculate if value of child node is the best move at this depth using minimax
+
+                        if (maximisingPlayer){
+                            extremeVal = Math.max(extremeVal, n.val);
+                            parent.val = extremeVal;
+                            alpha = Math.max(alpha, n.val);
+                        } else {
+                            extremeVal = Math.min(extremeVal, n.val);
+                            parent.val = extremeVal;
+                            beta = Math.min(beta, n.val);
+                        }
+                        if (beta <= alpha){
+                            //if best choice for maximiser earlier on in the tree is better or equal to the best choice for the minimizer so far then prune branch of tree without appending child to parent
+                            return true; //pruned
+                        }
                     }
                 }
             }
-            /*if (!moved){
-                this.c.board.updateTakeArr(parent.movedPiece.player) // update opposite color available taking moves
-                if(this.c.board.isCheck(!parent.movedPiece.player) != 0){
-                    if (parent.movedPiece.white){
-                        parent.val = Infinity;
-                    } else {
-                        parent.val = -Infinity
-                    }
-                } else {
-                    parent.val = 0;
-                }
-                parent.currentVal = parent.val;
-            } else {
-                
-                parent.val = extremeVal;
-            }*/
-            parent.val = extremeVal;
-            let numOfPositions = 0;
-            for (let child of parent.children){
-                numOfPositions += child.Apositions;
-            }
-            parent.Apositions = numOfPositions;
         }
-    }
-
-    getMax(arr){
-        let max = 0;
-        for (let i = 0; i < arr.length; i++){
-            if (i == 0){
-                max = arr[i];
-            } else {
-                if (arr[i] > max){
-                    max = arr[i];
-                }
-            }
-        }
-        return max
-    }
-
-    getMin(arr){
-        let min = 0;
-        for (let i = 0; i < arr.length; i++){
-            if (i == 0){
-                min = arr[i];
-            } else {
-                if (arr[i] < min){
-                    min = arr[i];
-                }
-            }
-        }
-        return min
+        return false;
     }
 
     undoMove(node){
@@ -372,7 +308,7 @@ class tree{
     }
 }
 
-function evalPos(fen, isCheck){
+function evalPos(fen){
     let fenPos = fen['position'];
     let val = 0;
     let colorFactor = 0;
@@ -403,21 +339,6 @@ function evalPos(fen, isCheck){
                 case 'p':
                     val += 10 * colorFactor
                     break;
-            }
-        }
-    }
-    if (isCheck != 0){
-        if (isCheck == true){
-            if (val > 0){
-                val *= 1.05
-            } else {
-                val /= 1.05
-            }
-        } else {
-            if (val > 0){
-                val /= 1.05
-            } else {
-                val *= 1.05
             }
         }
     }
