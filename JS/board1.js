@@ -153,7 +153,8 @@ class board{
         /*let string = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
         string = string.split("");
         string = string.reverse();
-        string = string.join("")*/
+        string = string.join("")
+        console.log(string);*/
         
         if (this.isPlayerWhite){
             this.fen = {'position': 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR', 'activeCol': 'w', 'castling': 'KQkq', 'enP': '-'}; // starting position white bottom
@@ -522,7 +523,6 @@ class board{
     }
     
     clearGrid(){
-        //changes board depending on gameplay i.e. checks and previous moves
         this.createGrid(); // remove any green legal blocks
 
         if (this.inCheck != 0){ // keep any red check blocks
@@ -574,17 +574,8 @@ class board{
     }
     
     completeMove(){
-        //updateTakeArr for other colour
-        //reset any values for next move
-        //createGrid which resets it
-        //updatePrev to show last move on board
-        //check for end of game - hasMoves
-        //------- if not end of game -----
-        //createFen() of new position which will tell next move details about board
-        //call computer of just wait for player move
         this.fen = this.createFen(this.fen, this.movingPiece, this.movingPiece.x, this.movingPiece.y, this.originalX, this.originalY, this.takenPiece);
-        this.updateTakeArr(this.playerMove)
-        
+
         this.inCheck = 0;
 
         this.prev = [];
@@ -595,6 +586,8 @@ class board{
         this.movingPiece = 0; // refresh moving piece variable for next go
         this.playerMove = !(this.playerMove); // change move color
 
+        this.updateTakeArr(!this.playerMove);
+        
         let checkValue = this.isCheck(this.playerMove);
 
         let hasMoves = this.hasMoves(this.playerMove);
@@ -612,6 +605,7 @@ class board{
                 } else {
                     this.winnerMsg = 'player wins';
                 }
+
             }
         } else {
             if(hasMoves == false){
@@ -716,14 +710,4 @@ class board{
         }
         return false;
     }
-    /*updateScroll(){ // make div scroll when new move added to notation
-        let div = document.querySelector('#notation-board');
-        div.scrollTop = div.scrollHeight;
-    }*/
-    /*resign(){ // ends game loop and changes values to display
-        this.endMsg = 'resignation';
-        this.playing = false;
-        this.winnerMsg = 'computer won';
-    }*/
-
 }

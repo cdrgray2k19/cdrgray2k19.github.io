@@ -1,12 +1,3 @@
-//nodes need move notation to work out start position and end position after move i.e. 23-53 - rook moving to the right - once again 0-7 index for x,y positions
-//nodes also need Fen position (after move made)
-//nodes need reference to parent
-//nodes need children array
-//nodes need reference to movedpiece and takenpiece
-//nodes need value
-//nodes need copy of the other colours arrray - if takenpiece is sliced and not self.taken = true
-
-
 class computer{
     constructor(board){
         this.board = board;
@@ -16,9 +7,6 @@ class computer{
     }
 
     findMove(){
-        //reference tree which will reference minimax search
-        //of all moves that are best select on randomly to show variety
-        //return a move
         this.t = new tree(this.depth, this);
         
         let values = [];
@@ -145,59 +133,25 @@ class tree{
         this.depth = depth;
         this.c = computer;
         this.root = new node(this.c.board.fen);
-        this.minimax(this.depth, this.root);
+        let maximisingPlayer;
+        if (this.c.board.isPlayerWhite){
+            maximisingPlayer = false;
+        } else {
+            maximisingPlayer = true;
+        }
+        let alpha = -Infinity;
+        let beta = Infinity;
+        this.minimax(this.depth, this.root, maximisingPlayer, alpha, beta);
         console.log(this.root);
         console.log(this.c.val);
 
     }
     
-    minimax(depth, parent){
-        /*if depth == 0
-            evaluate position and save value
-        else
-            using parent fen get array of pieces that are going to be moved
-            for each piece in the array
-                if they are not taken
-                    save original position
-                    updateLegal
-                    hardcopy move array
-                    for each move in arrary
-                        move piece to x and y position
-                        if detail is en passant
-                            takenpiece = one behind from where piece is moving to
-                        else if detail is castle
-                            if change in x is positive
-                                get rook at (7, same y position)
-                                rook goes to one left of king
-                            else
-                                get rook at (0, same y position)
-                                rook goes to 1 right of king
-                        else
-                            takenpiece is where piece is moving to
-
-                        if promotion:
-                            change to queen
-
-                        create new fen string for new node
-                        
-                        create new node with necessary info
-
-                        minimax(depth-1, new node as parent)
-
-                        push new node to parent's children array
-
-                        if detail is castle
-                            rook goes back to starting position
-                        if just promoted
-                            change piece back to pawn
-                        
-                        undoMove()
-
-        
-        */
-        if (depth == 0){
-            let n = parent;
-            this.c.board.updateTakeArr(n.movedPiece.player) // update opposite color available taking moves
+    minimax(depth, parent, maximisingPlayer, alpha, beta){
+        //check if end of game
+        let n = parent;
+        try{
+            this.c.board.updateTakeArr(n.movedPiece.player); // update opposite color available taking moves
             if (this.c.board.hasMoves(!n.movedPiece.player) == false){
                 if(this.c.board.isCheck(!n.movedPiece.player) != 0){
                     if (n.movedPiece.white){
@@ -209,9 +163,15 @@ class tree{
                     n.val = 0;
                 }
                 n.currentVal = n.val;
-            } else {
-                n.val = n.currentVal;
+                if (depth == 0){
+                    this.c.val += 1;
+                    n.Apositions = 1;
+                }
+                return;
             }
+        } catch {}
+        if (depth == 0){
+            n.val = n.currentVal;
             this.c.val += 1;
             n.Apositions = 1;
         } else {
@@ -220,6 +180,12 @@ class tree{
                 movingArr = this.c.pieces;
             } else {
                 movingArr = this.c.board.p.pieces;
+            }
+            let extremeVal;
+            if (maximisingPlayer){
+                extremeVal = -Infinity;
+            } else {
+                extremeVal = Infinity;
             }
             moved = false;
             for (let piece of movingArr){
@@ -321,7 +287,13 @@ class tree{
                             isCheck = piece.white;
                         }
                         let n = new node(newFen, originalPosition, parent, piece, takenPiece, notation, move, isCheck);
-                        this.minimax(depth - 1, n);
+                        this.minimax(depth - 1, n, !maximisingPlayer, alpha, beta);
+                        if (maximisingPlayer){
+                            extremeVal = Math.max(extremeVal, n.val);
+                        } else {
+                            extremeVal = Math.min(extremeVal, n.val);
+                        }
+                        parent.Apositions += 1;
                         parent.children.push(n);
                         parent.positionChildren.push(n.notation);
                         parent.positionChildren.push(String(n.Apositions));
@@ -337,7 +309,7 @@ class tree{
                     }
                 }
             }
-            if (!moved){
+            /*if (!moved){
                 this.c.board.updateTakeArr(parent.movedPiece.player) // update opposite color available taking moves
                 if(this.c.board.isCheck(!parent.movedPiece.player) != 0){
                     if (parent.movedPiece.white){
@@ -350,27 +322,15 @@ class tree{
                 }
                 parent.currentVal = parent.val;
             } else {
-                let values = [];
-                let numOfPositions = 0;
-                for (let child of parent.children){
-                    values.push(child.val)
-                    numOfPositions += child.Apositions;
-                }
-                parent.Apositions = numOfPositions;
-                if ((this.depth - depth)%2 == 0){
-                    if (this.c.board.isPlayerWhite){
-                        parent.val = this.getMin(values);
-                    } else {
-                        parent.val = this.getMax(values);
-                    }
-                } else {
-                    if (this.c.board.isPlayerWhite){
-                        parent.val = this.getMax(values);
-                    } else {
-                        parent.val = this.getMin(values);
-                    }
-                }
+                
+                parent.val = extremeVal;
+            }*/
+            parent.val = extremeVal;
+            let numOfPositions = 0;
+            for (let child of parent.children){
+                numOfPositions += child.Apositions;
             }
+            parent.Apositions = numOfPositions;
         }
     }
 
@@ -403,12 +363,6 @@ class tree{
     }
 
     undoMove(node){
-        /*if takenpiece != 0:
-            takenPiece.taken = false
-        
-        
-        move node.piece back to original position
-    */
         if (node.takenPiece != 0){
             node.takenPiece.taken = false
         }

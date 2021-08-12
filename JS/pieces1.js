@@ -493,53 +493,57 @@ class pawn extends pieces{
         
 
         let y = this.y + (1*dir)
-        if (this.board.pieceAt(this.x - 1, y, this.player) == false){
-            if (y == promotionY){
-                this.legal.push([this.x - 1, y, 'queen']);
-                this.legal.push([this.x - 1, y, 'rook']);
-                this.legal.push([this.x - 1, y, 'bishop']);
-                this.legal.push([this.x - 1, y, 'knight']);
-                this.take.push([this.x - 1, y, 'queen']);
-                this.take.push([this.x - 1, y, 'rook']);
-                this.take.push([this.x - 1, y, 'bishop']);
-                this.take.push([this.x - 1, y, 'knight']);
-            } else {
-                this.legal.push([this.x - 1, y, 'normal']);
-                this.take.push([this.x - 1, y, 'normal']);
-            }
-        } else if (this.board.pieceAt(this.x - 1, y, this.player) == 'null'){
-            if (y == promotionY){
-                this.take.push([this.x - 1, y, 'queen']);
-                this.take.push([this.x - 1, y, 'rook']);
-                this.take.push([this.x - 1, y, 'bishop']);
-                this.take.push([this.x - 1, y, 'knight']);
-            } else {
-                this.take.push([this.x - 1, y, 'normal']);
+        if ((this.x - 1) >= 0 && (this.x - 1) < 8 && y >= 0 && y < 8){
+            if (this.board.pieceAt(this.x - 1, y, this.player) == false){
+                if (y == promotionY){
+                    this.legal.push([this.x - 1, y, 'queen']);
+                    this.legal.push([this.x - 1, y, 'rook']);
+                    this.legal.push([this.x - 1, y, 'bishop']);
+                    this.legal.push([this.x - 1, y, 'knight']);
+                    this.take.push([this.x - 1, y, 'queen']);
+                    this.take.push([this.x - 1, y, 'rook']);
+                    this.take.push([this.x - 1, y, 'bishop']);
+                    this.take.push([this.x - 1, y, 'knight']);
+                } else {
+                    this.legal.push([this.x - 1, y, 'normal']);
+                    this.take.push([this.x - 1, y, 'normal']);
+                }
+            } else if (this.board.pieceAt(this.x - 1, y, this.player) == 'null'){
+                if (y == promotionY){
+                    this.take.push([this.x - 1, y, 'queen']);
+                    this.take.push([this.x - 1, y, 'rook']);
+                    this.take.push([this.x - 1, y, 'bishop']);
+                    this.take.push([this.x - 1, y, 'knight']);
+                } else {
+                    this.take.push([this.x - 1, y, 'normal']);
+                }
             }
         }
-        if (this.board.pieceAt(this.x + 1, y, this.player) == false){
-            if (y == promotionY){
-                this.legal.push([this.x + 1, y, 'queen']);
-                this.legal.push([this.x + 1, y, 'rook']);
-                this.legal.push([this.x + 1, y, 'bishop']);
-                this.legal.push([this.x + 1, y, 'knight']);
-                this.take.push([this.x + 1, y, 'queen']);
-                this.take.push([this.x + 1, y, 'rook']);
-                this.take.push([this.x + 1, y, 'bishop']);
-                this.take.push([this.x + 1, y, 'knight']);
-            } else {
-                this.legal.push([this.x + 1, y, 'normal']);
-                this.take.push([this.x + 1, y, 'normal']);
-            }
-            
-        } else if (this.board.pieceAt(this.x + 1, y, this.player) == 'null'){
-            if (y == promotionY){
-                this.take.push([this.x + 1, y, 'queen']);
-                this.take.push([this.x + 1, y, 'rook']);
-                this.take.push([this.x + 1, y, 'bishop']);
-                this.take.push([this.x + 1, y, 'knight']);
-            } else {
-                this.take.push([this.x + 1, y, 'normal']);
+        if ((this.x + 1) >= 0 && (this.x + 1) < 8 && y >= 0 && y < 8){
+            if (this.board.pieceAt(this.x + 1, y, this.player) == false){
+                if (y == promotionY){
+                    this.legal.push([this.x + 1, y, 'queen']);
+                    this.legal.push([this.x + 1, y, 'rook']);
+                    this.legal.push([this.x + 1, y, 'bishop']);
+                    this.legal.push([this.x + 1, y, 'knight']);
+                    this.take.push([this.x + 1, y, 'queen']);
+                    this.take.push([this.x + 1, y, 'rook']);
+                    this.take.push([this.x + 1, y, 'bishop']);
+                    this.take.push([this.x + 1, y, 'knight']);
+                } else {
+                    this.legal.push([this.x + 1, y, 'normal']);
+                    this.take.push([this.x + 1, y, 'normal']);
+                }
+                
+            } else if (this.board.pieceAt(this.x + 1, y, this.player) == 'null'){
+                if (y == promotionY){
+                    this.take.push([this.x + 1, y, 'queen']);
+                    this.take.push([this.x + 1, y, 'rook']);
+                    this.take.push([this.x + 1, y, 'bishop']);
+                    this.take.push([this.x + 1, y, 'knight']);
+                } else {
+                    this.take.push([this.x + 1, y, 'normal']);
+                }
             }
         }
 
@@ -566,59 +570,4 @@ class pawn extends pieces{
 
 
     }
-    /*diaganol(dir){ // check if pieces can take diagonally and for en passant
-        let y = this.y + (1*dir)
-        if (this.board.pieceAt(this.x - 1, y, this.player) == false){
-            this.legal.push([this.x - 1, y]);
-            this.take.push([this.x - 1, y]);
-        }
-        if (this.board.pieceAt(this.x + 1, y, this.player) == false){
-            this.legal.push([this.x + 1, y]);
-            this.take.push([this.x + 1, y]);
-        }
-        if(this.player){
-            if(this.y == 3){
-                let arr = [-1, 1];
-                for (let i = 0; i < arr.length; i++){
-                    let x = arr[i];
-                    for (let i = 0; i<this.board.c.pieces.length; i++){
-                        if (this.board.c.pieces[i].x == this.x + x && this.board.c.pieces[i].y == this.y){
-                            try{
-                                if (this.board.c.pieces[i].justMoved == true){
-                                    this.legal.push([this.x + x, this.y - 1]);
-                                    if (x == -1){
-                                        return ['enP-left', [this.x + x, this.y - 1]];
-                                    } else {
-                                        return ['enP-right', [this.x + x, this.y - 1]];
-                                    }
-                                }
-                            }catch{}
-                        }
-                    }
-                }
-            }
-        } else {
-            if(this.y == 4){
-                let arr = [-1, 1];
-                for (let i = 0; i < arr.length; i++){
-                    let x = arr[i];
-                    for (let i = 0; i<this.board.p.pieces.length; i++){
-                        if (this.board.p.pieces[i].x == this.x + x && this.board.p.pieces[i].y == this.y){
-                            try{
-                                if (this.board.p.pieces[i].justMoved == true){
-                                    this.legal.push([this.x + x, this.y + 1]);
-                                    if (x == -1){
-                                        return ['enP-left', [this.x + x, this.y + 1]];
-                                    } else {
-                                        return ['enP-right', [this.x + x, this.y + 1]];
-                                    }
-                                }
-                            }catch{}
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }*/
 }
