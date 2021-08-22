@@ -45,8 +45,8 @@ class board{
 
         this.createGrid(); // create grid and pieces and update both black and whites takeArrs to start
         this.createPieces();
-        this.updateTakeArr(this.playerMove);
-        this.updateTakeArr(!this.playerMove);
+        this.updateTakeArr(this.playerMove, this.fen);
+        this.updateTakeArr(!this.playerMove, this.fen);
 
         this.endMsgBox = document.querySelector('#canvasMsgBox'); // link html elements to javascript
         this.endMsg = '';
@@ -157,7 +157,7 @@ class board{
         console.log(string);*/
         
         if (this.isPlayerWhite){
-            this.fen = {'position': 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR', 'activeCol': 'w', 'castling': 'KQkq', 'enP': '-'}; // starting position white bottom
+            this.fen = {'position': 'r3k2r/p1ppqpb1/Bn2pnp1/3PN3/4P3/6Q1/PPPp1PpP/1K1R3R', 'activeCol': 'b', 'castling': 'kq', 'enP': '-'}; // starting position white bottom
         } else {
             this.fen = {'position': 'RNBKQBNR/PPPPPPPP/8/8/8/8/pppppppp/rnbkqbnr', 'activeCol': 'w', 'castling': 'KQkq', 'enP': '-'};
         }
@@ -407,6 +407,7 @@ class board{
         }
         return 0;
     }
+
     
     pieceUpdateLegal(piece, fen){
         //using new method of the move being [x, y, detail]
@@ -421,7 +422,7 @@ class board{
             piece.x = arr[i][0]; // temporarily move pieces
             piece.y = arr[i][1]; // temporarily move pieces
             if (arr[i][2] == 'castle'){ // if the message is not an empty string then legalise the moves differently
-                if(this.castleEval(piece, x, y)){
+                if(this.castleEval(piece, x, y, fen)){
                     arr2.push([arr[i][0], arr[i][1], arr[i][2]]);
                 }
                 continue;
@@ -431,7 +432,7 @@ class board{
             }else{
                 takenPiece = this.pieceTake(piece.x, piece.y, piece.player);
             }
-            this.updateTakeArr(!piece.player) // update opposite color available taking moves
+            this.updateTakeArr(!piece.player, fen) // update opposite color available taking moves
             if(this.isCheck(piece.player) == 0){
                 arr2.push([arr[i][0], arr[i][1], arr[i][2]]); // if no checks are found for this move then append to new legal moves array
             }
@@ -445,13 +446,13 @@ class board{
         piece.y = y;
     }
     
-    castleEval(piece, startX, startY){
+    castleEval(piece, startX, startY, fen){
         //sees if squares kings moving through are in takeArr
         let tempX = piece.x;
         let tempY = piece.y;
         piece.x = startX;
         piece.y = startY;
-        this.updateTakeArr(!piece.player) // update opposite color available taking moves
+        this.updateTakeArr(!piece.player, fen) // update opposite color available taking moves
         if(this.isCheck(piece.player) != 0){
             return false;
         }
@@ -586,11 +587,11 @@ class board{
         this.movingPiece = 0; // refresh moving piece variable for next go
         this.playerMove = !(this.playerMove); // change move color
 
-        this.updateTakeArr(!this.playerMove);
+        this.updateTakeArr(!this.playerMove, this.fen);
         
         let checkValue = this.isCheck(this.playerMove);
 
-        let hasMoves = this.hasMoves(this.playerMove);
+        let hasMoves = this.hasMoves(this.playerMove, this.fen);
         if(checkValue != 0){ // check new color for checks before anything else
             let x = checkValue[0];
             let y = checkValue[1];
@@ -616,25 +617,42 @@ class board{
         }
     }
     
-    updateTakeArr(player){
+    updateTakeArr(player, fen){
         //for each piece of chosen colour call mapLegal and reference Take Arr - this is to help with evaluating legal moves using checks next move and to see if a stalemate of checkmate has been reached
         if(player){
             this.playerTakeMoves = [];
+            this.playerPawnTakeMoves = [];
             for (let i = 0; i < this.p.pieces.length; i++){
                 if (this.p.pieces[i].taken == false){
-                    this.p.pieces[i].mapLegal(this.fen);
-                    for (let j = 0; j < this.p.pieces[i].take.length; j++){
-                        this.playerTakeMoves.push(this.p.pieces[i].take[j]);
+                    this.p.pieces[i].mapLegal(fen);
+                    if (this.p.pieces[i].constructor.name == pawn.name){
+                        for (let j = 0; j < this.p.pieces[i].take.length; j++){
+                            this.playerTakeMoves.push(this.p.pieces[i].take[j]);
+                            this.playerPawnTakeMoves.push(this.p.pieces[i].take[j]);
+                        }
+                    } else {
+                        for (let j = 0; j < this.p.pieces[i].take.length; j++){
+                            this.playerTakeMoves.push(this.p.pieces[i].take[j]);
+                        }
                     }
+
                 }
             }
         } else {
             this.computerTakeMoves = [];
+            this.computerPawnTakeMoves = [];
             for (let i = 0; i < this.c.pieces.length; i++){
                 if (this.c.pieces[i].taken == false){
-                    this.c.pieces[i].mapLegal(this.fen);
-                    for (let j = 0; j < this.c.pieces[i].take.length; j++){
-                        this.computerTakeMoves.push(this.c.pieces[i].take[j]);
+                    this.c.pieces[i].mapLegal(fen);
+                    if (this.c.pieces[i].constructor.name == pawn.name){
+                        for (let j = 0; j < this.c.pieces[i].take.length; j++){
+                            this.computerTakeMoves.push(this.c.pieces[i].take[j]);
+                            this.computerPawnTakeMoves.push(this.c.pieces[i].take[j]);
+                        }
+                    } else {
+                        for (let j = 0; j < this.c.pieces[i].take.length; j++){
+                            this.computerTakeMoves.push(this.c.pieces[i].take[j]);
+                        }
                     }
                 }
             }
@@ -688,14 +706,14 @@ class board{
         return 0;
     }
 
-    hasMoves(player){
+    hasMoves(player, fen){
         //check for stalemate and checkmate at end of move
         let piece;
         if (player){
             for (let i = 0; i < this.p.pieces.length; i++){
                 piece = this.p.pieces[i];
                 if (!piece.taken){
-                    this.pieceUpdateLegal(piece, this.fen);
+                    this.pieceUpdateLegal(piece, fen);
                     if (piece.legal.length > 0){
                         return true;
                     }
@@ -705,7 +723,7 @@ class board{
             for (let i = 0; i < this.c.pieces.length; i++){
                 piece = this.c.pieces[i];
                 if (!piece.taken){
-                    this.pieceUpdateLegal(piece, this.fen);
+                    this.pieceUpdateLegal(piece, fen);
                     if (piece.legal.length > 0){
                         return true;
                     }
@@ -713,5 +731,22 @@ class board{
             }
         }
         return false;
+    }
+    getPieceVal(piece){
+        if (piece.constructor.name == king.name){
+            return 900;
+        } else if (piece.constructor.name == queen.name){
+            return 90;
+        } else if (piece.constructor.name == rook.name){
+            return 50;
+        } else if (piece.constructor.name == bishop.name){
+            return 30;
+        } else if (piece.constructor.name == knight.name){
+            return 30;
+        } else if (piece.constructor.name == pawn.name){
+            return 10;
+        } else {
+            return null;
+        }
     }
 }
