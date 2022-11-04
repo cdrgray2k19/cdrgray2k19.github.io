@@ -151,7 +151,7 @@ class tree{
                 if (takenPiece != 0){ // if piece is captured by move
                     captureOrCheckMove = true;
                     let takenPieceVal = this.c.board.getPieceVal(takenPiece);
-                    moveScore += 5 * (takenPieceVal - pieceVal); // capturing pieces of greater value more likely to be a good move - this is a massive factor so will mulitply by 5 to emphasise its leveradge
+                    moveScore += Math.max(5 * takenPieceVal - pieceVal, 0);
                 }
                 
                 let detail = move[2];
@@ -164,11 +164,13 @@ class tree{
                     moveScore += 30;
                 }
 
-                this.c.board.updateTakeArr(piece.player, parent.fen);
-                if (this.c.board.isCheck(!piece.player) != 0){
+                if (move[3]){
                     captureOrCheckMove = true;
                     moveScore += 10;
                 }
+                move.splice(3, 1);
+
+                
 
                 if (onlyCapOrCheck){
                     if (!captureOrCheckMove){
@@ -178,7 +180,7 @@ class tree{
 
                 for(let i = 0; i<pawnTakes.length; i++){
                     if (pawnTakes[i][0] == move[0] && pawnTakes[i][1] == move[1]){
-                        moveScore -= 10;
+                        moveScore -= pieceVal;
                     }
                 }
 
@@ -186,7 +188,7 @@ class tree{
                 move.push(piece.x);
                 move.push(piece.y);
 
-                move.push(moveScore)
+                move.push(moveScore);
                 moves.push(move);
             }
         }
@@ -195,11 +197,11 @@ class tree{
     
     search(depth, parent, maximisingPlayer, alpha, beta, computer){
         
-        let movingArr, takenPiece, rookPiece, rookX, rookY, change, tempPiece;
+        let movingArr;
         
         if (depth == 0){
             
-            return this.captureCheckOnlySearch(3, parent, maximisingPlayer, alpha, beta, computer);
+            return this.captureCheckOnlySearch(2, parent, maximisingPlayer, alpha, beta, computer);
 
         } else{
 
@@ -252,80 +254,8 @@ class tree{
                 let index = legalMoves.indexOf(move);
                 legalMoves.splice(index, 1);
 
-                let piece = this.c.board.posGet(move[3], move[4]);
+                let n = this.makeMove(move, parent, movingArr);
 
-                let promoted = false;
-                piece.x = move[0];
-                piece.y = move[1];
-                let detail = move[2];
-                if (detail == 'enP'){
-                    takenPiece = this.c.board.pieceTake(piece.x, move[4], piece.player);
-                } else if (detail == 'castle'){
-                    if (piece.x - move[3] > 0){
-                        rookX = 7;
-                        change = -1;
-                    } else {
-                        rookX = 0;
-                        change = 1;
-                    }
-                    if ((this.depth - depth)%2 == 1){ // if player pieces are being moved
-                        rookY = 7;
-                    } else {
-                        rookY = 0;
-                    }
-                    rookPiece = this.c.board.posGet(rookX, rookY);
-                    rookPiece.x = piece.x + change;
-                    takenPiece = 0;
-                } else {
-
-                    
-                    if (detail == 'queen'){
-                        
-                        let i = movingArr.indexOf(piece);
-                        movingArr[i] = new queen(piece.x, piece.y, piece.white, piece.player, this.c.board);
-                        //piece = movingArr[i];
-                        tempPiece = movingArr[i];
-                        promoted = true;
-                    
-                    } else if (detail == 'rook'){
-                        
-                        let i = movingArr.indexOf(piece);
-                        movingArr[i] = new rook(piece.x, piece.y, piece.white, piece.player, this.c.board);
-                        //piece = movingArr[i];
-                        tempPiece = movingArr[i];
-                        promoted = true;
-                    
-                    } else if (detail == 'bishop'){
-                        
-                        let i = movingArr.indexOf(piece);
-                        movingArr[i] = new bishop(piece.x, piece.y, piece.white, piece.player, this.c.board);
-                        //piece = movingArr[i];
-                        tempPiece = movingArr[i];
-                        promoted = true;
-                    
-                    } else if (detail == 'knight'){
-                        
-                        let i = movingArr.indexOf(piece);
-                        movingArr[i] = new knight(piece.x, piece.y, piece.white, piece.player, this.c.board);
-                        //piece = movingArr[i];
-                        tempPiece = movingArr[i];
-                        promoted = true;
-                    
-                    }
-                    
-                    
-                    
-                    takenPiece = this.c.board.pieceTake(piece.x, piece.y, piece.player);
-                }
-
-                //create a newFen to send to child to determine moves allowed and board state
-
-                let newFen = this.c.board.createFen(parent.fen, piece, piece.x, piece.y, move[3], move[4], takenPiece);
-                let originalPosition = String(move[3]) + String(move[4])
-                //determine if in check to pass to eval func
-                
-                //create new node and start new search
-                let n = new node(newFen, originalPosition, parent, piece, takenPiece, move);
                 let pruned = this.search(depth - 1, n, !maximisingPlayer, alpha, beta, !computer);
 
                 if (!pruned){
@@ -334,14 +264,6 @@ class tree{
                 
                 //undo move for next move on this depth
                 
-                if (detail == 'castle'){
-                    rookPiece.x = rookX;
-                    rookPiece.y = rookY;
-                }
-                if (promoted){
-                    let i = movingArr.indexOf(tempPiece);
-                    movingArr[i] = piece;
-                }
                 this.undoMove(n);
 
                 //calculate if value of child node is the best move at this depth using minimax
@@ -371,8 +293,8 @@ class tree{
     }
 
     captureCheckOnlySearch(depth, parent, maximisingPlayer, alpha, beta, computer){
-        let movingArr, takenPiece, rookPiece, rookX, rookY, change, tempPiece;
-
+        let movingArr;
+        depth = 0;
         if (depth == 0){
             if (this.c.board.hasMoves(!parent.movedPiece.player, parent.fen) == false){
                 this.c.board.updateTakeArr(parent.movedPiece.player, parent.fen); // update opposite color available taking moves
@@ -386,7 +308,7 @@ class tree{
                     parent.val = 0;
                 }
             } else {
-                parent.val = evalPos(parent.fen)
+                parent.val = this.evalPos(parent.fen)
             }
             this.c.val += 1;
             return;
@@ -414,7 +336,7 @@ class tree{
                         parent.val = 0;
                     }
                 } else {
-                    parent.val = evalPos(parent.fen)
+                    parent.val = this.evalPos(parent.fen)
                 }
                 this.c.val += 1;
                 return;
@@ -443,80 +365,8 @@ class tree{
                 let index = legalMoves.indexOf(move);
                 legalMoves.splice(index, 1);
 
-                let piece = this.c.board.posGet(move[3], move[4]);
+                let n = this.makeMove(move, parent, movingArr);
 
-                let promoted = false;
-                piece.x = move[0];
-                piece.y = move[1];
-                let detail = move[2];
-                if (detail == 'enP'){
-                    takenPiece = this.c.board.pieceTake(piece.x, move[4], piece.player);
-                } else if (detail == 'castle'){
-                    if (piece.x - move[3] > 0){
-                        rookX = 7;
-                        change = -1;
-                    } else {
-                        rookX = 0;
-                        change = 1;
-                    }
-                    if ((this.depth - depth)%2 == 1){ // if player pieces are being moved
-                        rookY = 7;
-                    } else {
-                        rookY = 0;
-                    }
-                    rookPiece = this.c.board.posGet(rookX, rookY);
-                    rookPiece.x = piece.x + change;
-                    takenPiece = 0;
-                } else {
-
-                    
-                    if (detail == 'queen'){
-                        
-                        let i = movingArr.indexOf(piece);
-                        movingArr[i] = new queen(piece.x, piece.y, piece.white, piece.player, this.c.board);
-                        //piece = movingArr[i];
-                        tempPiece = movingArr[i];
-                        promoted = true;
-                    
-                    } else if (detail == 'rook'){
-                        
-                        let i = movingArr.indexOf(piece);
-                        movingArr[i] = new rook(piece.x, piece.y, piece.white, piece.player, this.c.board);
-                        //piece = movingArr[i];
-                        tempPiece = movingArr[i];
-                        promoted = true;
-                    
-                    } else if (detail == 'bishop'){
-                        
-                        let i = movingArr.indexOf(piece);
-                        movingArr[i] = new bishop(piece.x, piece.y, piece.white, piece.player, this.c.board);
-                        //piece = movingArr[i];
-                        tempPiece = movingArr[i];
-                        promoted = true;
-                    
-                    } else if (detail == 'knight'){
-                        
-                        let i = movingArr.indexOf(piece);
-                        movingArr[i] = new knight(piece.x, piece.y, piece.white, piece.player, this.c.board);
-                        //piece = movingArr[i];
-                        tempPiece = movingArr[i];
-                        promoted = true;
-                    
-                    }
-                    
-                    
-                    
-                    takenPiece = this.c.board.pieceTake(piece.x, piece.y, piece.player);
-                }
-
-                //create a newFen to send to child to determine moves allowed and board state
-
-                let newFen = this.c.board.createFen(parent.fen, piece, piece.x, piece.y, move[3], move[4], takenPiece);
-                let originalPosition = String(move[3]) + String(move[4])
-                //determine if in check to pass to eval func
-                
-                //create new node and start new search
-                let n = new node(newFen, originalPosition, parent, piece, takenPiece, move);
                 let pruned = this.captureCheckOnlySearch(depth - 1, n, !maximisingPlayer, alpha, beta, !computer);
 
                 if (!pruned){
@@ -525,14 +375,6 @@ class tree{
                 
                 //undo move for next move on this depth
                 
-                if (detail == 'castle'){
-                    rookPiece.x = rookX;
-                    rookPiece.y = rookY;
-                }
-                if (promoted){
-                    let i = movingArr.indexOf(tempPiece);
-                    movingArr[i] = piece;
-                }
                 this.undoMove(n);
 
                 //calculate if value of child node is the best move at this depth using minimax
@@ -561,49 +403,311 @@ class tree{
         return false;
     }
 
+    makeMove(move, parent, movingArr){
+        let takenPiece, rookPiece, rookX, rookY, change;
+        takenPiece = 0;
+        let piece = this.c.board.posGet(move[3], move[4]);
+        //console.log(move);
+        //console.log(piece);
+        //console.log(movingArr);
+        piece.x = move[0];
+        piece.y = move[1];
+        let detail = move[2];
+        if (detail == 'enP'){
+            takenPiece = this.c.board.pieceTake(piece.x, move[4], piece.player);
+        } else if (detail == 'castle'){
+            if (piece.x - move[3] > 0){
+                rookX = 7;
+                change = -1;
+            } else {
+                rookX = 0;
+                change = 1;
+            }
+            if (piece.player){ // if player pieces are being moved
+                rookY = 7;
+            } else {
+                rookY = 0;
+            }
+            rookPiece = this.c.board.posGet(rookX, rookY);
+            rookPiece.x = piece.x + change;
+        } else {
+
+            
+            if (detail == 'queen'){
+                
+                let i = movingArr.indexOf(piece);
+                movingArr[i] = new queen(piece.x, piece.y, piece.white, piece.player, this.c.board);
+                //piece = movingArr[i];
+            
+            } else if (detail == 'rook'){
+                
+                let i = movingArr.indexOf(piece);
+                movingArr[i] = new rook(piece.x, piece.y, piece.white, piece.player, this.c.board);
+                //piece = movingArr[i];
+            
+            } else if (detail == 'bishop'){
+                
+                let i = movingArr.indexOf(piece);
+                movingArr[i] = new bishop(piece.x, piece.y, piece.white, piece.player, this.c.board);
+                //piece = movingArr[i];
+            
+            } else if (detail == 'knight'){
+                
+                let i = movingArr.indexOf(piece);
+                movingArr[i] = new knight(piece.x, piece.y, piece.white, piece.player, this.c.board);
+                //piece = movingArr[i];
+            
+            }
+            
+            
+            
+            takenPiece = this.c.board.pieceTake(piece.x, piece.y, piece.player);
+        }
+
+        //create a newFen to send to child to determine moves allowed and board state
+
+        let newFen = this.c.board.createFen(parent.fen, piece, piece.x, piece.y, move[3], move[4], takenPiece);
+        let originalPosition = String(move[3]) + String(move[4]);
+        //determine if in check to pass to eval func
+        
+        //create new node and start new search
+        return new node(newFen, originalPosition, parent, piece, takenPiece, move);
+
+    }
+
     undoMove(node){
+        let originalX = parseInt(node.originalPosition[0]);
+        let originalY = parseInt(node.originalPosition[1]);
+        if (node.move[2] == 'castle'){
+            //find rook by using left or right and added of subtracting 1 from king x and just use king y
+            let change = node.movedPiece.x - originalX;
+            let rookPiece;
+            if (change > 0){
+                rookPiece = this.c.board.posGet(node.movedPiece.x - 1, node.movedPiece.y);
+                rookPiece.x = 7;
+            } else {
+                rookPiece = this.c.board.posGet(node.movedPiece.x + 1, node.movedPiece.y);
+                rookPiece.x = 0;
+            }
+        }
+
+        if (node.move[2] == 'queen' || node.move[2] == 'rook' || node.move[2] == 'bishop' || node.move[2] == 'knight'){
+            //find piece and replace with piece should be easy enough
+            let promotedPiece = this.c.board.posGet(node.movedPiece.x, node.movedPiece.y)
+            let arr;
+            if (promotedPiece.player){
+                arr = this.c.board.p.pieces;
+            } else {
+                arr = this.c.pieces;
+            }
+            let i = arr.indexOf(promotedPiece);
+            arr[i] = node.movedPiece;
+        }
+
         if (node.takenPiece != 0){
             node.takenPiece.taken = false
         }
-        node.movedPiece.x = parseInt(node.originalPosition[0]);
-        node.movedPiece.y = parseInt(node.originalPosition[1]);
+        node.movedPiece.x = originalX;
+        node.movedPiece.y = originalY;
 
     }
-}
-
-function evalPos(fen){
-    let fenPos = fen['position'];
-    let val = 0;
-    let colorFactor = 0;
-    for (let c of fenPos){
-        if ((/[a-zA-Z]/).test(c)){
-            if (c == c.toUpperCase()){
-                colorFactor = 1;
-                c = c.toLowerCase();
-            } else if (c == c.toLowerCase()){
-                colorFactor = -1;
-            }
-            switch(c){
-                case 'k':
-                    val += 900 * colorFactor
-                    break;
-                case 'q':
-                    val += 90 * colorFactor
-                    break;
-                case 'r':
-                    val += 50 * colorFactor
-                    break;
-                case 'b':
-                    val += 30 * colorFactor
-                    break;
-                case 'n':
-                    val += 30 * colorFactor
-                    break;
-                case 'p':
-                    val += 10 * colorFactor
-                    break;
+    
+    evalPos(fen){
+        //get x and y then use PST
+        //also find out how to determine start or end game
+        
+        let allPieces = this.c.pieces.concat(this.c.board.p.pieces);
+        let materialCount = 0
+        for (let i = 0; i < allPieces.length; i++){
+            if (!allPieces[i].taken){
+                materialCount += 1;
             }
         }
+
+        let gameState;
+        if (materialCount > 25){
+            gameState = 'start';
+        } else if (materialCount > 10){
+            gameState = 'middle';
+        } else {
+            gameState = 'end';
+        }
+
+        let fenPos = fen['position'];
+        let val = 0;
+        let colorFactor = 0;
+        let x = 0;
+        let y = 0;
+        for (let c of fenPos){
+            if ((/[a-zA-Z]/).test(c)){
+                if (c == c.toUpperCase()){
+                    colorFactor = 1;
+                    c = c.toLowerCase();
+                } else if (c == c.toLowerCase()){
+                    colorFactor = -1;
+                }
+                let playerPiece;
+                if (colorFactor == 1){
+                    if (this.c.board.isPlayerWhite){
+                        playerPiece = true;
+                    } else {
+                        playerPiece = false;
+                    }
+                } else {
+                    if (this.c.board.isPlayerWhite){
+                        playerPiece = false;
+                    } else {
+                        playerPiece = true;
+                    }
+                }
+                let PSTx;
+                let PSTy;
+                let pawnMultiplier;
+                switch(c){
+                    case 'k':
+                        PSTx = x;
+                        if (!playerPiece){
+                            PSTy = 7 - y;
+                        } else {
+                            PSTy = y;
+                        }
+                        if (gameState == 'start' || gameState == 'middle'){
+                            val += parseInt((900 * colorFactor * kingStartTable[PSTy][PSTx]).toFixed(5));
+                        } else {
+                            val += parseInt((900 * colorFactor * kingEndTable[PSTy][PSTx]).toFixed(5))
+                        }
+                        break;
+                    case 'q':
+                        val += 90 * colorFactor;
+                        break;
+                    case 'r':
+                        val += 50 * colorFactor;
+                        break;
+                    case 'b':
+                        PSTx = x;
+                        if (!playerPiece){
+                            PSTy = 7 - y;
+                        } else {
+                            PSTy = y;
+                        }
+                        val += parseInt((30 * colorFactor * bishopTable[PSTy][PSTx]).toFixed(5));
+                        break;
+                    case 'n':
+                        PSTx = x;
+                        if (!playerPiece){
+                            PSTy = 7 - y;
+                        } else {
+                            PSTy = y;
+                        }
+                        val += parseInt((30 * colorFactor * knightTable[PSTy][PSTx]).toFixed(5));
+                        break;
+                    case 'p':
+                        PSTx = x;
+                        if (!playerPiece){
+                            PSTy = 7 - y
+                        } else {
+                            PSTy = y;
+                        }
+                        if (gameState == 'start' || gameState == 'middle'){
+                            pawnMultiplier = 1;
+                        } else {
+                            pawnMultiplier = 3;
+                        }
+                        val += parseInt((10 * pawnMultiplier * colorFactor * pawnTable[PSTy][PSTx]).toFixed(5));
+                        break;
+                }
+                x += 1;
+            } else if (c == '/'){
+                y += 1;
+                x = 0;
+            } else if (c == parseInt(c)){
+                x += parseInt(c);
+            }
+        }
+        return val;
     }
-    return val;
 }
+
+const kingStartTable = [
+
+    [0.7, 6, 0.6, 0.5, 0.5, 0.6, 0.6, 0.7],
+    [0.7, 0.6, 0.6, 0.5, 0.5, 0.6, 0.6, 0.7],
+    [0.7, 0.6, 0.6, 0.5, 0.5, 0.6, 0.6, 0.7],
+    [0.7, 0.6, 0.6, 0.5, 0.5, 0.6, 0.6, 0.7],
+    [0.8, 0.7, 0.7, 0.6, 0.6, 0.7, 0.7, 0.8],
+    [0.9, 0.8, 0.8, 0.7, 0.7, 0.8, 0.8, 0.9],
+    [1.2, 1.2, 1, 1, 1, 1, 1.2, 1.2],
+    [1.2, 1.3, 1.2, 1.1, 1.1, 1.2, 1.3, 1.2]
+
+];
+
+const kingEndTable = [
+
+    [0.5, 0.6, 0.7, 0.8, 0.8, 0.7, 0.6, 0.5],
+    [0.7, 0.8, 0.9, 1, 1, 1.9, 0.8, 0.7],
+    [0.7, 0.9, 1.2, 1.3, 1.3, 1.2, 0.9, 0.7],
+    [0.7, 0.9, 1.3, 1.4, 1.4, 1.3, 0.9, 0.7],
+    [0.7, 0.9, 1.3, 1.4, 1.4, 1.3, 0.9, 0.7],
+    [0.7, 0.9, 1.2, 1.3, 1.3, 1.2, 0.9, 0.7],
+    [0.7, 0.7, 1, 1, 1, 1, 0.7, 0.7],
+    [0.5, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.5]
+
+];
+
+const pawnTable = [
+
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5],
+    [1.1, 1.1, 1.2, 1.3, 1.3, 1.2, 1.1, 1.1],
+    [1.05, 1.05, 1.1, 1.27, 1.27, 1.1, 1.05, 1.05],
+    [1.0, 1.0, 1.0, 1.25, 1.25, 1.0, 1.0, 1.0],
+    [1.05, 0.95, 0.9, 1, 1, 0.9, 0.95, 1.05,],
+    [1.05, 1.10, 1.10,0.75,0.75, 1.10, 1.10,  1.05],
+    [0, 0, 0, 0, 0, 0, 0, 0]
+
+];
+
+const bishopTable = [
+    
+    [0.8,0.9,0.9,0.9,0.9,0.9,0.9,0.8],
+    [0.9, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,0.9],
+    [0.9, 1.0,  1.05,1.10,1.10,  1.05,  0,0.9],
+    [0.9,  1.05,  1.05,1.10,1.10,  1.05,  1.05,0.9],
+    [0.9, 1.0,1.10,1.10,1.10,1.10, 1.0,0.9],
+    [0.9,1.10,1.10,1.10,1.10,1.10,1.10,0.9],
+    [0.9,  1.05, 1.0, 1.0, 1.0, 1.0,  1.05,0.9],
+    [0.8,0.9,0.6,0.9,0.9,0.6,0.9,0.8]
+
+]
+
+const knightTable = [
+
+    [0.5,0.6,0.7,0.7,0.7,0.7,0.6,0.5],
+    [0.6,0.8,  1.0,  1.0,  1.0,  1.0,0.8,0.6],
+    [0.7,  1.0, 1.10, 1.15, 1.15, 1.10,  1.0,0.7],
+    [0.7,  1.05, 1.15, 1.20, 1.20, 1.15,  1.05,0.7],
+    [0.7,  1.0, 1.15, 1.20, 1.20, 1.15,  1.0,0.7],
+    [0.7,  1.05, 1.10, 1.15, 1.15, 1.10,  1.05,0.7],
+    [0.6,0.8,  1.0,  1.05,  1.05,  1.0,0.8,0.6],
+    [0.5,0.6,0.8,0.7,0.7,0.8,0.6,0.5]
+
+];
+
+
+
+//with pawn square table just make value more for endgame - can just be done in eval function
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

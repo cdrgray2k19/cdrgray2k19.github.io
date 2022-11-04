@@ -50,11 +50,7 @@ class player{ // add functions which will use general function in board.js to mo
                     rookX = 0;
                     change = 1;
                 }
-                if (this.board.playerMove){
-                    rookY = 7;
-                } else {
-                    rookY = 0;
-                }
+                rookY = 7;
                 let rook = this.board.posGet(rookX, rookY);
                 rook.x = this.board.movingPiece.x + change;
                 this.board.takenPiece = 0;

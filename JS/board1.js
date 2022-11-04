@@ -150,29 +150,28 @@ class board{
     
     createPieces(){
         //using new fen string to decide who moves
-        /*let string = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+        let string = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
         string = string.split("");
         string = string.reverse();
-        string = string.join("")
-        console.log(string);*/
+        string = string.join("");
         
         if (this.isPlayerWhite){
-            this.fen = {'position': 'r3k2r/p1ppqpb1/Bn2pnp1/3PN3/4P3/6Q1/PPPp1PpP/1K1R3R', 'activeCol': 'b', 'castling': 'kq', 'enP': '-'}; // starting position white bottom
+            this.fen = {'position': 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR', 'activeCol': 'w', 'castling': 'KQkq', 'enP': '-'}; // starting position white bottom
         } else {
-            this.fen = {'position': 'RNBKQBNR/PPPPPPPP/8/8/8/8/pppppppp/rnbkqbnr', 'activeCol': 'w', 'castling': 'KQkq', 'enP': '-'};
+            this.fen = {'position': string, 'activeCol': 'w', 'castling': '', 'enP': '-'};
         }
         let x = 0;
         let y = 0;
         let white = 0;
         let player = 0;
-        let FENcode = this.fen['position']
+        let FENcode = this.fen['position'];
         for (let c of FENcode){
             if (c == '/'){
                 x = 0;
                 y += 1;
                 continue;
             } else if (c == parseInt(c)){
-                x += parseInt(c)
+                x += parseInt(c);
                 continue;
             } else if (c == c.toUpperCase()){ // if letter is uppercase
                 white = true;
@@ -267,9 +266,9 @@ class board{
         }
         let colour;
         if (prevFen['activeCol'] == 'w'){
-            colour = 'b'
+            colour = 'b';
         } else {
-            colour = 'w'
+            colour = 'w';
         }
         //need to use last move to decide about en passant and castling
         var castleRights = prevFen['castling'];
@@ -432,12 +431,18 @@ class board{
             }else{
                 takenPiece = this.pieceTake(piece.x, piece.y, piece.player);
             }
-            this.updateTakeArr(!piece.player, fen) // update opposite color available taking moves
+            let newFen = this.createFen(fen, piece, arr[i][0], arr[i][1], x, y, takenPiece);
+            this.updateTakeArr(!piece.player, newFen) // update opposite color available taking moves
             if(this.isCheck(piece.player) == 0){
-                arr2.push([arr[i][0], arr[i][1], arr[i][2]]); // if no checks are found for this move then append to new legal moves array
+                this.updateTakeArr(piece.player, newFen);
+                let check = false;
+                if (this.isCheck(!piece.player) != 0){
+                    check = true;
+                }
+                arr2.push([arr[i][0], arr[i][1], arr[i][2], check]); // if no checks are found for this move then append to new legal moves array
             }
             if (takenPiece != 0){ // if piece was taken, now the evaluation of the board is done the piece can be pushed back into the nescessary array to be stored on the board
-                takenPiece.taken = false
+                takenPiece.taken = false;
                 takenPiece = 0;
             }
         }
@@ -519,7 +524,7 @@ class board{
                 return move;
             }
         }
-        return 0
+        return 0;
 
     }
     
